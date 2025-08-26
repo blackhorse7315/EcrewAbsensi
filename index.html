@@ -279,6 +279,34 @@
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Data Absensi Seluruh Karyawan</h2>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-xl shadow p-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label for="filterName" class="block text-sm font-medium text-gray-700">Nama Karyawan</label>
+                        <input type="text" id="filterName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="Cari nama...">
+                    </div>
+                    <div>
+                        <label for="filterTime" class="block text-sm font-medium text-gray-700">Rentang Waktu</label>
+                        <select id="filterTime" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                            <option value="all">Semua</option>
+                            <option value="daily">Hari Ini</option>
+                            <option value="weekly">Minggu Ini</option>
+                            <option value="monthly">Bulan Ini</option>
+                        </select>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="applyFilters()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                        <button onclick="resetFilters()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg">
+                            <i class="fas fa-undo mr-2"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -640,6 +668,77 @@
             </form>
         </div>
     </div>
+
+     <!-- Edit Attendance Modal (for Admin) -->
+    <div id="editAttendanceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Edit Data Absensi</h3>
+                <button onclick="closeModal('editAttendanceModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="editAttendanceForm" class="space-y-4">
+                <input type="hidden" id="editMasukId">
+                <input type="hidden" id="editPulangId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nama Karyawan</label>
+                        <input type="text" id="editName" class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md shadow-sm py-2 px-3" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tanggal</label>
+                        <input type="text" id="editDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    </div>
+                </div>
+
+                <!-- Absen Masuk Details -->
+                <div class="p-4 border rounded-lg border-green-300 bg-green-50">
+                    <h4 class="font-semibold text-green-800 mb-2">Detail Absen Masuk</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Jam Masuk</label>
+                            <input type="text" id="editTimeMasuk" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status Masuk</label>
+                            <input type="text" id="editStatusMasuk" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Alasan Terlambat</label>
+                            <textarea id="editAlasanTerlambat" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Absen Pulang Details -->
+                <div class="p-4 border rounded-lg border-red-300 bg-red-50">
+                    <h4 class="font-semibold text-red-800 mb-2">Detail Absen Pulang</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Jam Pulang</label>
+                            <input type="text" id="editTimePulang" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status Pulang</label>
+                            <input type="text" id="editStatusPulang" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Remark Pekerjaan</label>
+                            <textarea id="editRemark" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal('editAttendanceModal')" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <script>
         // Data karyawan
@@ -1082,6 +1181,11 @@
             if(newsForm) {
                 newsForm.addEventListener('submit', publishNews);
             }
+            // Add listener for edit attendance form
+            const editAttendanceForm = document.getElementById('editAttendanceForm');
+            if(editAttendanceForm) {
+                editAttendanceForm.addEventListener('submit', saveAttendanceChanges);
+            }
         });
         
         // Check status masuk berdasarkan waktu
@@ -1223,11 +1327,20 @@
                 return;
             }
             
-            const firstName = employee.name.split(' ')[0].toLowerCase();
-            if (password.toLowerCase() !== firstName) {
-                showError(`Password salah! Gunakan nama depan Anda "${employee.name.split(' ')[0]}" sebagai password.`);
-                return;
+            // Special password check for admin
+            if (employee.role === 'ADMIN' && password === 'admintwa021') {
+                // Admin login successful
+            } else if (employee.role !== 'ADMIN') {
+                const firstName = employee.name.split(' ')[0].toLowerCase();
+                if (password.toLowerCase() !== firstName) {
+                    showError(`Password salah! Gunakan nama depan Anda "${employee.name.split(' ')[0]}" sebagai password.`);
+                    return;
+                }
+            } else {
+                 showError('Password salah!');
+                 return;
             }
+
             
             currentUser = employee;
             document.getElementById('loginPage').style.display = 'none';
@@ -1863,36 +1976,67 @@
         }
 
         // --- ADMIN FUNCTIONS ---
+        function applyFilters() {
+            loadAllAttendance();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterTime').value = 'all';
+            loadAllAttendance();
+        }
+
         function loadAllAttendance() {
             const tableBody = document.getElementById('allAttendanceTableBody');
-            tableBody.innerHTML = ''; // Clear existing data
+            tableBody.innerHTML = '';
 
-            const groupedData = groupAbsensiByDate(absensiData);
+            const nameFilter = document.getElementById('filterName').value.toLowerCase();
+            const timeFilter = document.getElementById('filterTime').value;
+
+            let filteredData = absensiData;
+
+            // Apply name filter
+            if (nameFilter) {
+                filteredData = filteredData.filter(record => record.name.toLowerCase().includes(nameFilter));
+            }
+
+            // Apply time filter
+            const now = new Date();
+            if (timeFilter === 'daily') {
+                const today = now.toDateString();
+                filteredData = filteredData.filter(record => record.date === today);
+            } else if (timeFilter === 'weekly') {
+                const oneWeekAgo = new Date(now.setDate(now.getDate() - 7)).getTime();
+                filteredData = filteredData.filter(record => record.timestamp >= oneWeekAgo);
+            } else if (timeFilter === 'monthly') {
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                filteredData = filteredData.filter(record => {
+                    const recordDate = new Date(record.timestamp);
+                    return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
+                });
+            }
+
+            const groupedData = groupAbsensiByDate(filteredData);
 
             Object.keys(groupedData).sort((a,b) => new Date(b) - new Date(a)).forEach(dateKey => {
                 const dailyRecords = groupedData[dateKey];
                 const userGroup = dailyRecords.reduce((acc, record) => {
-                    if (!acc[record.email]) {
-                        acc[record.email] = {};
-                    }
-                    if (record.type === 'masuk') {
-                        acc[record.email].masuk = record;
-                    } else if (record.type === 'pulang') {
-                        acc[record.email].pulang = record;
-                    }
+                    if (!acc[record.email]) acc[record.email] = {};
+                    if (record.type === 'masuk') acc[record.email].masuk = record;
+                    else if (record.type === 'pulang') acc[record.email].pulang = record;
                     return acc;
                 }, {});
 
                 for (const email in userGroup) {
                     const { masuk, pulang } = userGroup[email];
                     const row = document.createElement('tr');
+                    row.className = 'cursor-pointer hover:bg-gray-50';
+                    row.onclick = () => showEditAttendanceModal(masuk?.id, pulang?.id);
                     
                     let statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Tidak Lengkap</span>';
-                    if (masuk && pulang) {
-                        statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Lengkap</span>';
-                    } else if (masuk) {
-                        statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Belum Pulang</span>';
-                    }
+                    if (masuk && pulang) statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Lengkap</span>';
+                    else if (masuk) statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Belum Pulang</span>';
 
                     row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${masuk?.name || pulang?.name}</div></td>
@@ -1904,6 +2048,62 @@
                     tableBody.appendChild(row);
                 }
             });
+        }
+
+        function showEditAttendanceModal(masukId, pulangId) {
+            const masukRecord = absensiData.find(r => r.id === masukId);
+            const pulangRecord = absensiData.find(r => r.id === pulangId);
+
+            if (!masukRecord && !pulangRecord) {
+                alert('Data tidak ditemukan!');
+                return;
+            }
+
+            document.getElementById('editMasukId').value = masukId || '';
+            document.getElementById('editPulangId').value = pulangId || '';
+
+            document.getElementById('editName').value = masukRecord?.name || pulangRecord?.name;
+            document.getElementById('editDate').value = masukRecord?.date || pulangRecord?.date;
+
+            // Populate Masuk
+            document.getElementById('editTimeMasuk').value = masukRecord?.time || '';
+            document.getElementById('editStatusMasuk').value = masukRecord?.statusMasuk || '';
+            document.getElementById('editAlasanTerlambat').value = masukRecord?.alasanTerlambat || '';
+
+            // Populate Pulang
+            document.getElementById('editTimePulang').value = pulangRecord?.time || '';
+            document.getElementById('editStatusPulang').value = pulangRecord?.statusPulang || '';
+            document.getElementById('editRemark').value = pulangRecord?.remarkPekerjaan || '';
+
+            document.getElementById('editAttendanceModal').classList.remove('hidden');
+        }
+
+        function saveAttendanceChanges(e) {
+            e.preventDefault();
+            const masukId = parseInt(document.getElementById('editMasukId').value);
+            const pulangId = parseInt(document.getElementById('editPulangId').value);
+
+            const masukIndex = absensiData.findIndex(r => r.id === masukId);
+            const pulangIndex = absensiData.findIndex(r => r.id === pulangId);
+
+            if (masukIndex > -1) {
+                absensiData[masukIndex].date = document.getElementById('editDate').value;
+                absensiData[masukIndex].time = document.getElementById('editTimeMasuk').value;
+                absensiData[masukIndex].statusMasuk = document.getElementById('editStatusMasuk').value;
+                absensiData[masukIndex].alasanTerlambat = document.getElementById('editAlasanTerlambat').value;
+            }
+
+            if (pulangIndex > -1) {
+                absensiData[pulangIndex].date = document.getElementById('editDate').value;
+                absensiData[pulangIndex].time = document.getElementById('editTimePulang').value;
+                absensiData[pulangIndex].statusPulang = document.getElementById('editStatusPulang').value;
+                absensiData[pulangIndex].remarkPekerjaan = document.getElementById('editRemark').value;
+            }
+
+            localStorage.setItem('absensiData', JSON.stringify(absensiData));
+            alert('Data absensi berhasil diperbarui!');
+            closeModal('editAttendanceModal');
+            loadAllAttendance();
         }
 
         function showAddNewsModal() {
