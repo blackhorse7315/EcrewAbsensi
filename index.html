@@ -406,6 +406,31 @@
                 <!-- Remark & Foto Pekerjaan (Hanya muncul saat absen pulang) -->
                 <div id="remarkSection" class="hidden space-y-4">
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Lokasi Absen Pulang <span class="text-red-500">*</span>
+                        </label>
+                        <div class="space-y-3">
+                            <div id="mapContainerPulang" class="map-container border border-gray-300 rounded-lg"></div>
+                            <div id="locationInfoPulang" class="location-info hidden">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Lokasi Pulang Terdeteksi:</span>
+                                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
+                                        <i class="fas fa-check-circle mr-1"></i>Valid
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-600" id="addressTextPulang"></div>
+                                <div class="text-xs text-gray-500 mt-1" id="coordinatesTextPulang"></div>
+                            </div>
+                            <input type="hidden" id="lokasiPulang" required>
+                            <input type="hidden" id="latitudePulang" required>
+                            <input type="hidden" id="longitudePulang" required>
+                            <button type="button" onclick="getLocationPulang()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+                                <i class="fas fa-crosshairs mr-2"></i>
+                                <span id="locationBtnTextPulang">Deteksi Lokasi Pulang</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan Hari Ini</label>
                         <textarea id="remarkPekerjaan" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Deskripsikan pekerjaan yang telah dilakukan hari ini..."></textarea>
                     </div>
@@ -574,6 +599,9 @@
         let map = null;
         let marker = null;
         let isLocationDetected = false;
+        let mapPulang = null;
+        let markerPulang = null;
+        let isLocationPulangDetected = false;
         
         // Data berita
         const newsData = [
@@ -795,6 +823,28 @@
             });
         }
         
+        // Initialize map for pulang
+        function initializeMapPulang() {
+            if (mapPulang) {
+                mapPulang.remove();
+            }
+            
+            // Default location (Jakarta)
+            const defaultLat = -6.2088;
+            const defaultLng = 106.8456;
+            
+            mapPulang = L.map('mapContainerPulang').setView([defaultLat, defaultLng], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(mapPulang);
+            
+            // Add click event to map
+            mapPulang.on('click', function(e) {
+                updateLocationPulang(e.latlng.lat, e.latlng.lng);
+            });
+        }
+        
         // Get location
         function getLocation() {
             const btn = document.getElementById('locationBtnText');
@@ -808,6 +858,49 @@
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
                         updateLocation(lat, lng);
+                        btn.textContent = originalText;
+                    },
+                    function(error) {
+                        let errorMessage = 'Gagal mendeteksi lokasi';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = 'Akses lokasi ditolak. Silakan izinkan akses lokasi.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = 'Informasi lokasi tidak tersedia.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = 'Timeout mendeteksi lokasi.';
+                                break;
+                        }
+                        alert(errorMessage + ' Anda dapat mengklik pada peta untuk memilih lokasi.');
+                        btn.textContent = originalText;
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                alert('Geolocation tidak didukung oleh browser ini. Silakan klik pada peta untuk memilih lokasi.');
+                btn.textContent = originalText;
+            }
+        }
+        
+        // Get location for pulang
+        function getLocationPulang() {
+            const btn = document.getElementById('locationBtnTextPulang');
+            const originalText = btn.textContent;
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mendeteksi Lokasi...';
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        updateLocationPulang(lat, lng);
                         btn.textContent = originalText;
                     },
                     function(error) {
@@ -866,9 +959,58 @@
             isLocationDetected = true;
         }
         
+        // Update location on map for pulang
+        function updateLocationPulang(lat, lng) {
+            // Remove existing marker
+            if (markerPulang) {
+                mapPulang.removeLayer(markerPulang);
+            }
+            
+            // Add new marker
+            markerPulang = L.marker([lat, lng]).addTo(mapPulang);
+            
+            // Center map on location
+            mapPulang.setView([lat, lng], 16);
+            
+            // Update form fields
+            document.getElementById('latitudePulang').value = lat;
+            document.getElementById('longitudePulang').value = lng;
+            document.getElementById('lokasiPulang').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            
+            // Show location info
+            document.getElementById('locationInfoPulang').classList.remove('hidden');
+            document.getElementById('coordinatesTextPulang').textContent = `Koordinat: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            
+            // Get address using reverse geocoding
+            getAddressFromCoordinatesPulang(lat, lng);
+            
+            isLocationPulangDetected = true;
+        }
+        
         // Get address from coordinates
         function getAddressFromCoordinates(lat, lng) {
             const addressText = document.getElementById('addressText');
+            addressText.textContent = 'Mengambil alamat...';
+            
+            // Using Nominatim API for reverse geocoding
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        addressText.textContent = data.display_name;
+                    } else {
+                        addressText.textContent = 'Alamat tidak ditemukan';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error getting address:', error);
+                    addressText.textContent = 'Gagal mengambil alamat';
+                });
+        }
+        
+        // Get address from coordinates for pulang
+        function getAddressFromCoordinatesPulang(lat, lng) {
+            const addressText = document.getElementById('addressTextPulang');
             addressText.textContent = 'Mengambil alamat...';
             
             // Using Nominatim API for reverse geocoding
@@ -1134,36 +1276,36 @@
                 record.email === currentUser.email
             );
             
-            // Find the latest check-in without a corresponding check-out
-            const unpairedMasuk = todayRecords
+            // Find the latest check-in (always allow check-out for the latest check-in)
+            const latestMasuk = todayRecords
                 .filter(record => record.type === 'masuk')
-                .find(masukRecord => {
-                    // Check if this masuk record has a corresponding pulang record
-                    const correspondingPulang = todayRecords.find(pulangRecord => 
-                        pulangRecord.type === 'pulang' && 
-                        pulangRecord.absenMasukId === masukRecord.id
-                    );
-                    return !correspondingPulang;
-                });
+                .sort((a, b) => b.timestamp - a.timestamp)[0]; // Get the most recent check-in
             
-            if (unpairedMasuk) {
+            if (latestMasuk) {
                 // Show existing check-in data and prepare for check-out
-                fillExistingAbsenData(unpairedMasuk);
-                document.getElementById('btnAbsenMasuk').classList.add('hidden');
+                fillExistingAbsenData(latestMasuk);
+                document.getElementById('btnAbsenMasuk').classList.remove('hidden');
                 document.getElementById('btnAbsenPulang').classList.remove('hidden');
                 document.getElementById('remarkSection').classList.remove('hidden');
                 document.getElementById('statusMasukSection').classList.remove('hidden');
                 
                 // Show existing status
                 const statusDiv = document.getElementById('statusMasuk');
-                statusDiv.textContent = unpairedMasuk.statusMasuk;
-                statusDiv.className = unpairedMasuk.statusMasuk.includes('Terlambat') ? 
+                statusDiv.textContent = latestMasuk.statusMasuk;
+                statusDiv.className = latestMasuk.statusMasuk.includes('Terlambat') ? 
                     'p-3 rounded-lg font-medium bg-red-100 text-red-800' : 
                     'p-3 rounded-lg font-medium bg-green-100 text-green-800';
                 
-                currentAbsenMasuk = unpairedMasuk;
+                // Show late reason if it was late
+                if (latestMasuk.statusMasuk.includes('Terlambat') && latestMasuk.alasanTerlambat) {
+                    document.getElementById('alasanTerlambatSection').classList.remove('hidden');
+                    document.getElementById('alasanTerlambat').value = latestMasuk.alasanTerlambat;
+                    document.getElementById('alasanTerlambat').readOnly = true;
+                }
+                
+                currentAbsenMasuk = latestMasuk;
             } else {
-                // Show absen masuk form (allow new check-in)
+                // Show absen masuk form (no check-in yet today)
                 resetAbsenForm();
                 document.getElementById('btnAbsenMasuk').classList.remove('hidden');
                 document.getElementById('btnAbsenPulang').classList.add('hidden');
@@ -1176,6 +1318,10 @@
             // Initialize map after modal is shown
             setTimeout(() => {
                 initializeMap();
+                // Initialize pulang map if remark section is visible
+                if (!document.getElementById('remarkSection').classList.contains('hidden')) {
+                    initializeMapPulang();
+                }
             }, 100);
         }
         
@@ -1220,6 +1366,19 @@
             document.getElementById('previewFotoPekerjaan').innerHTML = '';
             document.getElementById('statusMasukSection').classList.add('hidden');
             document.getElementById('alasanTerlambatSection').classList.add('hidden');
+            document.getElementById('alasanTerlambat').readOnly = false;
+            
+            // Reset location fields
+            isLocationDetected = false;
+            isLocationPulangDetected = false;
+            document.getElementById('locationInfo').classList.add('hidden');
+            document.getElementById('locationInfoPulang').classList.add('hidden');
+            document.getElementById('lokasiMasuk').value = '';
+            document.getElementById('lokasiPulang').value = '';
+            document.getElementById('latitude').value = '';
+            document.getElementById('longitude').value = '';
+            document.getElementById('latitudePulang').value = '';
+            document.getElementById('longitudePulang').value = '';
         }
         
         // Submit absen masuk
@@ -1336,11 +1495,11 @@
             
             const remarkPekerjaan = document.getElementById('remarkPekerjaan').value;
             const fotoPekerjaan = document.getElementById('fotoPekerjaan').files[0];
-            const lokasi = document.getElementById('lokasiMasuk').value;
-            const latitude = document.getElementById('latitude').value;
-            const longitude = document.getElementById('longitude').value;
+            const lokasiPulang = document.getElementById('lokasiPulang').value;
+            const latitudePulang = document.getElementById('latitudePulang').value;
+            const longitudePulang = document.getElementById('longitudePulang').value;
             
-            console.log('Data form pulang:', { remarkPekerjaan, fotoPekerjaan, lokasi, latitude, longitude });
+            console.log('Data form pulang:', { remarkPekerjaan, fotoPekerjaan, lokasiPulang, latitudePulang, longitudePulang });
             console.log('Current absen masuk:', currentAbsenMasuk);
             
             // Validasi input
@@ -1354,8 +1513,8 @@
                 return;
             }
             
-            if (!lokasi || !latitude || !longitude) {
-                alert('Mohon deteksi lokasi terlebih dahulu! Klik tombol "Deteksi Lokasi Saya" atau klik pada peta untuk memilih lokasi.');
+            if (!lokasiPulang || !latitudePulang || !longitudePulang) {
+                alert('Mohon deteksi lokasi pulang terlebih dahulu! Klik tombol "Deteksi Lokasi Pulang" atau klik pada peta untuk memilih lokasi.');
                 return;
             }
             
@@ -1398,9 +1557,9 @@
                         absenMasukTime: currentAbsenMasuk.time,
                         absenMasukTimestamp: currentAbsenMasuk.timestamp,
                         absenMasukId: currentAbsenMasuk.id,
-                        lokasi: lokasi,
-                        latitude: latitude,
-                        longitude: longitude
+                        lokasi: lokasiPulang,
+                        latitude: latitudePulang,
+                        longitude: longitudePulang
                     };
                     
                     console.log('Menyimpan record pulang:', absenRecord);
@@ -1855,5 +2014,5 @@
             loadNewsPreview();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975038cd23205fc7',t:'MTc1NjE3ODcyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97505ce76390a027',t:'MTc1NjE4MDIwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
