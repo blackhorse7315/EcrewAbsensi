@@ -1134,29 +1134,36 @@
                 record.email === currentUser.email
             );
             
-            // Find the latest check-in (always allow check-out for the latest check-in)
-            const latestMasuk = todayRecords
+            // Find the latest check-in without a corresponding check-out
+            const unpairedMasuk = todayRecords
                 .filter(record => record.type === 'masuk')
-                .sort((a, b) => b.timestamp - a.timestamp)[0]; // Get the most recent check-in
+                .find(masukRecord => {
+                    // Check if this masuk record has a corresponding pulang record
+                    const correspondingPulang = todayRecords.find(pulangRecord => 
+                        pulangRecord.type === 'pulang' && 
+                        pulangRecord.absenMasukId === masukRecord.id
+                    );
+                    return !correspondingPulang;
+                });
             
-            if (latestMasuk) {
+            if (unpairedMasuk) {
                 // Show existing check-in data and prepare for check-out
-                fillExistingAbsenData(latestMasuk);
-                document.getElementById('btnAbsenMasuk').classList.remove('hidden');
+                fillExistingAbsenData(unpairedMasuk);
+                document.getElementById('btnAbsenMasuk').classList.add('hidden');
                 document.getElementById('btnAbsenPulang').classList.remove('hidden');
                 document.getElementById('remarkSection').classList.remove('hidden');
                 document.getElementById('statusMasukSection').classList.remove('hidden');
                 
                 // Show existing status
                 const statusDiv = document.getElementById('statusMasuk');
-                statusDiv.textContent = latestMasuk.statusMasuk;
-                statusDiv.className = latestMasuk.statusMasuk.includes('Terlambat') ? 
+                statusDiv.textContent = unpairedMasuk.statusMasuk;
+                statusDiv.className = unpairedMasuk.statusMasuk.includes('Terlambat') ? 
                     'p-3 rounded-lg font-medium bg-red-100 text-red-800' : 
                     'p-3 rounded-lg font-medium bg-green-100 text-green-800';
                 
-                currentAbsenMasuk = latestMasuk;
+                currentAbsenMasuk = unpairedMasuk;
             } else {
-                // Show absen masuk form (no check-in yet today)
+                // Show absen masuk form (allow new check-in)
                 resetAbsenForm();
                 document.getElementById('btnAbsenMasuk').classList.remove('hidden');
                 document.getElementById('btnAbsenPulang').classList.add('hidden');
@@ -1848,5 +1855,5 @@
             loadNewsPreview();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97504924a3e0a196',t:'MTc1NjE3OTM5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975038cd23205fc7',t:'MTc1NjE3ODcyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
