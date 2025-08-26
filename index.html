@@ -5,356 +5,1349 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ECrew - Aplikasi Absensi</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
         }
-        .form-label {
-            @apply block text-sm font-medium text-gray-500 mb-1;
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .form-data {
-            @apply text-sm font-semibold text-gray-900;
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .form-select {
-            @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+        
+        .running-text {
+            animation: scroll 15s linear infinite;
+            white-space: nowrap;
         }
-        .status-badge {
-            @apply px-2.5 py-1 text-xs font-bold rounded-full;
+        
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
         .btn-primary {
-            @apply w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
         }
-        .btn-secondary {
-             @apply w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
-
-    <!-- Container Utama Aplikasi -->
-    <div class="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-
-        <!-- Halaman Login (Awalnya Ditampilkan) -->
-        <div id="login-page">
-            <div class="p-8">
-                <div class="text-center mb-8">
-                    <svg class="mx-auto h-12 w-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <h2 class="mt-4 text-2xl font-bold text-gray-900">ECrew Absensi</h2>
-                    <p class="text-sm text-gray-500">Silakan masuk untuk melanjutkan</p>
+<body class="min-h-screen gradient-bg">
+    <!-- Login Page -->
+    <div id="loginPage" class="min-h-screen flex items-center justify-center p-4" style="display: flex;">
+        <div class="glass-effect rounded-2xl p-8 w-full max-w-md fade-in">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-users text-3xl text-indigo-600"></i>
                 </div>
-                <form id="login-form">
-                    <div class="space-y-5">
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input id="email" type="email" required value="user@ecrew.com" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        </div>
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                            <input id="password" type="password" required value="123456" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        </div>
-                        <button type="submit" class="btn-primary">Masuk</button>
+                <h1 class="text-3xl font-bold text-white mb-2">ECrew</h1>
+                <p class="text-white/80">Aplikasi Absensi Modern</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-white/90 text-sm font-medium mb-2">Email</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="email" class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30" placeholder="Masukkan email" required>
                     </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Halaman Dashboard (Disembunyikan) -->
-        <div id="dashboard-page" class="hidden">
-            <div class="bg-indigo-600 p-6 text-white">
-                 <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm opacity-80">Selamat Datang,</p>
-                        <h1 class="text-xl font-bold">Pengguna ECrew</h1>
+                </div>
+                
+                <div>
+                    <label class="block text-white/90 text-sm font-medium mb-2">Nama</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="nama" class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30" placeholder="Nama akan terisi otomatis" readonly>
                     </div>
-                    <img class="h-12 w-12 rounded-full ring-2 ring-white" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
                 </div>
-            </div>
-            <div class="p-6">
-                <div class="grid grid-cols-2 gap-5 text-center">
-                    <a href="#" id="btn-go-to-absen" class="bg-gray-100 hover:bg-indigo-100 p-6 rounded-xl shadow-sm transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="flex items-center justify-center h-16 w-16 mx-auto bg-indigo-500 text-white rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        </div>
-                        <p class="mt-4 font-semibold text-gray-800">Absen Hari Ini</p>
-                    </a>
-                    <a href="#" class="bg-gray-100 hover:bg-indigo-100 p-6 rounded-xl shadow-sm transition-all duration-300 transform hover:-translate-y-1">
-                         <div class="flex items-center justify-center h-16 w-16 mx-auto bg-indigo-500 text-white rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <p class="mt-4 font-semibold text-gray-800">Riwayat Absen</p>
-                    </a>
+                
+                <div>
+                    <label class="block text-white/90 text-sm font-medium mb-2">Divisi</label>
+                    <div class="relative">
+                        <i class="fas fa-building absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="divisi" class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30" placeholder="Divisi akan terisi otomatis" readonly>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Halaman Absensi (Disembunyikan) -->
-        <div id="absen-page" class="hidden">
-            <div class="bg-gray-800 p-4 text-white flex items-center">
-                <button id="btn-back-to-dashboard">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                
+                <div>
+                    <label class="block text-white/90 text-sm font-medium mb-2">Posisi</label>
+                    <div class="relative">
+                        <i class="fas fa-briefcase absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="posisi" class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30" placeholder="Posisi akan terisi otomatis" readonly>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-white/90 text-sm font-medium mb-2">Password</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="password" class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30" placeholder="Masukkan password" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full btn-primary text-white font-semibold py-3 px-4 rounded-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Masuk
                 </button>
-                <h2 class="text-lg font-bold text-center flex-grow">Formulir Absensi</h2>
+            </form>
+            
+            <div class="text-center mt-6">
+                <p class="text-white/60 text-sm">© 2024 ECrew Application</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="min-h-screen" style="display: none;">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-white text-lg"></i>
+                        </div>
+                        <h1 class="ml-3 text-xl font-bold text-gray-900">ECrew Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-600" id="currentTime"></span>
+                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                            <i class="fas fa-sign-out-alt text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Running Text -->
+        <div class="bg-indigo-600 text-white py-2 overflow-hidden">
+            <div class="running-text text-lg font-medium">
+                🎉 Selamat datang di ECrew Application Absensi - Sistem absensi modern untuk kemudahan Anda
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Welcome Section -->
+            <div class="mb-8 fade-in">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Selamat Datang, <span id="welcomeUser">User</span>!</h2>
+                <p class="text-gray-600">Kelola absensi Anda dengan mudah dan efisien</p>
             </div>
 
-            <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-                <!-- Data Karyawan -->
-                <div class="grid grid-cols-2 gap-x-4 gap-y-5 border-b pb-4">
-                    <div><label class="form-label">Name</label><p class="form-data">Pengguna ECrew</p></div>
-                    <div><label class="form-label">Email</label><p class="form-data">user@ecrew.com</p></div>
-                    <div><label class="form-label">Division</label><p class="form-data">Technology</p></div>
-                    <div><label class="form-label">Position</label><p class="form-data">Developer</p></div>
-                    <div class="col-span-2"><label for="duty-as" class="form-label">Duty As</label>
-                        <select id="duty-as" class="form-select">
-                            <option>Director</option><option>Safety, Quality & Security Manager</option><option>Operation Manager</option><option>Maintenance Manager</option><option>Chief Pilot Fixed Wing</option><option>Chief Pilot Rotary Wing</option><option>Chief Flight Support</option><option>Chief Inspector</option><option>Chief Engineer</option><option>Chief Finance, Accounting & Staf</option><option>Chief Engineering</option><option>Pilot in Command</option><option>Second in Command</option><option>Ground Instructor</option><option>Flight Instructor</option><option>Company Check Pilot</option><option>Engineer</option><option>Line Pilot</option><option>Cabin Service</option><option>Student</option><option>Flight Support</option><option>Ground Support</option><option>Technical Representative</option><option>Engineering</option><option>Staff</option><option>Logistic</option><option>Aviation Security</option><option>Driver</option>
-                        </select>
-                    </div>
-                     <div class="col-span-2"><label for="type-of-work" class="form-label">Type of Work</label>
-                        <select id="type-of-work" class="form-select">
-                           <option>Office Hour</option><option>Standby Flight</option><option>Standby on Call</option><option>Pos One Gate</option><option>Day Off</option><option>Day Off 7 Consecutive Days for Pilot</option><option>Flight Duty VIP</option><option>Ferry Flight</option><option>PPC Simulator</option><option>PPC Aircraft</option><option>Test Flight</option><option>Ground Run</option><option>Recurrent Training</option><option>Recency Flight</option><option>Meeting Out of Office</option><option>Medical Examination</option><option>Annual Leave</option><option>Sick</option><option>Technical Representative</option><option>Aviation Security</option><option>Over Time</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Status Absen -->
-                <div class="flex justify-between items-center">
-                    <div><label class="form-label">Status Absen</label><p id="status-absen" class="form-data">Belum Absen</p></div>
-                    <div><label class="form-label">Tanggal</label><p id="date-masuk" class="form-data">-</p></div>
-                </div>
-
-                <!-- Absen Masuk -->
-                <div class="space-y-3 border rounded-lg p-4 bg-gray-50">
-                    <h3 class="font-bold text-indigo-700">Absensi Masuk</h3>
-                    <div>
-                        <label class="form-label">Foto Masuk (Kamera)</label>
-                        <div class="bg-black rounded-md overflow-hidden relative w-full aspect-video">
-                            <video id="camera-stream" class="w-full h-full object-cover" autoplay playsinline></video>
-                            <canvas id="camera-canvas" class="hidden"></canvas>
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Absen Card -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover cursor-pointer" onclick="showAbsenModal()">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-green-600 text-xl"></i>
                         </div>
-                        <p id="camera-permission-status" class="text-xs text-center text-gray-500 mt-1">Meminta izin kamera...</p>
-                        <button id="btn-capture-photo" class="btn-secondary mt-2">Ambil Foto</button>
+                        <span class="text-green-600 text-sm font-medium">Aktif</span>
                     </div>
-                    <div>
-                        <label class="form-label">Preview Foto Masuk:</label>
-                        <img id="photo-preview" src="https://placehold.co/128x128/e2e8f0/a0aec0?text=Belum+ada+foto" class="rounded-md w-24 h-24 object-cover border"/>
-                    </div>
-                    <div><label class="form-label">Location Masuk</label><p id="location-masuk" class="form-data text-xs">Menunggu izin lokasi...</p></div>
-                    <div><label class="form-label">Absen Masuk</label><p id="absen-masuk-time" class="form-data">-</p></div>
-                    <div><label class="form-label">Status Masuk</label><p id="status-masuk" class="form-data">-</p></div>
-                    <div id="alasan-terlambat-container" class="hidden"><label for="alasan-terlambat" class="form-label">Alasan Terlambat</label><textarea id="alasan-terlambat" rows="2" class="w-full border rounded-md p-2 text-sm"></textarea></div>
-                    <button id="btn-absen-masuk" class="btn-primary">Absen Masuk</button>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Absen Sekarang</h3>
+                    <p class="text-gray-600 text-sm">Catat kehadiran Anda hari ini</p>
                 </div>
 
-                <!-- Absen Pulang (Awalnya Disembunyikan) -->
-                <div id="absen-pulang-section" class="space-y-3 border rounded-lg p-4 bg-gray-50 hidden">
-                    <h3 class="font-bold text-red-700">Absensi Pulang</h3>
-                    <div><label for="remark-pekerjaan" class="form-label">Remark Pekerjaan Hari Ini</label><textarea id="remark-pekerjaan" rows="3" class="w-full border rounded-md p-2 text-sm"></textarea></div>
-                    <div><label class="form-label">Upload Foto Pekerjaan (dari Galeri)</label><input type="file" id="foto-pekerjaan" class="text-sm" accept="image/*"/></div>
-                    <div><label class="form-label">Location Pulang</label><p id="location-pulang" class="form-data text-xs">Menunggu...</p></div>
-                    <div><label class="form-label">Absen Pulang</label><p id="absen-pulang-time" class="form-data">-</p></div>
-                    <div><label class="form-label">Status Pulang</label><p id="status-pulang" class="form-data">-</p></div>
-                    <div id="total-overtime-container" class="hidden"><label class="form-label">Total Overtime</label><p id="total-overtime" class="form-data">-</p></div>
-                    <div><label class="form-label">Total Work Time</label><p id="total-worktime" class="form-data">-</p></div>
-                    <button id="btn-absen-pulang" class="btn-primary bg-red-600 hover:bg-red-700 focus:ring-red-500">Absen Pulang</button>
+                <!-- Riwayat Absen Card -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover cursor-pointer" onclick="showRiwayatModal()">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-history text-blue-600 text-xl"></i>
+                        </div>
+                        <span class="text-blue-600 text-sm font-medium">Data</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Riwayat Absen</h3>
+                    <p class="text-gray-600 text-sm">Lihat catatan absensi Anda</p>
                 </div>
+
+                <!-- Update News Card -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover cursor-pointer" onclick="showNewsModal()">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-newspaper text-purple-600 text-xl"></i>
+                        </div>
+                        <span class="text-purple-600 text-sm font-medium">Terbaru</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Update News</h3>
+                    <p class="text-gray-600 text-sm">Berita dan pengumuman terkini</p>
+                </div>
+            </div>
+
+            <!-- News Section -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-900">Update News Terbaru</h3>
+                    <button onclick="showAllNews()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4" id="newsPreview">
+                    <!-- News items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-green-100 rounded flex items-center justify-center">
+                            <i class="fas fa-check text-green-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-600">Hadir Bulan Ini</p>
+                            <p class="text-lg font-semibold text-gray-900">22 Hari</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-yellow-100 rounded flex items-center justify-center">
+                            <i class="fas fa-clock text-yellow-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-600">Terlambat</p>
+                            <p class="text-lg font-semibold text-gray-900">2 Kali</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-red-100 rounded flex items-center justify-center">
+                            <i class="fas fa-times text-red-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-600">Tidak Hadir</p>
+                            <p class="text-lg font-semibold text-gray-900">1 Hari</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
+                            <i class="fas fa-percentage text-blue-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-600">Kehadiran</p>
+                            <p class="text-lg font-semibold text-gray-900">95.6%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Absen Modal -->
+    <div id="absenModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-clock text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Form Absensi</h3>
+                <p class="text-gray-600 mt-2" id="absenTime"></p>
+            </div>
+            
+            <form id="absenForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Foto Masuk -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Foto Masuk</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <input type="file" id="fotoMasuk" accept="image/*" capture="user" class="hidden">
+                            <button type="button" onclick="document.getElementById('fotoMasuk').click()" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-camera text-2xl mb-2"></i>
+                                <p>Ambil Foto</p>
+                            </button>
+                            <div id="previewFotoMasuk" class="mt-2"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lokasi -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi</label>
+                        <div class="space-y-2">
+                            <input type="text" id="lokasiMasuk" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Lokasi akan terdeteksi otomatis" readonly>
+                            <button type="button" onclick="getLocation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                Deteksi Lokasi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Karyawan (Auto-filled) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+                        <input type="text" id="absenNama" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="absenEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
+                        <input type="text" id="absenDivisi" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Posisi</label>
+                        <input type="text" id="absenPosisi" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                    </div>
+                </div>
+                
+                <!-- Duty As & Type of Work -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Duty As</label>
+                        <select id="dutyAs" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Pilih Duty</option>
+                            <option value="Director">Director</option>
+                            <option value="Safety, Quality & Security Manager">Safety, Quality & Security Manager</option>
+                            <option value="Operation Manager">Operation Manager</option>
+                            <option value="Maintenance Manager">Maintenance Manager</option>
+                            <option value="Chief Pilot Fixed Wing">Chief Pilot Fixed Wing</option>
+                            <option value="Chief Pilot Rotary Wing">Chief Pilot Rotary Wing</option>
+                            <option value="Chief Flight Support">Chief Flight Support</option>
+                            <option value="Chief Inspector">Chief Inspector</option>
+                            <option value="Chief Engineer">Chief Engineer</option>
+                            <option value="Chief Finance, Accounting & Staf">Chief Finance, Accounting & Staf</option>
+                            <option value="Chief Engineering">Chief Engineering</option>
+                            <option value="Pilot in Command">Pilot in Command</option>
+                            <option value="Second in Command">Second in Command</option>
+                            <option value="Ground Instructor">Ground Instructor</option>
+                            <option value="Flight Instructor">Flight Instructor</option>
+                            <option value="Company Check Pilot">Company Check Pilot</option>
+                            <option value="Engineer">Engineer</option>
+                            <option value="Line Pilot">Line Pilot</option>
+                            <option value="Cabin Service">Cabin Service</option>
+                            <option value="Student">Student</option>
+                            <option value="Flight Support">Flight Support</option>
+                            <option value="Ground Support">Ground Support</option>
+                            <option value="Technical Representative">Technical Representative</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Logistic">Logistic</option>
+                            <option value="Aviation Security">Aviation Security</option>
+                            <option value="Driver">Driver</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Type of Work</label>
+                        <select id="typeOfWork" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Pilih Tipe Pekerjaan</option>
+                            <option value="Office Hour">Office Hour</option>
+                            <option value="Standby Flight">Standby Flight</option>
+                            <option value="Standby on Call">Standby on Call</option>
+                            <option value="Pos One Gate">Pos One Gate</option>
+                            <option value="Day Off">Day Off</option>
+                            <option value="Day Off 7 Consecutive Days for Pilot">Day Off 7 Consecutive Days for Pilot</option>
+                            <option value="Flight Duty VIP">Flight Duty VIP</option>
+                            <option value="Ferry Flight">Ferry Flight</option>
+                            <option value="PPC Simulator">PPC Simulator</option>
+                            <option value="PPC Aircraft">PPC Aircraft</option>
+                            <option value="Test Flight">Test Flight</option>
+                            <option value="Ground Run">Ground Run</option>
+                            <option value="Recurrent Training">Recurrent Training</option>
+                            <option value="Recency Flight">Recency Flight</option>
+                            <option value="Meeting Out of Office">Meeting Out of Office</option>
+                            <option value="Medical Examination">Medical Examination</option>
+                            <option value="Annual Leave">Annual Leave</option>
+                            <option value="Sick">Sick</option>
+                            <option value="Technical Representative">Technical Representative</option>
+                            <option value="Aviation Security">Aviation Security</option>
+                            <option value="Over Time">Over Time</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Status Masuk (Auto-filled) -->
+                <div id="statusMasukSection" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Masuk</label>
+                    <div id="statusMasuk" class="p-3 rounded-lg font-medium"></div>
+                </div>
+                
+                <!-- Alasan Terlambat -->
+                <div id="alasanTerlambatSection" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Terlambat</label>
+                    <textarea id="alasanTerlambat" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Jelaskan alasan keterlambatan..."></textarea>
+                </div>
+                
+                <!-- Remark & Foto Pekerjaan (Hanya muncul saat absen pulang) -->
+                <div id="remarkSection" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan Hari Ini</label>
+                        <textarea id="remarkPekerjaan" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Deskripsikan pekerjaan yang telah dilakukan hari ini..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan Hari Ini</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <input type="file" id="fotoPekerjaan" accept="image/*" capture="environment" class="hidden">
+                            <button type="button" onclick="document.getElementById('fotoPekerjaan').click()" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-camera text-2xl mb-2"></i>
+                                <p>Ambil Foto Pekerjaan</p>
+                            </button>
+                            <div id="previewFotoPekerjaan" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="flex space-x-4">
+                    <button type="button" id="btnAbsenMasuk" onclick="submitAbsenMasuk()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Absen Masuk
+                    </button>
+                    <button type="button" id="btnAbsenPulang" onclick="submitAbsenPulang()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors hidden">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Absen Pulang
+                    </button>
+                    <button type="button" onclick="closeModal('absenModal')" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors">
+                        Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Riwayat Modal -->
+    <div id="riwayatModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl max-h-96 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Riwayat Absensi</h3>
+                <button onclick="closeModal('riwayatModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3" id="riwayatList">
+                <!-- Riwayat akan ditampilkan di sini -->
+            </div>
+        </div>
+    </div>
+
+    <!-- News Modal -->
+    <div id="newsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Update News</h3>
+                <button onclick="closeModal('newsModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6" id="allNewsList">
+                <!-- All news will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Detail Modal -->
+    <div id="articleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="closeModal('articleModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-arrow-left text-xl mr-2"></i>
+                    Kembali
+                </button>
+                <button onclick="closeModal('articleModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="articleContent">
+                <!-- Article content will be loaded here -->
             </div>
         </div>
     </div>
 
     <script>
-        // State management
-        let clockInTime = null;
-        let cameraStream = null;
-        let photoTaken = false;
-
-        // Page Elements
-        const loginPage = document.getElementById('login-page');
-        const dashboardPage = document.getElementById('dashboard-page');
-        const absenPage = document.getElementById('absen-page');
-
-        // Form & Button Elements
-        const loginForm = document.getElementById('login-form');
-        const btnGoToAbsen = document.getElementById('btn-go-to-absen');
-        const btnBackToDashboard = document.getElementById('btn-back-to-dashboard');
-        const btnAbsenMasuk = document.getElementById('btn-absen-masuk');
-        const btnAbsenPulang = document.getElementById('btn-absen-pulang');
-        const btnCapturePhoto = document.getElementById('btn-capture-photo');
-
-        // Camera Elements
-        const videoElement = document.getElementById('camera-stream');
-        const canvasElement = document.getElementById('camera-canvas');
-        const photoPreview = document.getElementById('photo-preview');
-        const cameraStatusEl = document.getElementById('camera-permission-status');
-
-        // Data Display Elements
-        const dateMasukEl = document.getElementById('date-masuk');
-        const statusAbsenEl = document.getElementById('status-absen');
-        const locationMasukEl = document.getElementById('location-masuk');
-        const absenMasukTimeEl = document.getElementById('absen-masuk-time');
-        const statusMasukEl = document.getElementById('status-masuk');
-        const alasanContainer = document.getElementById('alasan-terlambat-container');
-        const absenPulangSection = document.getElementById('absen-pulang-section');
-        const locationPulangEl = document.getElementById('location-pulang');
-        const absenPulangTimeEl = document.getElementById('absen-pulang-time');
-        const statusPulangEl = document.getElementById('status-pulang');
-        const overtimeContainer = document.getElementById('total-overtime-container');
-        const totalOvertimeEl = document.getElementById('total-overtime');
-        const totalWorktimeEl = document.getElementById('total-worktime');
-
-        // --- Utility Functions ---
-        const formatTime = (date) => date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const formatDate = (date) => date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        const calculateDuration = (start, end) => {
-            let diff = Math.abs(end - start) / 1000;
-            const hours = Math.floor(diff / 3600);
-            diff %= 3600;
-            const minutes = Math.floor(diff / 60);
-            const seconds = Math.floor(diff % 60);
-            return `${hours} jam, ${minutes} menit, ${seconds} detik`;
-        };
-
-        // --- Camera Functions ---
-        const startCamera = async () => {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-                    cameraStream = stream;
-                    videoElement.srcObject = stream;
-                    cameraStatusEl.textContent = "Kamera siap. Silakan ambil foto.";
-                    cameraStatusEl.classList.add('text-green-600');
-                } catch (error) {
-                    console.error("Error accessing camera:", error);
-                    cameraStatusEl.textContent = "Izin kamera ditolak atau tidak ditemukan.";
-                    cameraStatusEl.classList.add('text-red-600');
-                    btnCapturePhoto.disabled = true;
+        // Data karyawan
+        const employeeData = [
+            {name: "Rustam Suhanda", email: "managementtranswisata@gmail.com", division: "Staf", position: "President Director", role: "ADMIN"},
+            {name: "Selfy Warauw", email: "warauw_1@yahoo.com", division: "Staf", position: "Director", role: "ADMIN"},
+            {name: "Muhamad Ramdani Masri", email: "crunkbolcow@gmail.com", division: "Operation", position: "Chief Pilot Rotary Wing", role: "ADMIN"},
+            {name: "Sulaksono Teddy Prabowo", email: "fly5103@gmail.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Marcelino Bhaharoenawanto", email: "marcelino412ep@gmail.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Muhamad Sofwan", email: "sofwanm819@gmail.com", division: "Operation", position: "Chief Pilot Fixed Wing", role: "ADMIN"},
+            {name: "Sofian M. L. Tobing", email: "sofiantobing692@gmail.com", division: "Operation", position: "General Manager", role: "USER"},
+            {name: "Rico Febdiandana", email: "ricofebdi@gmail.com", division: "Operation", position: "Chief Flight Support", role: "USER"},
+            {name: "Alfajri", email: "alfajri_koto@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Eli Setya", email: "tioxpilot@gmail.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Susetyo Harijanto", email: "harijantosusetyo@gmail.com", division: "Operation", position: "Operation Manager", role: "ADMIN"},
+            {name: "Purwoko", email: "purwoko.mulyono@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Riza Hanindita", email: "icul2122@gmail.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Henaldy Arifia Sudrajat", email: "henaldy.ts204@gmail.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Kadek Amelia Nadya Berliana", email: "amelberliana@yahoo.co.id", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Qorry Maulidya Natawijaya", email: "qnatawijaya@gmail.com", division: "Operation", position: "Cabin Service", role: "USER"},
+            {name: "Shentira Anggia Putri", email: "anggiashentira@gmail.com", division: "Operation", position: "Cabin Service", role: "USER"},
+            {name: "Tiffani Pricilia Hasan", email: "tiffanipriciliaaaa@gmail.com", division: "Operation", position: "Cabin Service", role: "USER"},
+            {name: "Agustin Zulfani Prihatini", email: "agustinzulfani74@gmail.com", division: "Operation", position: "Cabin Service", role: "USER"},
+            {name: "Nadya Casey Ivanka", email: "ivankacasey99@gmail.com", division: "Operation", position: "Cabin Service", role: "USER"},
+            {name: "Yanu Prihatno", email: "prihatnoyanu@gmail.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Bayu Nugroho", email: "bayu.avicena@gmail.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Wahyudi Suseno", email: "nawawahyudisuseno090@gmail.com", division: "Maintenance", position: "Avionic", role: "USER"},
+            {name: "Sigit Hardadi", email: "sigithardadi88@yahoo.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Hadi Sutrisno", email: "hadikamilatun@gmail.com", division: "Maintenance", position: "Maintenance Manager", role: "USER"},
+            {name: "Suhairi", email: "suhairitwa@gmail.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Suyanto", email: "yanto.umardin@gmail.com", division: "Maintenance", position: "Avionic", role: "USER"},
+            {name: "Lazarus Rio Raymond", email: "rioraymond89@gmail.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Febie Aguti Effendi", email: "mpiipie@gmail.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Diki Hariyanto", email: "dikiatnu7@gmail.com", division: "Maintenance", position: "Chief Engineer", role: "USER"},
+            {name: "Prayit Susonggo", email: "prayitsusonggo@yahoo.com", division: "Maintenance", position: "Avionic", role: "USER"},
+            {name: "Iskandar Akbar Hakim", email: "iskandarakbarhakim@gmail.com", division: "Maintenance", position: "Chief Inspector", role: "USER"},
+            {name: "Arif Vrybadi Halim", email: "GlexXRSvpcgo@outlook.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Alfiza Eka Putra", email: "alfizaekap@gmail.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Dedi Prasetyo", email: "deditren99@gmail.com", division: "Safety", position: "Aviation Security", role: "USER"},
+            {name: "Media H Marbun", email: "mediamarbun@gmail.com", division: "Staf", position: "Human Resource Development", role: "ADMIN"},
+            {name: "Fatmawati", email: "ulieumeda@gmail.com", division: "Staf", position: "Finance", role: "USER"},
+            {name: "Dede Rahman Arafiq", email: "d2rahman@yahoo.co.id", division: "Staf", position: "Finance", role: "USER"},
+            {name: "Leo Fitzgerald Sinay", email: "leosinay@gmail.com", division: "Maintenance", position: "Chief Engineering", role: "USER"},
+            {name: "Khairul Zaman Pohan", email: "pohan16zaman@gmail.com", division: "Operation", position: "Flight Support", role: "USER"},
+            {name: "Sentot Basuki", email: "sentotbasuki@gmail.com", division: "Operation", position: "Flight Support", role: "USER"},
+            {name: "Bobby Feisal Mahardhika", email: "bobby.feisal22@gmail.com", division: "Staf", position: "Engineering", role: "USER"},
+            {name: "Tri Widayat", email: "tri3wiwid@gmail.com", division: "Operation", position: "Flight Support", role: "USER"},
+            {name: "Isdarminto", email: "is.darminto35@gmail.com", division: "Staf", position: "Logistic", role: "USER"},
+            {name: "Sulaichan Noor Ali", email: "sulaichann@gmail.com", division: "Staf", position: "Logistic", role: "USER"},
+            {name: "Sri Muljono Bayu Putro", email: "sbayuputro@gmail.com", division: "Operation", position: "Flight Support", role: "USER"},
+            {name: "Asri Gatot Yulianto", email: "Asrigatot.67@gmail.com", division: "Safety", position: "Aviation Security", role: "USER"},
+            {name: "Nanang Chabibi", email: "nanangchabibi3@gmail.com", division: "Safety", position: "Aviation Security", role: "USER"},
+            {name: "Hariyanto", email: "katellisna423@gmail.com", division: "Safety", position: "Aviation Security", role: "USER"},
+            {name: "Supriyono", email: "fardhan0509@gmail.com", division: "Staf", position: "Kurir", role: "USER"},
+            {name: "Kasna", email: "kasna.pjln799@gmail.com", division: "Staf", position: "Driver", role: "USER"},
+            {name: "Rizal Setiawan", email: "rizalsetiawan020812@gmail.com", division: "Staf", position: "Driver", role: "USER"},
+            {name: "Ardi Rizki", email: "ardi.rizk91@gmail.com", division: "Maintenance", position: "Engineer", role: "USER"},
+            {name: "Wawan Setiawan", email: "setiawanwawan7312@gmail.com", division: "Operation", position: "Line Pilot", role: "USER"},
+            {name: "Tommy Saputra", email: "tommysaputra473@gmail.com", division: "Staf", position: "Chief Finance, Accounting & Tax", role: "USER"}
+        ];
+        
+        // Data absensi
+        let absensiData = JSON.parse(localStorage.getItem('absensiData')) || [];
+        let currentUser = null;
+        let currentAbsenMasuk = null;
+        
+        // Data berita
+        const newsData = [
+            {
+                id: 1,
+                title: "Sistem Absensi ECrew Terbaru Diluncurkan",
+                summary: "Sistem absensi ECrew telah diperbarui dengan fitur-fitur canggih termasuk deteksi lokasi GPS, foto real-time, dan perhitungan overtime otomatis.",
+                content: `
+                    <h2 class="text-2xl font-bold mb-4">Sistem Absensi ECrew Terbaru Diluncurkan</h2>
+                    <div class="mb-6">
+                        <svg class="w-full h-64 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white" viewBox="0 0 400 200">
+                            <text x="200" y="100" text-anchor="middle" class="text-2xl font-bold">ECrew System</text>
+                            <text x="200" y="130" text-anchor="middle" class="text-lg">New Features</text>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700 mb-4">PT. Trans Wisata dengan bangga mengumumkan peluncuran sistem absensi ECrew yang telah diperbarui dengan teknologi terdepan. Sistem ini dirancang khusus untuk memenuhi kebutuhan industri penerbangan yang dinamis.</p>
+                    
+                    <h3 class="text-xl font-semibold mb-3">Fitur-Fitur Unggulan:</h3>
+                    <ul class="list-disc list-inside mb-4 space-y-2">
+                        <li><strong>Deteksi Lokasi GPS:</strong> Memastikan karyawan berada di lokasi yang tepat saat absen</li>
+                        <li><strong>Foto Real-time:</strong> Verifikasi identitas dengan foto langsung dari kamera</li>
+                        <li><strong>Perhitungan Otomatis:</strong> Sistem menghitung jam kerja dan overtime secara otomatis</li>
+                        <li><strong>Multi-Role Support:</strong> Mendukung berbagai posisi dari pilot hingga ground support</li>
+                        <li><strong>Responsive Design:</strong> Dapat diakses dari berbagai perangkat</li>
+                    </ul>
+                    
+                    <p class="text-gray-700 mb-4">Sistem ini telah melalui tahap pengujian intensif dan siap digunakan oleh seluruh karyawan. Pelatihan penggunaan akan diadakan minggu depan untuk memastikan transisi yang lancar.</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-blue-800"><strong>Catatan:</strong> Untuk bantuan teknis, silakan hubungi tim IT atau HR Department.</p>
+                    </div>
+                `,
+                date: "2024-01-15",
+                category: "Technology",
+                author: "Tim IT ECrew"
+            },
+            {
+                id: 2,
+                title: "Pengumuman Libur Nasional Kemerdekaan RI",
+                summary: "Dalam rangka memperingati Hari Kemerdekaan Republik Indonesia ke-79, seluruh karyawan diberikan libur pada tanggal 17 Agustus 2024.",
+                content: `
+                    <h2 class="text-2xl font-bold mb-4">Pengumuman Libur Nasional Kemerdekaan RI</h2>
+                    <div class="mb-6">
+                        <svg class="w-full h-64 bg-gradient-to-r from-red-500 to-white rounded-lg flex items-center justify-center" viewBox="0 0 400 200">
+                            <rect x="0" y="0" width="400" height="100" fill="#FF0000"/>
+                            <rect x="0" y="100" width="400" height="100" fill="#FFFFFF"/>
+                            <text x="200" y="110" text-anchor="middle" class="text-xl font-bold fill-red-600">17 AGUSTUS 2024</text>
+                            <text x="200" y="135" text-anchor="middle" class="text-lg fill-red-600">HUT RI KE-79</text>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700 mb-4">Kepada seluruh karyawan PT. Trans Wisata,</p>
+                    
+                    <p class="text-gray-700 mb-4">Dalam rangka memperingati Hari Kemerdekaan Republik Indonesia yang ke-79, dengan ini kami sampaikan bahwa:</p>
+                    
+                    <div class="bg-red-50 p-4 rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-red-800 mb-2">Jadwal Libur:</h3>
+                        <ul class="list-disc list-inside text-red-700 space-y-1">
+                            <li><strong>Tanggal:</strong> Sabtu, 17 Agustus 2024</li>
+                            <li><strong>Status:</strong> Libur Nasional</li>
+                            <li><strong>Operasional:</strong> Tidak ada penerbangan terjadwal</li>
+                        </ul>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold mb-3">Ketentuan Khusus:</h3>
+                    <ul class="list-disc list-inside mb-4 space-y-2">
+                        <li>Seluruh karyawan diberikan libur penuh</li>
+                        <li>Tim emergency standby tetap siaga untuk kondisi darurat</li>
+                        <li>Operasional normal dimulai kembali pada Senin, 19 Agustus 2024</li>
+                        <li>Karyawan yang bertugas emergency akan mendapat kompensasi sesuai ketentuan</li>
+                    </ul>
+                    
+                    <p class="text-gray-700 mb-4">Mari kita rayakan kemerdekaan Indonesia dengan penuh rasa syukur dan semangat nasionalisme. Selamat Hari Kemerdekaan RI ke-79!</p>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-green-800"><strong>Dirgahayu Republik Indonesia!</strong></p>
+                        <p class="text-green-700 text-sm mt-1">Management PT. Trans Wisata</p>
+                    </div>
+                `,
+                date: "2024-08-10",
+                category: "Announcement",
+                author: "HR Department"
+            },
+            {
+                id: 3,
+                title: "Maintenance Sistem Terjadwal",
+                summary: "Sistem ECrew akan mengalami maintenance rutin pada hari Minggu untuk peningkatan performa dan keamanan.",
+                content: `
+                    <h2 class="text-2xl font-bold mb-4">Maintenance Sistem Terjadwal</h2>
+                    <div class="mb-6">
+                        <svg class="w-full h-64 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center text-white" viewBox="0 0 400 200">
+                            <circle cx="200" cy="100" r="40" fill="none" stroke="white" stroke-width="4"/>
+                            <path d="M200 70 L200 100 L220 120" stroke="white" stroke-width="3" fill="none"/>
+                            <text x="200" y="160" text-anchor="middle" class="text-lg font-bold">MAINTENANCE</text>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700 mb-4">Kepada seluruh pengguna sistem ECrew,</p>
+                    
+                    <p class="text-gray-700 mb-4">Dalam rangka meningkatkan performa dan keamanan sistem, kami akan melakukan maintenance terjadwal pada:</p>
+                    
+                    <div class="bg-orange-50 p-4 rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-orange-800 mb-2">Jadwal Maintenance:</h3>
+                        <ul class="list-disc list-inside text-orange-700 space-y-1">
+                            <li><strong>Hari:</strong> Minggu</li>
+                            <li><strong>Tanggal:</strong> 21 Januari 2024</li>
+                            <li><strong>Waktu:</strong> 02:00 - 04:00 WIB</li>
+                            <li><strong>Durasi:</strong> Maksimal 2 jam</li>
+                        </ul>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold mb-3">Yang Akan Dilakukan:</h3>
+                    <ul class="list-disc list-inside mb-4 space-y-2">
+                        <li>Update keamanan sistem</li>
+                        <li>Optimasi database untuk performa lebih cepat</li>
+                        <li>Backup data komprehensif</li>
+                        <li>Testing fitur-fitur baru</li>
+                        <li>Perbaikan bug minor yang dilaporkan</li>
+                    </ul>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-yellow-800 mb-2">Dampak Selama Maintenance:</h3>
+                        <ul class="list-disc list-inside text-yellow-700 space-y-1">
+                            <li>Sistem tidak dapat diakses sementara</li>
+                            <li>Absensi dapat dilakukan setelah maintenance selesai</li>
+                            <li>Data yang tersimpan tetap aman</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4">Kami mohon maaf atas ketidaknyamanan yang mungkin terjadi. Maintenance ini dilakukan untuk memberikan pengalaman yang lebih baik bagi seluruh pengguna.</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-blue-800"><strong>Informasi:</strong> Jika ada pertanyaan, silakan hubungi tim IT di ext. 123</p>
+                    </div>
+                `,
+                date: "2024-01-18",
+                category: "System",
+                author: "Tim IT"
+            },
+            {
+                id: 4,
+                title: "Pelatihan Keselamatan Penerbangan",
+                summary: "Pelatihan wajib keselamatan penerbangan akan diadakan untuk seluruh crew dan ground support minggu depan.",
+                content: `
+                    <h2 class="text-2xl font-bold mb-4">Pelatihan Keselamatan Penerbangan</h2>
+                    <div class="mb-6">
+                        <svg class="w-full h-64 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center text-white" viewBox="0 0 400 200">
+                            <path d="M150 100 L200 80 L250 100 L200 120 Z" fill="white"/>
+                            <circle cx="200" cy="100" r="5" fill="white"/>
+                            <text x="200" y="150" text-anchor="middle" class="text-lg font-bold">SAFETY TRAINING</text>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700 mb-4">Kepada seluruh crew dan ground support,</p>
+                    
+                    <p class="text-gray-700 mb-4">Sesuai dengan regulasi keselamatan penerbangan dan komitmen perusahaan terhadap safety first, kami akan mengadakan pelatihan keselamatan wajib.</p>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-green-800 mb-2">Detail Pelatihan:</h3>
+                        <ul class="list-disc list-inside text-green-700 space-y-1">
+                            <li><strong>Tanggal:</strong> 25-27 Januari 2024</li>
+                            <li><strong>Waktu:</strong> 08:00 - 16:00 WIB</li>
+                            <li><strong>Lokasi:</strong> Training Center ECrew</li>
+                            <li><strong>Instruktur:</strong> Certified Safety Inspector</li>
+                        </ul>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold mb-3">Materi Pelatihan:</h3>
+                    <ul class="list-disc list-inside mb-4 space-y-2">
+                        <li>Emergency Response Procedures</li>
+                        <li>Fire Safety & Evacuation</li>
+                        <li>First Aid & Medical Emergency</li>
+                        <li>Ground Handling Safety</li>
+                        <li>Personal Protective Equipment (PPE)</li>
+                        <li>Risk Assessment & Hazard Identification</li>
+                    </ul>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Peserta Wajib:</h3>
+                        <ul class="list-disc list-inside text-blue-700 space-y-1">
+                            <li>Seluruh pilot dan co-pilot</li>
+                            <li>Cabin crew</li>
+                            <li>Ground support team</li>
+                            <li>Maintenance crew</li>
+                            <li>Aviation security</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4">Kehadiran bersifat wajib dan akan mempengaruhi sertifikasi keselamatan karyawan. Sertifikat akan diberikan kepada peserta yang lulus evaluasi.</p>
+                    
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <p class="text-red-800"><strong>Penting:</strong> Konfirmasi kehadiran paling lambat 22 Januari 2024 ke HR Department</p>
+                    </div>
+                `,
+                date: "2024-01-20",
+                category: "Training",
+                author: "Safety Department"
+            }
+        ];
+        
+        // Auto-fill data berdasarkan email
+        function autoFillData() {
+            const emailInput = document.getElementById('email');
+            const namaInput = document.getElementById('nama');
+            const divisiInput = document.getElementById('divisi');
+            const posisiInput = document.getElementById('posisi');
+            
+            emailInput.addEventListener('input', function() {
+                const email = this.value.toLowerCase();
+                const employee = employeeData.find(emp => emp.email.toLowerCase() === email);
+                
+                if (employee) {
+                    namaInput.value = employee.name;
+                    divisiInput.value = employee.division;
+                    posisiInput.value = employee.position;
+                } else {
+                    namaInput.value = '';
+                    divisiInput.value = '';
+                    posisiInput.value = '';
                 }
-            } else {
-                cameraStatusEl.textContent = "Kamera tidak didukung di browser ini.";
-                btnCapturePhoto.disabled = true;
-            }
-        };
-
-        const stopCamera = () => {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-        };
-
-        btnCapturePhoto.addEventListener('click', () => {
-            canvasElement.width = videoElement.videoWidth;
-            canvasElement.height = videoElement.videoHeight;
-            const context = canvasElement.getContext('2d');
-            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-            const dataUrl = canvasElement.toDataURL('image/jpeg');
-            photoPreview.src = dataUrl;
-            photoTaken = true;
-            stopCamera(); // Stop camera after taking picture
-            videoElement.classList.add('hidden');
-            cameraStatusEl.textContent = "Foto berhasil diambil.";
-        });
-
-        // --- Geolocation ---
-        const getLocation = (element) => {
+            });
+        }
+        
+        // Get location
+        function getLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        element.textContent = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-                    },
-                    () => {
-                        element.textContent = "Gagal mendapatkan lokasi.";
-                        element.classList.add('text-red-500');
-                    }
-                );
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    document.getElementById('lokasiMasuk').value = `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}`;
+                }, function(error) {
+                    document.getElementById('lokasiMasuk').value = 'Lokasi tidak dapat dideteksi';
+                });
             } else {
-                element.textContent = "Geolocation tidak didukung oleh browser ini.";
+                document.getElementById('lokasiMasuk').value = 'Geolocation tidak didukung';
             }
-        };
-
-        // --- Page Navigation ---
-        loginForm.addEventListener('submit', (e) => {
+        }
+        
+        // Preview foto
+        function previewImage(input, previewId) {
+            const file = input.files[0];
+            const preview = document.getElementById(previewId);
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" class="w-32 h-32 object-cover rounded-lg mx-auto">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Event listeners untuk preview foto
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('fotoMasuk').addEventListener('change', function() {
+                previewImage(this, 'previewFotoMasuk');
+            });
+            
+            document.getElementById('fotoPekerjaan').addEventListener('change', function() {
+                previewImage(this, 'previewFotoPekerjaan');
+            });
+        });
+        
+        // Check status masuk berdasarkan waktu
+        function checkStatusMasuk() {
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const currentTime = hour * 60 + minute; // Convert to minutes
+            const cutoffTime = 9 * 60; // 09:00 in minutes
+            
+            const statusSection = document.getElementById('statusMasukSection');
+            const statusDiv = document.getElementById('statusMasuk');
+            const alasanSection = document.getElementById('alasanTerlambatSection');
+            
+            statusSection.classList.remove('hidden');
+            
+            if (currentTime <= cutoffTime) {
+                statusDiv.textContent = 'Terima Kasih Anda Telah Absen Tepat Waktu';
+                statusDiv.className = 'p-3 rounded-lg font-medium bg-green-100 text-green-800';
+                alasanSection.classList.add('hidden');
+            } else {
+                statusDiv.textContent = 'Anda Terlambat Absen';
+                statusDiv.className = 'p-3 rounded-lg font-medium bg-red-100 text-red-800';
+                alasanSection.classList.remove('hidden');
+            }
+        }
+        
+        // Check status pulang berdasarkan waktu
+        function checkStatusPulang(masukTime) {
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const currentTime = hour * 60 + minute;
+            
+            let status = '';
+            let overtime = '';
+            
+            if (currentTime < 17 * 60) { // Before 17:00
+                status = 'Anda Pulang Sebelum Waktunya';
+            } else if (currentTime <= 17 * 60 + 30) { // 17:00 - 17:30
+                status = 'Anda Pulang Tepat Waktu';
+            } else { // After 17:30
+                status = 'Waktu Kerja Melebihi';
+                const overtimeMinutes = currentTime - (17 * 60 + 30);
+                const overtimeHours = Math.floor(overtimeMinutes / 60);
+                const remainingMinutes = overtimeMinutes % 60;
+                overtime = `${overtimeHours} jam ${remainingMinutes} menit`;
+            }
+            
+            // Calculate total work time
+            const masukDate = new Date(masukTime);
+            const pulangDate = new Date();
+            const diffMs = pulangDate - masukDate;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const diffSeconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+            const totalWorkTime = `${diffHours} jam ${diffMinutes} menit ${diffSeconds} detik`;
+            
+            return { status, overtime, totalWorkTime };
+        }
+        
+        // Update waktu real-time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+        
+        // Show error message
+        function showError(message) {
+            // Remove existing error message
+            const existingError = document.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Create new error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm';
+            errorDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Insert error message before the form
+            const form = document.getElementById('loginForm');
+            form.parentNode.insertBefore(errorDiv, form);
+            
+            // Auto remove error after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Clear error message
+        function clearError() {
+            const existingError = document.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+        }
+        
+        // Login function
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            loginPage.classList.add('hidden');
-            dashboardPage.classList.remove('hidden');
-        });
-
-        btnGoToAbsen.addEventListener('click', (e) => {
-            e.preventDefault();
-            dashboardPage.classList.add('hidden');
-            absenPage.classList.remove('hidden');
-            startCamera();
-            getLocation(locationMasukEl);
-            dateMasukEl.textContent = formatDate(new Date());
-        });
-
-        btnBackToDashboard.addEventListener('click', () => {
-            absenPage.classList.add('hidden');
-            dashboardPage.classList.remove('hidden');
-            stopCamera();
-        });
-
-        // --- Attendance Logic ---
-        btnAbsenMasuk.addEventListener('click', () => {
-            if (!photoTaken) {
-                alert("Harap ambil foto terlebih dahulu sebelum absen masuk.");
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            // Clear previous error
+            clearError();
+            
+            // Validasi input kosong
+            if (!email) {
+                showError('Email tidak boleh kosong!');
                 return;
             }
-            const now = new Date();
-            clockInTime = now;
-            absenMasukTimeEl.textContent = formatTime(now);
-            statusAbsenEl.textContent = 'On Working';
-            statusAbsenEl.classList.add('text-green-600');
-
-            const nineAM = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 1);
-            if (now > nineAM) {
-                statusMasukEl.innerHTML = '<span class="status-badge bg-red-100 text-red-800">Anda Terlambat Absen</span>';
-                alasanContainer.classList.remove('hidden');
-            } else {
-                statusMasukEl.innerHTML = '<span class="status-badge bg-green-100 text-green-800">Terima Kasih Anda Telah Absen Tepat Waktu</span>';
-            }
-
-            btnAbsenMasuk.disabled = true;
-            btnCapturePhoto.disabled = true;
-            document.getElementById('duty-as').disabled = true;
-            document.getElementById('type-of-work').disabled = true;
-            absenPulangSection.classList.remove('hidden');
-        });
-
-        btnAbsenPulang.addEventListener('click', () => {
-            if (!clockInTime) return;
-            const now = new Date();
             
-            getLocation(locationPulangEl);
-            absenPulangTimeEl.textContent = formatTime(now);
-            statusAbsenEl.textContent = 'Pulang';
-            statusAbsenEl.classList.remove('text-green-600');
-            statusAbsenEl.classList.add('text-red-600');
-
-            const fivePM = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0, 0);
-            const fiveThirtyPM = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 31, 0);
-
-            if (now < fivePM) {
-                statusPulangEl.innerHTML = '<span class="status-badge bg-yellow-100 text-yellow-800">Anda Pulang Sebelum Waktunya</span>';
-            } else if (now >= fivePM && now < fiveThirtyPM) {
-                statusPulangEl.innerHTML = '<span class="status-badge bg-green-100 text-green-800">Anda Pulang Tepat Waktu</span>';
-            } else {
-                statusPulangEl.innerHTML = '<span class="status-badge bg-blue-100 text-blue-800">Waktu Kerja Melebihi</span>';
-                overtimeContainer.classList.remove('hidden');
-                totalOvertimeEl.textContent = calculateDuration(fiveThirtyPM, now);
+            if (!password) {
+                showError('Password tidak boleh kosong!');
+                return;
             }
+            
+            // Validasi format email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Format email tidak valid!');
+                return;
+            }
+            
+            // Cari karyawan berdasarkan email
+            const employee = employeeData.find(emp => emp.email.toLowerCase() === email.toLowerCase());
+            
+            if (!employee) {
+                showError('Email tidak terdaftar dalam sistem! Pastikan Anda menggunakan email yang benar.');
+                return;
+            }
+            
+            // Validasi password (nama depan)
+            const firstName = employee.name.split(' ')[0].toLowerCase();
+            if (password.toLowerCase() !== firstName) {
+                showError(`Password salah! Gunakan nama depan Anda "${employee.name.split(' ')[0]}" sebagai password.`);
+                return;
+            }
+            
+            // Login berhasil
+            currentUser = employee;
+            document.getElementById('welcomeUser').textContent = employee.name;
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            updateTime();
+            setInterval(updateTime, 1000);
+            loadRiwayat();
+            loadNewsPreview();
+            
+            // Clear form
+            this.reset();
+        });
+        
+        // Logout function
+        function logout() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+        
+        // Modal functions
+        function showAbsenModal() {
+            const now = new Date();
+            document.getElementById('absenTime').textContent = now.toLocaleString('id-ID');
+            
+            // Fill user data
+            if (currentUser) {
+                document.getElementById('absenNama').value = currentUser.name;
+                document.getElementById('absenEmail').value = currentUser.email;
+                document.getElementById('absenDivisi').value = currentUser.division;
+                document.getElementById('absenPosisi').value = currentUser.position;
+            }
+            
+            // Check if user already has absen masuk today
+            const today = new Date().toDateString();
+            const todayAbsen = absensiData.find(record => 
+                record.date === today && 
+                record.type === 'masuk' && 
+                record.email === currentUser.email
+            );
+            
+            if (todayAbsen) {
+                // Show absen pulang form
+                document.getElementById('btnAbsenMasuk').classList.add('hidden');
+                document.getElementById('btnAbsenPulang').classList.remove('hidden');
+                document.getElementById('remarkSection').classList.remove('hidden');
+                currentAbsenMasuk = todayAbsen;
+            } else {
+                // Show absen masuk form
+                document.getElementById('btnAbsenMasuk').classList.remove('hidden');
+                document.getElementById('btnAbsenPulang').classList.add('hidden');
+                document.getElementById('remarkSection').classList.add('hidden');
+                checkStatusMasuk();
+            }
+            
+            document.getElementById('absenModal').classList.remove('hidden');
+        }
+        
+        // Submit absen masuk
+        function submitAbsenMasuk() {
+            const dutyAs = document.getElementById('dutyAs').value;
+            const typeOfWork = document.getElementById('typeOfWork').value;
+            const fotoMasuk = document.getElementById('fotoMasuk').files[0];
+            const lokasi = document.getElementById('lokasiMasuk').value;
+            
+            if (!dutyAs || !typeOfWork) {
+                alert('Mohon lengkapi Duty As dan Type of Work!');
+                return;
+            }
+            
+            if (!fotoMasuk) {
+                alert('Mohon ambil foto untuk absen masuk!');
+                return;
+            }
+            
+            if (!lokasi || lokasi === 'Lokasi akan terdeteksi otomatis') {
+                alert('Mohon deteksi lokasi terlebih dahulu!');
+                return;
+            }
+            
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const currentTime = hour * 60 + minute;
+            const cutoffTime = 9 * 60;
+            
+            let statusMasuk = '';
+            let alasanTerlambat = '';
+            
+            if (currentTime <= cutoffTime) {
+                statusMasuk = 'Terima Kasih Anda Telah Absen Tepat Waktu';
+            } else {
+                statusMasuk = 'Anda Terlambat Absen';
+                alasanTerlambat = document.getElementById('alasanTerlambat').value;
+                if (!alasanTerlambat) {
+                    alert('Mohon isi alasan keterlambatan!');
+                    return;
+                }
+            }
+            
+            const absenRecord = {
+                type: 'masuk',
+                name: currentUser.name,
+                email: currentUser.email,
+                division: currentUser.division,
+                position: currentUser.position,
+                dutyAs: dutyAs,
+                typeOfWork: typeOfWork,
+                statusAbsen: 'on working',
+                time: now.toLocaleString('id-ID'),
+                date: now.toDateString(),
+                statusMasuk: statusMasuk,
+                alasanTerlambat: alasanTerlambat,
+                lokasi: lokasi,
+                fotoMasuk: fotoMasuk ? fotoMasuk.name : ''
+            };
+            
+            absensiData.push(absenRecord);
+            localStorage.setItem('absensiData', JSON.stringify(absensiData));
+            
+            alert('Absen masuk berhasil dicatat!');
+            closeModal('absenModal');
+            loadRiwayat();
+        }
+        
+        // Submit absen pulang
+        function submitAbsenPulang() {
+            const remarkPekerjaan = document.getElementById('remarkPekerjaan').value;
+            const fotoPekerjaan = document.getElementById('fotoPekerjaan').files[0];
+            
+            if (!remarkPekerjaan) {
+                alert('Mohon isi remark pekerjaan hari ini!');
+                return;
+            }
+            
+            if (!fotoPekerjaan) {
+                alert('Mohon ambil foto pekerjaan hari ini!');
+                return;
+            }
+            
+            const now = new Date();
+            const pulangInfo = checkStatusPulang(currentAbsenMasuk.time);
+            
+            const absenRecord = {
+                type: 'pulang',
+                name: currentUser.name,
+                email: currentUser.email,
+                division: currentUser.division,
+                position: currentUser.position,
+                dutyAs: currentAbsenMasuk.dutyAs,
+                typeOfWork: currentAbsenMasuk.typeOfWork,
+                statusAbsen: 'pulang',
+                time: now.toLocaleString('id-ID'),
+                date: now.toDateString(),
+                statusPulang: pulangInfo.status,
+                totalOvertime: pulangInfo.overtime,
+                totalWorkTime: pulangInfo.totalWorkTime,
+                remarkPekerjaan: remarkPekerjaan,
+                fotoPekerjaan: fotoPekerjaan ? fotoPekerjaan.name : '',
+                absenMasukTime: currentAbsenMasuk.time
+            };
+            
+            absensiData.push(absenRecord);
+            localStorage.setItem('absensiData', JSON.stringify(absensiData));
+            
+            alert('Absen pulang berhasil dicatat!');
+            closeModal('absenModal');
+            loadRiwayat();
+        }
+        
+        function showRiwayatModal() {
+            document.getElementById('riwayatModal').classList.remove('hidden');
+            loadRiwayat();
+        }
+        
+        // Load news preview on dashboard
+        function loadNewsPreview() {
+            const newsPreview = document.getElementById('newsPreview');
+            const latestNews = newsData.slice(0, 3); // Show latest 3 news
+            
+            newsPreview.innerHTML = '';
+            
+            latestNews.forEach(news => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'border-l-4 border-blue-500 pl-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors';
+                newsItem.onclick = () => showArticle(news.id);
+                
+                const timeAgo = getTimeAgo(news.date);
+                
+                newsItem.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-gray-900 hover:text-blue-600 transition-colors">${news.title}</h4>
+                        <span class="text-xs text-gray-500 ml-2">${timeAgo}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm line-clamp-2">${news.summary}</p>
+                    <div class="flex items-center mt-2">
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${news.category}</span>
+                        <span class="text-xs text-gray-500 ml-2">oleh ${news.author}</span>
+                    </div>
+                `;
+                
+                newsPreview.appendChild(newsItem);
+            });
+        }
+        
+        // Calculate time ago
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) return '1 hari yang lalu';
+            if (diffDays < 7) return `${diffDays} hari yang lalu`;
+            if (diffDays < 30) return `${Math.ceil(diffDays / 7)} minggu yang lalu`;
+            return `${Math.ceil(diffDays / 30)} bulan yang lalu`;
+        }
+        
+        // Show all news modal
+        function showAllNews() {
+            document.getElementById('newsModal').classList.remove('hidden');
+            loadAllNews();
+        }
+        
+        // Load all news in modal
+        function loadAllNews() {
+            const allNewsList = document.getElementById('allNewsList');
+            allNewsList.innerHTML = '';
+            
+            newsData.forEach(news => {
+                const newsCard = document.createElement('div');
+                newsCard.className = 'bg-white border border-gray-200 rounded-lg p-6 cursor-pointer hover:shadow-lg transition-shadow';
+                newsCard.onclick = () => showArticle(news.id);
+                
+                const timeAgo = getTimeAgo(news.date);
+                
+                newsCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs bg-${getCategoryColor(news.category)}-100 text-${getCategoryColor(news.category)}-800 px-2 py-1 rounded">${news.category}</span>
+                            <span class="text-xs text-gray-500">${timeAgo}</span>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">${news.title}</h3>
+                    <p class="text-gray-600 mb-3">${news.summary}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">oleh ${news.author}</span>
+                        <span class="text-blue-600 text-sm font-medium">Baca selengkapnya →</span>
+                    </div>
+                `;
+                
+                allNewsList.appendChild(newsCard);
+            });
+        }
+        
+        // Get category color
+        function getCategoryColor(category) {
+            const colors = {
+                'Technology': 'blue',
+                'Announcement': 'green',
+                'System': 'orange',
+                'Training': 'purple'
+            };
+            return colors[category] || 'gray';
+        }
+        
+        // Show article detail
+        function showArticle(newsId) {
+            const article = newsData.find(news => news.id === newsId);
+            if (!article) return;
+            
+            document.getElementById('newsModal').classList.add('hidden');
+            document.getElementById('articleModal').classList.remove('hidden');
+            
+            const articleContent = document.getElementById('articleContent');
+            const timeAgo = getTimeAgo(article.date);
+            
+            articleContent.innerHTML = `
+                <div class="mb-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="text-sm bg-${getCategoryColor(article.category)}-100 text-${getCategoryColor(article.category)}-800 px-3 py-1 rounded">${article.category}</span>
+                        <span class="text-sm text-gray-500">${timeAgo}</span>
+                    </div>
+                    <div class="text-sm text-gray-600 mb-4">
+                        <i class="fas fa-user mr-1"></i> ${article.author}
+                        <span class="mx-2">•</span>
+                        <i class="fas fa-calendar mr-1"></i> ${new Date(article.date).toLocaleDateString('id-ID', { 
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })}
+                    </div>
+                </div>
+                
+                <div class="prose max-w-none">
+                    ${article.content}
+                </div>
+            `;
+        }
+        
+        function showNewsModal() {
+            showAllNews();
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+        
 
-            totalWorktimeEl.textContent = calculateDuration(clockInTime, now);
-
-            btnAbsenPulang.disabled = true;
-            document.getElementById('remark-pekerjaan').disabled = true;
-            document.getElementById('foto-pekerjaan').disabled = true;
+        
+        // Load riwayat absensi
+        function loadRiwayat() {
+            const riwayatList = document.getElementById('riwayatList');
+            riwayatList.innerHTML = '';
+            
+            if (absensiData.length === 0) {
+                riwayatList.innerHTML = '<p class="text-gray-500 text-center">Belum ada data absensi</p>';
+                return;
+            }
+            
+            absensiData.slice(-10).reverse().forEach(record => {
+                const div = document.createElement('div');
+                div.className = 'border border-gray-200 rounded-lg p-4 mb-4';
+                
+                let statusColor = record.type === 'masuk' ? 'text-green-600' : 'text-red-600';
+                let statusBg = record.type === 'masuk' ? 'bg-green-100' : 'bg-red-100';
+                
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 ${statusBg} rounded-full flex items-center justify-center mr-3">
+                                <i class="fas ${record.type === 'masuk' ? 'fa-sign-in-alt' : 'fa-sign-out-alt'} ${statusColor}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">${record.type === 'masuk' ? 'Absen Masuk' : 'Absen Pulang'}</h4>
+                                <p class="text-sm text-gray-600">${record.time}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-500">${record.date}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><strong>Nama:</strong> ${record.name || '-'}</div>
+                        <div><strong>Divisi:</strong> ${record.division || '-'}</div>
+                        <div><strong>Duty As:</strong> ${record.dutyAs || '-'}</div>
+                        <div><strong>Type of Work:</strong> ${record.typeOfWork || '-'}</div>
+                        ${record.statusMasuk ? `<div class="col-span-2"><strong>Status:</strong> <span class="${record.statusMasuk.includes('Terlambat') ? 'text-red-600' : 'text-green-600'}">${record.statusMasuk}</span></div>` : ''}
+                        ${record.statusPulang ? `<div class="col-span-2"><strong>Status Pulang:</strong> <span class="text-blue-600">${record.statusPulang}</span></div>` : ''}
+                        ${record.totalWorkTime ? `<div class="col-span-2"><strong>Total Kerja:</strong> ${record.totalWorkTime}</div>` : ''}
+                        ${record.totalOvertime ? `<div class="col-span-2"><strong>Overtime:</strong> ${record.totalOvertime}</div>` : ''}
+                        ${record.remarkPekerjaan ? `<div class="col-span-2"><strong>Remark:</strong> ${record.remarkPekerjaan}</div>` : ''}
+                    </div>
+                `;
+                riwayatList.appendChild(div);
+            });
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('fixed')) {
+                e.target.classList.add('hidden');
+            }
+        });
+        
+        // Initialize auto-fill functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            autoFillData();
+            
+            // Clear error when user starts typing
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            emailInput.addEventListener('input', clearError);
+            passwordInput.addEventListener('input', clearError);
         });
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974ffe2201809cbc',t:'MTc1NjE3NjMyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
