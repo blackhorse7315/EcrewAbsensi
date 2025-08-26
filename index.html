@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECrew - Aplikasi Absensi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .form-label {
+            @apply block text-sm font-medium text-gray-500 mb-1;
+        }
+        .form-data {
+            @apply text-sm font-semibold text-gray-900;
+        }
+        .form-select {
+            @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+        }
+        .status-badge {
+            @apply px-2.5 py-1 text-xs font-bold rounded-full;
+        }
+        .btn-primary {
+            @apply w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed;
+        }
+        .btn-secondary {
+             @apply w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <!-- Container Utama Aplikasi -->
+    <div class="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- Halaman Login (Awalnya Ditampilkan) -->
+        <div id="login-page">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <svg class="mx-auto h-12 w-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h2 class="mt-4 text-2xl font-bold text-gray-900">ECrew Absensi</h2>
+                    <p class="text-sm text-gray-500">Silakan masuk untuk melanjutkan</p>
+                </div>
+                <form id="login-form">
+                    <div class="space-y-5">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input id="email" type="email" required value="user@ecrew.com" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <input id="password" type="password" required value="123456" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <button type="submit" class="btn-primary">Masuk</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Halaman Dashboard (Disembunyikan) -->
+        <div id="dashboard-page" class="hidden">
+            <div class="bg-indigo-600 p-6 text-white">
+                 <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm opacity-80">Selamat Datang,</p>
+                        <h1 class="text-xl font-bold">Pengguna ECrew</h1>
+                    </div>
+                    <img class="h-12 w-12 rounded-full ring-2 ring-white" src="https://placehold.co/100x100/E2E8F0/4A5568?text=User" alt="User Avatar">
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 gap-5 text-center">
+                    <a href="#" id="btn-go-to-absen" class="bg-gray-100 hover:bg-indigo-100 p-6 rounded-xl shadow-sm transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="flex items-center justify-center h-16 w-16 mx-auto bg-indigo-500 text-white rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                        <p class="mt-4 font-semibold text-gray-800">Absen Hari Ini</p>
+                    </a>
+                    <a href="#" class="bg-gray-100 hover:bg-indigo-100 p-6 rounded-xl shadow-sm transition-all duration-300 transform hover:-translate-y-1">
+                         <div class="flex items-center justify-center h-16 w-16 mx-auto bg-indigo-500 text-white rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <p class="mt-4 font-semibold text-gray-800">Riwayat Absen</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Halaman Absensi (Disembunyikan) -->
+        <div id="absen-page" class="hidden">
+            <div class="bg-gray-800 p-4 text-white flex items-center">
+                <button id="btn-back-to-dashboard">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 class="text-lg font-bold text-center flex-grow">Formulir Absensi</h2>
+            </div>
+
+            <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <!-- Data Karyawan -->
+                <div class="grid grid-cols-2 gap-x-4 gap-y-5 border-b pb-4">
+                    <div><label class="form-label">Name</label><p class="form-data">Pengguna ECrew</p></div>
+                    <div><label class="form-label">Email</label><p class="form-data">user@ecrew.com</p></div>
+                    <div><label class="form-label">Division</label><p class="form-data">Technology</p></div>
+                    <div><label class="form-label">Position</label><p class="form-data">Developer</p></div>
+                    <div class="col-span-2"><label for="duty-as" class="form-label">Duty As</label>
+                        <select id="duty-as" class="form-select">
+                            <option>Director</option><option>Safety, Quality & Security Manager</option><option>Operation Manager</option><option>Maintenance Manager</option><option>Chief Pilot Fixed Wing</option><option>Chief Pilot Rotary Wing</option><option>Chief Flight Support</option><option>Chief Inspector</option><option>Chief Engineer</option><option>Chief Finance, Accounting & Staf</option><option>Chief Engineering</option><option>Pilot in Command</option><option>Second in Command</option><option>Ground Instructor</option><option>Flight Instructor</option><option>Company Check Pilot</option><option>Engineer</option><option>Line Pilot</option><option>Cabin Service</option><option>Student</option><option>Flight Support</option><option>Ground Support</option><option>Technical Representative</option><option>Engineering</option><option>Staff</option><option>Logistic</option><option>Aviation Security</option><option>Driver</option>
+                        </select>
+                    </div>
+                     <div class="col-span-2"><label for="type-of-work" class="form-label">Type of Work</label>
+                        <select id="type-of-work" class="form-select">
+                           <option>Office Hour</option><option>Standby Flight</option><option>Standby on Call</option><option>Pos One Gate</option><option>Day Off</option><option>Day Off 7 Consecutive Days for Pilot</option><option>Flight Duty VIP</option><option>Ferry Flight</option><option>PPC Simulator</option><option>PPC Aircraft</option><option>Test Flight</option><option>Ground Run</option><option>Recurrent Training</option><option>Recency Flight</option><option>Meeting Out of Office</option><option>Medical Examination</option><option>Annual Leave</option><option>Sick</option><option>Technical Representative</option><option>Aviation Security</option><option>Over Time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Status Absen -->
+                <div class="flex justify-between items-center">
+                    <div><label class="form-label">Status Absen</label><p id="status-absen" class="form-data">Belum Absen</p></div>
+                    <div><label class="form-label">Tanggal</label><p id="date-masuk" class="form-data">-</p></div>
+                </div>
+
+                <!-- Absen Masuk -->
+                <div class="space-y-3 border rounded-lg p-4 bg-gray-50">
+                    <h3 class="font-bold text-indigo-700">Absensi Masuk</h3>
+                    <div>
+                        <label class="form-label">Foto Masuk (Kamera)</label>
+                        <div class="bg-black rounded-md overflow-hidden relative w-full aspect-video">
+                            <video id="camera-stream" class="w-full h-full object-cover" autoplay playsinline></video>
+                            <canvas id="camera-canvas" class="hidden"></canvas>
+                        </div>
+                        <p id="camera-permission-status" class="text-xs text-center text-gray-500 mt-1">Meminta izin kamera...</p>
+                        <button id="btn-capture-photo" class="btn-secondary mt-2">Ambil Foto</button>
+                    </div>
+                    <div>
+                        <label class="form-label">Preview Foto Masuk:</label>
+                        <img id="photo-preview" src="https://placehold.co/128x128/e2e8f0/a0aec0?text=Belum+ada+foto" class="rounded-md w-24 h-24 object-cover border"/>
+                    </div>
+                    <div><label class="form-label">Location Masuk</label><p id="location-masuk" class="form-data text-xs">Menunggu izin lokasi...</p></div>
+                    <div><label class="form-label">Absen Masuk</label><p id="absen-masuk-time" class="form-data">-</p></div>
+                    <div><label class="form-label">Status Masuk</label><p id="status-masuk" class="form-data">-</p></div>
+                    <div id="alasan-terlambat-container" class="hidden"><label for="alasan-terlambat" class="form-label">Alasan Terlambat</label><textarea id="alasan-terlambat" rows="2" class="w-full border rounded-md p-2 text-sm"></textarea></div>
+                    <button id="btn-absen-masuk" class="btn-primary">Absen Masuk</button>
+                </div>
+
+                <!-- Absen Pulang (Awalnya Disembunyikan) -->
+                <div id="absen-pulang-section" class="space-y-3 border rounded-lg p-4 bg-gray-50 hidden">
+                    <h3 class="font-bold text-red-700">Absensi Pulang</h3>
+                    <div><label for="remark-pekerjaan" class="form-label">Remark Pekerjaan Hari Ini</label><textarea id="remark-pekerjaan" rows="3" class="w-full border rounded-md p-2 text-sm"></textarea></div>
+                    <div><label class="form-label">Upload Foto Pekerjaan (dari Galeri)</label><input type="file" id="foto-pekerjaan" class="text-sm" accept="image/*"/></div>
+                    <div><label class="form-label">Location Pulang</label><p id="location-pulang" class="form-data text-xs">Menunggu...</p></div>
+                    <div><label class="form-label">Absen Pulang</label><p id="absen-pulang-time" class="form-data">-</p></div>
+                    <div><label class="form-label">Status Pulang</label><p id="status-pulang" class="form-data">-</p></div>
+                    <div id="total-overtime-container" class="hidden"><label class="form-label">Total Overtime</label><p id="total-overtime" class="form-data">-</p></div>
+                    <div><label class="form-label">Total Work Time</label><p id="total-worktime" class="form-data">-</p></div>
+                    <button id="btn-absen-pulang" class="btn-primary bg-red-600 hover:bg-red-700 focus:ring-red-500">Absen Pulang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let clockInTime = null;
+        let cameraStream = null;
+        let photoTaken = false;
+
+        // Page Elements
+        const loginPage = document.getElementById('login-page');
+        const dashboardPage = document.getElementById('dashboard-page');
+        const absenPage = document.getElementById('absen-page');
+
+        // Form & Button Elements
+        const loginForm = document.getElementById('login-form');
+        const btnGoToAbsen = document.getElementById('btn-go-to-absen');
+        const btnBackToDashboard = document.getElementById('btn-back-to-dashboard');
+        const btnAbsenMasuk = document.getElementById('btn-absen-masuk');
+        const btnAbsenPulang = document.getElementById('btn-absen-pulang');
+        const btnCapturePhoto = document.getElementById('btn-capture-photo');
+
+        // Camera Elements
+        const videoElement = document.getElementById('camera-stream');
+        const canvasElement = document.getElementById('camera-canvas');
+        const photoPreview = document.getElementById('photo-preview');
+        const cameraStatusEl = document.getElementById('camera-permission-status');
+
+        // Data Display Elements
+        const dateMasukEl = document.getElementById('date-masuk');
+        const statusAbsenEl = document.getElementById('status-absen');
+        const locationMasukEl = document.getElementById('location-masuk');
+        const absenMasukTimeEl = document.getElementById('absen-masuk-time');
+        const statusMasukEl = document.getElementById('status-masuk');
+        const alasanContainer = document.getElementById('alasan-terlambat-container');
+        const absenPulangSection = document.getElementById('absen-pulang-section');
+        const locationPulangEl = document.getElementById('location-pulang');
+        const absenPulangTimeEl = document.getElementById('absen-pulang-time');
+        const statusPulangEl = document.getElementById('status-pulang');
+        const overtimeContainer = document.getElementById('total-overtime-container');
+        const totalOvertimeEl = document.getElementById('total-overtime');
+        const totalWorktimeEl = document.getElementById('total-worktime');
+
+        // --- Utility Functions ---
+        const formatTime = (date) => date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const formatDate = (date) => date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const calculateDuration = (start, end) => {
+            let diff = Math.abs(end - start) / 1000;
+            const hours = Math.floor(diff / 3600);
+            diff %= 3600;
+            const minutes = Math.floor(diff / 60);
+            const seconds = Math.floor(diff % 60);
+            return `${hours} jam, ${minutes} menit, ${seconds} detik`;
+        };
+
+        // --- Camera Functions ---
+        const startCamera = async () => {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                    cameraStream = stream;
+                    videoElement.srcObject = stream;
+                    cameraStatusEl.textContent = "Kamera siap. Silakan ambil foto.";
+                    cameraStatusEl.classList.add('text-green-600');
+                } catch (error) {
+                    console.error("Error accessing camera:", error);
+                    cameraStatusEl.textContent = "Izin kamera ditolak atau tidak ditemukan.";
+                    cameraStatusEl.classList.add('text-red-600');
+                    btnCapturePhoto.disabled = true;
+                }
+            } else {
+                cameraStatusEl.textContent = "Kamera tidak didukung di browser ini.";
+                btnCapturePhoto.disabled = true;
+            }
+        };
+
+        const stopCamera = () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+        };
+
+        btnCapturePhoto.addEventListener('click', () => {
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+            const context = canvasElement.getContext('2d');
+            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            const dataUrl = canvasElement.toDataURL('image/jpeg');
+            photoPreview.src = dataUrl;
+            photoTaken = true;
+            stopCamera(); // Stop camera after taking picture
+            videoElement.classList.add('hidden');
+            cameraStatusEl.textContent = "Foto berhasil diambil.";
+        });
+
+        // --- Geolocation ---
+        const getLocation = (element) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        element.textContent = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+                    },
+                    () => {
+                        element.textContent = "Gagal mendapatkan lokasi.";
+                        element.classList.add('text-red-500');
+                    }
+                );
+            } else {
+                element.textContent = "Geolocation tidak didukung oleh browser ini.";
+            }
+        };
+
+        // --- Page Navigation ---
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            loginPage.classList.add('hidden');
+            dashboardPage.classList.remove('hidden');
+        });
+
+        btnGoToAbsen.addEventListener('click', (e) => {
+            e.preventDefault();
+            dashboardPage.classList.add('hidden');
+            absenPage.classList.remove('hidden');
+            startCamera();
+            getLocation(locationMasukEl);
+            dateMasukEl.textContent = formatDate(new Date());
+        });
+
+        btnBackToDashboard.addEventListener('click', () => {
+            absenPage.classList.add('hidden');
+            dashboardPage.classList.remove('hidden');
+            stopCamera();
+        });
+
+        // --- Attendance Logic ---
+        btnAbsenMasuk.addEventListener('click', () => {
+            if (!photoTaken) {
+                alert("Harap ambil foto terlebih dahulu sebelum absen masuk.");
+                return;
+            }
+            const now = new Date();
+            clockInTime = now;
+            absenMasukTimeEl.textContent = formatTime(now);
+            statusAbsenEl.textContent = 'On Working';
+            statusAbsenEl.classList.add('text-green-600');
+
+            const nineAM = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 1);
+            if (now > nineAM) {
+                statusMasukEl.innerHTML = '<span class="status-badge bg-red-100 text-red-800">Anda Terlambat Absen</span>';
+                alasanContainer.classList.remove('hidden');
+            } else {
+                statusMasukEl.innerHTML = '<span class="status-badge bg-green-100 text-green-800">Terima Kasih Anda Telah Absen Tepat Waktu</span>';
+            }
+
+            btnAbsenMasuk.disabled = true;
+            btnCapturePhoto.disabled = true;
+            document.getElementById('duty-as').disabled = true;
+            document.getElementById('type-of-work').disabled = true;
+            absenPulangSection.classList.remove('hidden');
+        });
+
+        btnAbsenPulang.addEventListener('click', () => {
+            if (!clockInTime) return;
+            const now = new Date();
+            
+            getLocation(locationPulangEl);
+            absenPulangTimeEl.textContent = formatTime(now);
+            statusAbsenEl.textContent = 'Pulang';
+            statusAbsenEl.classList.remove('text-green-600');
+            statusAbsenEl.classList.add('text-red-600');
+
+            const fivePM = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0, 0);
+            const fiveThirtyPM = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 31, 0);
+
+            if (now < fivePM) {
+                statusPulangEl.innerHTML = '<span class="status-badge bg-yellow-100 text-yellow-800">Anda Pulang Sebelum Waktunya</span>';
+            } else if (now >= fivePM && now < fiveThirtyPM) {
+                statusPulangEl.innerHTML = '<span class="status-badge bg-green-100 text-green-800">Anda Pulang Tepat Waktu</span>';
+            } else {
+                statusPulangEl.innerHTML = '<span class="status-badge bg-blue-100 text-blue-800">Waktu Kerja Melebihi</span>';
+                overtimeContainer.classList.remove('hidden');
+                totalOvertimeEl.textContent = calculateDuration(fiveThirtyPM, now);
+            }
+
+            totalWorktimeEl.textContent = calculateDuration(clockInTime, now);
+
+            btnAbsenPulang.disabled = true;
+            document.getElementById('remark-pekerjaan').disabled = true;
+            document.getElementById('foto-pekerjaan').disabled = true;
+        });
+    </script>
+</body>
+</html>
