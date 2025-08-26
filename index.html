@@ -121,7 +121,7 @@
         </div>
     </div>
 
-    <!-- Dashboard Page -->
+    <!-- User Dashboard Page -->
     <div id="dashboardPage" class="min-h-screen" style="display: none;">
         <!-- Header -->
         <header class="bg-white shadow-sm border-b">
@@ -247,6 +247,54 @@
                             <p class="text-lg font-semibold text-gray-900">95.6%</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Dashboard Page -->
+    <div id="adminDashboardPage" class="min-h-screen" style="display: none;">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-yellow-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user-shield text-white text-lg"></i>
+                        </div>
+                        <h1 class="ml-3 text-xl font-bold text-gray-900">Admin Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="showAddNewsModal()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">
+                            <i class="fas fa-plus mr-2"></i>Tambah Berita
+                        </button>
+                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                            <i class="fas fa-sign-out-alt text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Data Absensi Seluruh Karyawan</h2>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jam Masuk</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jam Pulang</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allAttendanceTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
@@ -536,6 +584,63 @@
         </div>
     </div>
 
+    <!-- Add News Modal (for Admin) -->
+    <div id="addNewsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Tambah Berita Baru</h3>
+                <button onclick="closeModal('addNewsModal')" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="addNewsForm" class="space-y-4">
+                <div>
+                    <label for="newsTitle" class="block text-sm font-medium text-gray-700">Judul Berita</label>
+                    <input type="text" id="newsTitle" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                </div>
+                <div>
+                    <label for="newsAuthor" class="block text-sm font-medium text-gray-700">Author</label>
+                    <input type="text" id="newsAuthor" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                </div>
+                <div>
+                    <label for="newsCategory" class="block text-sm font-medium text-gray-700">Kategori</label>
+                    <input type="text" id="newsCategory" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                </div>
+                <div>
+                    <label for="newsSummary" class="block text-sm font-medium text-gray-700">Ringkasan</label>
+                    <textarea id="newsSummary" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
+                </div>
+                <div>
+                    <label for="newsContent" class="block text-sm font-medium text-gray-700">Konten Lengkap (HTML didukung)</label>
+                    <textarea id="newsContent" rows="6" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Foto Berita</label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="newsImage" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                    <span>Unggah file</span>
+                                    <input id="newsImage" name="newsImage" type="file" class="sr-only" accept="image/*">
+                                </label>
+                                <p class="pl-1">atau seret dan lepas</p>
+                            </div>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF</p>
+                        </div>
+                    </div>
+                    <div id="newsImagePreview" class="mt-4 text-center"></div>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal('addNewsModal')" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">Publikasikan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Data karyawan
         const employeeData = [
@@ -608,7 +713,7 @@
         let isLocationPulangDetected = false;
         
         // Data berita
-        const newsData = [
+        let newsData = JSON.parse(localStorage.getItem('newsData')) || [
             {
                 id: 1,
                 title: "Sistem Absensi ECrew Terbaru Diluncurkan",
@@ -640,7 +745,8 @@
                 `,
                 date: "2024-01-15",
                 category: "Technology",
-                author: "Tim IT ECrew"
+                author: "Tim IT ECrew",
+                imageData: null
             },
             {
                 id: 2,
@@ -686,124 +792,10 @@
                 `,
                 date: "2024-08-10",
                 category: "Announcement",
-                author: "HR Department"
-            },
-            {
-                id: 3,
-                title: "Maintenance Sistem Terjadwal",
-                summary: "Sistem ECrew akan mengalami maintenance rutin pada hari Minggu untuk peningkatan performa dan keamanan.",
-                content: `
-                    <h2 class="text-2xl font-bold mb-4">Maintenance Sistem Terjadwal</h2>
-                    <div class="mb-6">
-                        <svg class="w-full h-64 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center text-white" viewBox="0 0 400 200">
-                            <circle cx="200" cy="100" r="40" fill="none" stroke="white" stroke-width="4"/>
-                            <path d="M200 70 L200 100 L220 120" stroke="white" stroke-width="3" fill="none"/>
-                            <text x="200" y="160" text-anchor="middle" class="text-lg font-bold">MAINTENANCE</text>
-                        </svg>
-                    </div>
-                    <p class="text-gray-700 mb-4">Kepada seluruh pengguna sistem ECrew,</p>
-                    
-                    <p class="text-gray-700 mb-4">Dalam rangka meningkatkan performa dan keamanan sistem, kami akan melakukan maintenance terjadwal pada:</p>
-                    
-                    <div class="bg-orange-50 p-4 rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-orange-800 mb-2">Jadwal Maintenance:</h3>
-                        <ul class="list-disc list-inside text-orange-700 space-y-1">
-                            <li><strong>Hari:</strong> Minggu</li>
-                            <li><strong>Tanggal:</strong> 21 Januari 2024</li>
-                            <li><strong>Waktu:</strong> 02:00 - 04:00 WIB</li>
-                            <li><strong>Durasi:</strong> Maksimal 2 jam</li>
-                        </ul>
-                    </div>
-                    
-                    <h3 class="text-xl font-semibold mb-3">Yang Akan Dilakukan:</h3>
-                    <ul class="list-disc list-inside mb-4 space-y-2">
-                        <li>Update keamanan sistem</li>
-                        <li>Optimasi database untuk performa lebih cepat</li>
-                        <li>Backup data komprehensif</li>
-                        <li>Testing fitur-fitur baru</li>
-                        <li>Perbaikan bug minor yang dilaporkan</li>
-                    </ul>
-                    
-                    <div class="bg-yellow-50 p-4 rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-yellow-800 mb-2">Dampak Selama Maintenance:</h3>
-                        <ul class="list-disc list-inside text-yellow-700 space-y-1">
-                            <li>Sistem tidak dapat diakses sementara</li>
-                            <li>Absensi dapat dilakukan setelah maintenance selesai</li>
-                            <li>Data yang tersimpan tetap aman</li>
-                        </ul>
-                    </div>
-                    
-                    <p class="text-gray-700 mb-4">Kami mohon maaf atas ketidaknyamanan yang mungkin terjadi. Maintenance ini dilakukan untuk memberikan pengalaman yang lebih baik bagi seluruh pengguna.</p>
-                    
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <p class="text-blue-800"><strong>Informasi:</strong> Jika ada pertanyaan, silakan hubungi tim IT di ext. 123</p>
-                    </div>
-                `,
-                date: "2024-01-18",
-                category: "System",
-                author: "Tim IT"
-            },
-            {
-                id: 4,
-                title: "Pelatihan Keselamatan Penerbangan",
-                summary: "Pelatihan wajib keselamatan penerbangan akan diadakan untuk seluruh crew dan ground support minggu depan.",
-                content: `
-                    <h2 class="text-2xl font-bold mb-4">Pelatihan Keselamatan Penerbangan</h2>
-                    <div class="mb-6">
-                        <svg class="w-full h-64 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center text-white" viewBox="0 0 400 200">
-                            <path d="M150 100 L200 80 L250 100 L200 120 Z" fill="white"/>
-                            <circle cx="200" cy="100" r="5" fill="white"/>
-                            <text x="200" y="150" text-anchor="middle" class="text-lg font-bold">SAFETY TRAINING</text>
-                        </svg>
-                    </div>
-                    <p class="text-gray-700 mb-4">Kepada seluruh crew dan ground support,</p>
-                    
-                    <p class="text-gray-700 mb-4">Sesuai dengan regulasi keselamatan penerbangan dan komitmen perusahaan terhadap safety first, kami akan mengadakan pelatihan keselamatan wajib.</p>
-                    
-                    <div class="bg-green-50 p-4 rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-green-800 mb-2">Detail Pelatihan:</h3>
-                        <ul class="list-disc list-inside text-green-700 space-y-1">
-                            <li><strong>Tanggal:</strong> 25-27 Januari 2024</li>
-                            <li><strong>Waktu:</strong> 08:00 - 16:00 WIB</li>
-                            <li><strong>Lokasi:</strong> Training Center ECrew</li>
-                            <li><strong>Instruktur:</strong> Certified Safety Inspector</li>
-                        </ul>
-                    </div>
-                    
-                    <h3 class="text-xl font-semibold mb-3">Materi Pelatihan:</h3>
-                    <ul class="list-disc list-inside mb-4 space-y-2">
-                        <li>Emergency Response Procedures</li>
-                        <li>Fire Safety & Evacuation</li>
-                        <li>First Aid & Medical Emergency</li>
-                        <li>Ground Handling Safety</li>
-                        <li>Personal Protective Equipment (PPE)</li>
-                        <li>Risk Assessment & Hazard Identification</li>
-                    </ul>
-                    
-                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Peserta Wajib:</h3>
-                        <ul class="list-disc list-inside text-blue-700 space-y-1">
-                            <li>Seluruh pilot dan co-pilot</li>
-                            <li>Cabin crew</li>
-                            <li>Ground support team</li>
-                            <li>Maintenance crew</li>
-                            <li>Aviation security</li>
-                        </ul>
-                    </div>
-                    
-                    <p class="text-gray-700 mb-4">Kehadiran bersifat wajib dan akan mempengaruhi sertifikasi keselamatan karyawan. Sertifikat akan diberikan kepada peserta yang lulus evaluasi.</p>
-                    
-                    <div class="bg-red-50 p-4 rounded-lg">
-                        <p class="text-red-800"><strong>Penting:</strong> Konfirmasi kehadiran paling lambat 22 Januari 2024 ke HR Department</p>
-                    </div>
-                `,
-                date: "2024-01-20",
-                category: "Training",
-                author: "Safety Department"
+                author: "HR Department",
+                imageData: null
             }
         ];
-        
-
         
         // Initialize map
         function initializeMap() {
@@ -1041,7 +1033,7 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    preview.innerHTML = `<img src="${e.target.result}" class="w-32 h-32 object-cover rounded-lg mx-auto">`;
+                    preview.innerHTML = `<img src="${e.target.result}" class="w-48 h-auto object-cover rounded-lg mx-auto">`;
                 };
                 reader.readAsDataURL(file);
             }
@@ -1052,18 +1044,23 @@
             // Add event listeners with error handling
             const fotoMasukInput = document.getElementById('fotoMasuk');
             const fotoPekerjaanInput = document.getElementById('fotoPekerjaan');
+            const newsImageInput = document.getElementById('newsImage');
             
             if (fotoMasukInput) {
                 fotoMasukInput.addEventListener('change', function() {
-                    console.log('Foto masuk changed');
                     previewImage(this, 'previewFotoMasuk');
                 });
             }
             
             if (fotoPekerjaanInput) {
                 fotoPekerjaanInput.addEventListener('change', function() {
-                    console.log('Foto pekerjaan changed');
                     previewImage(this, 'previewFotoPekerjaan');
+                });
+            }
+
+            if (newsImageInput) {
+                newsImageInput.addEventListener('change', function() {
+                    previewImage(this, 'newsImagePreview');
                 });
             }
             
@@ -1077,6 +1074,12 @@
             
             if (passwordInput) {
                 passwordInput.addEventListener('input', clearError);
+            }
+
+            // Add listener for news form
+            const newsForm = document.getElementById('addNewsForm');
+            if(newsForm) {
+                newsForm.addEventListener('submit', publishNews);
             }
         });
         
@@ -1149,7 +1152,10 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
-            document.getElementById('currentTime').textContent = timeString;
+            const currentTimeEl = document.getElementById('currentTime');
+            if (currentTimeEl) {
+                currentTimeEl.textContent = timeString;
+            }
         }
         
         // Show error message
@@ -1196,53 +1202,47 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
             
-            // Clear previous error
             clearError();
             
-            // Validasi input kosong
-            if (!email) {
-                showError('Email tidak boleh kosong!');
+            if (!email || !password) {
+                showError('Email dan Password tidak boleh kosong!');
                 return;
             }
             
-            if (!password) {
-                showError('Password tidak boleh kosong!');
-                return;
-            }
-            
-            // Validasi format email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showError('Format email tidak valid!');
                 return;
             }
             
-            // Cari karyawan berdasarkan email
             const employee = employeeData.find(emp => emp.email.toLowerCase() === email.toLowerCase());
             
             if (!employee) {
-                showError('Email tidak terdaftar dalam sistem! Pastikan Anda menggunakan email yang benar.');
+                showError('Email tidak terdaftar dalam sistem!');
                 return;
             }
             
-            // Validasi password (nama depan)
             const firstName = employee.name.split(' ')[0].toLowerCase();
             if (password.toLowerCase() !== firstName) {
                 showError(`Password salah! Gunakan nama depan Anda "${employee.name.split(' ')[0]}" sebagai password.`);
                 return;
             }
             
-            // Login berhasil
             currentUser = employee;
-            document.getElementById('welcomeUser').textContent = employee.name;
             document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('dashboardPage').style.display = 'block';
+            
+            if (currentUser.role === 'ADMIN') {
+                document.getElementById('adminDashboardPage').style.display = 'block';
+                loadAllAttendance();
+            } else {
+                document.getElementById('dashboardPage').style.display = 'block';
+                document.getElementById('welcomeUser').textContent = employee.name;
+                loadRiwayat();
+                loadNewsPreview();
+            }
+            
             updateTime();
             setInterval(updateTime, 1000);
-            loadRiwayat();
-            loadNewsPreview();
-            
-            // Clear form
             this.reset();
         });
         
@@ -1250,7 +1250,9 @@
         function logout() {
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('adminDashboardPage').style.display = 'none';
             document.getElementById('loginForm').reset();
+            currentUser = null;
         }
         
         // Modal functions
@@ -1258,7 +1260,6 @@
             const now = new Date();
             document.getElementById('absenTime').textContent = now.toLocaleString('id-ID');
             
-            // Fill user data
             if (currentUser) {
                 document.getElementById('absenNama').value = currentUser.name;
                 document.getElementById('absenEmail').value = currentUser.email;
@@ -1266,27 +1267,23 @@
                 document.getElementById('absenPosisi').value = currentUser.position;
             }
             
-            // Reset location detection
             isLocationDetected = false;
             document.getElementById('locationInfo').classList.add('hidden');
             document.getElementById('lokasiMasuk').value = '';
             document.getElementById('latitude').value = '';
             document.getElementById('longitude').value = '';
             
-            // Check attendance status for today
             const today = new Date().toDateString();
             const todayRecords = absensiData.filter(record => 
                 record.date === today && 
                 record.email === currentUser.email
             );
             
-            // Find the latest check-in (always allow check-out for the latest check-in)
             const latestMasuk = todayRecords
                 .filter(record => record.type === 'masuk')
-                .sort((a, b) => b.timestamp - a.timestamp)[0]; // Get the most recent check-in
+                .sort((a, b) => b.timestamp - a.timestamp)[0];
             
             if (latestMasuk) {
-                // Show existing check-in data and prepare for check-out
                 fillExistingAbsenData(latestMasuk);
                 document.getElementById('btnAbsenMasuk').classList.add('hidden');
                 document.getElementById('btnAbsenPulang').classList.remove('hidden');
@@ -1294,14 +1291,12 @@
                 document.getElementById('remarkSection').classList.remove('hidden');
                 document.getElementById('statusMasukSection').classList.remove('hidden');
                 
-                // Show existing status
                 const statusDiv = document.getElementById('statusMasuk');
                 statusDiv.textContent = latestMasuk.statusMasuk;
                 statusDiv.className = latestMasuk.statusMasuk.includes('Terlambat') ? 
                     'p-3 rounded-lg font-medium bg-red-100 text-red-800' : 
                     'p-3 rounded-lg font-medium bg-green-100 text-green-800';
                 
-                // Show late reason if it was late
                 if (latestMasuk.statusMasuk.includes('Terlambat') && latestMasuk.alasanTerlambat) {
                     document.getElementById('alasanTerlambatSection').classList.remove('hidden');
                     document.getElementById('alasanTerlambat').value = latestMasuk.alasanTerlambat;
@@ -1311,7 +1306,6 @@
                 
                 currentAbsenMasuk = latestMasuk;
             } else {
-                // Show absen masuk form (no check-in yet today)
                 resetAbsenFormForNewEntry();
                 document.getElementById('btnAbsenMasuk').classList.remove('hidden');
                 document.getElementById('btnAbsenPulang').classList.add('hidden');
@@ -1322,40 +1316,33 @@
             
             document.getElementById('absenModal').classList.remove('hidden');
             
-            // Initialize map after modal is shown
             setTimeout(() => {
                 initializeMap();
-                // Initialize pulang map if remark section is visible
                 if (!document.getElementById('remarkSection').classList.contains('hidden')) {
                     initializeMapPulang();
                 }
             }, 100);
         }
         
-        // Fill existing absen data
         function fillExistingAbsenData(absenData) {
             document.getElementById('dutyAs').value = absenData.dutyAs || '';
             document.getElementById('typeOfWork').value = absenData.typeOfWork || '';
             
-            // Make check-in fields read-only
             document.getElementById('dutyAs').readOnly = true;
             document.getElementById('typeOfWork').readOnly = true;
             document.getElementById('dutyAs').classList.add('bg-gray-100', 'cursor-not-allowed');
             document.getElementById('typeOfWork').classList.add('bg-gray-100', 'cursor-not-allowed');
             
-            // Show existing location
             if (absenData.latitude && absenData.longitude) {
                 document.getElementById('latitude').value = absenData.latitude;
                 document.getElementById('longitude').value = absenData.longitude;
                 document.getElementById('lokasiMasuk').value = absenData.lokasi;
                 
-                // Show location info
                 document.getElementById('locationInfo').classList.remove('hidden');
                 document.getElementById('coordinatesText').textContent = `Koordinat: ${absenData.latitude}, ${absenData.longitude}`;
                 document.getElementById('addressText').textContent = absenData.lokasi;
                 isLocationDetected = true;
                 
-                // Disable location detection button
                 const locationBtn = document.querySelector('button[onclick="getLocation()"]');
                 if (locationBtn) {
                     locationBtn.disabled = true;
@@ -1364,23 +1351,19 @@
                     locationBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Lokasi Terkunci';
                 }
                 
-                // Update map after it's initialized
                 setTimeout(() => {
                     if (map) {
                         updateLocation(parseFloat(absenData.latitude), parseFloat(absenData.longitude));
-                        // Disable map interactions
                         map.off('click');
                     }
                 }, 200);
             }
             
-            // Show existing photo preview and disable photo input
             if (absenData.fotoMasukData) {
                 document.getElementById('previewFotoMasuk').innerHTML = 
                     `<img src="${absenData.fotoMasukData}" class="w-32 h-32 object-cover rounded-lg mx-auto">
                      <p class="text-xs text-gray-500 mt-2 text-center">Foto sudah diambil</p>`;
                 
-                // Disable photo input
                 const fotoBtn = document.querySelector('button[onclick="document.getElementById(\'fotoMasuk\').click()"]');
                 if (fotoBtn) {
                     fotoBtn.disabled = true;
@@ -1393,7 +1376,6 @@
             }
         }
         
-        // Reset absen form for new entry
         function resetAbsenFormForNewEntry() {
             document.getElementById('dutyAs').value = '';
             document.getElementById('typeOfWork').value = '';
@@ -1404,7 +1386,6 @@
             document.getElementById('alasanTerlambatSection').classList.add('hidden');
             document.getElementById('alasanTerlambat').readOnly = false;
             
-            // Reset location fields
             isLocationDetected = false;
             isLocationPulangDetected = false;
             document.getElementById('locationInfo').classList.add('hidden');
@@ -1416,51 +1397,41 @@
             document.getElementById('latitudePulang').value = '';
             document.getElementById('longitudePulang').value = '';
             
-            // Enable all form elements
             enableFormElements();
         }
         
-        // Reset absen form (for reset button)
         function resetAbsenForm() {
             if (!confirm('Apakah Anda yakin ingin mereset semua data absensi hari ini? Data yang sudah tersimpan akan dihapus.')) {
                 return;
             }
             
-            // Remove today's attendance records for current user
             const today = new Date().toDateString();
             absensiData = absensiData.filter(record => 
                 !(record.date === today && record.email === currentUser.email)
             );
             localStorage.setItem('absensiData', JSON.stringify(absensiData));
             
-            // Reset form to new entry state
             resetAbsenFormForNewEntry();
             
-            // Update button visibility
             document.getElementById('btnAbsenMasuk').classList.remove('hidden');
             document.getElementById('btnAbsenPulang').classList.add('hidden');
             document.getElementById('btnResetAbsen').classList.add('hidden');
             document.getElementById('remarkSection').classList.add('hidden');
             
-            // Reset current absen masuk
             currentAbsenMasuk = null;
             
-            // Check status for new entry
             checkStatusMasuk();
             
             alert('Data absensi hari ini telah direset. Anda dapat melakukan absen masuk kembali.');
             loadRiwayat();
         }
         
-        // Enable form elements
         function enableFormElements() {
-            // Enable duty and type of work
             document.getElementById('dutyAs').readOnly = false;
             document.getElementById('typeOfWork').readOnly = false;
             document.getElementById('dutyAs').classList.remove('bg-gray-100', 'cursor-not-allowed');
             document.getElementById('typeOfWork').classList.remove('bg-gray-100', 'cursor-not-allowed');
             
-            // Enable photo input
             document.getElementById('fotoMasuk').disabled = false;
             const fotoBtn = document.querySelector('button[onclick="document.getElementById(\'fotoMasuk\').click()"]');
             if (fotoBtn) {
@@ -1470,7 +1441,6 @@
                 fotoBtn.innerHTML = '<i class="fas fa-camera text-2xl mb-2"></i><p>Ambil Foto</p>';
             }
             
-            // Enable location button
             const locationBtn = document.querySelector('button[onclick="getLocation()"]');
             if (locationBtn) {
                 locationBtn.disabled = false;
@@ -1479,16 +1449,12 @@
                 locationBtn.innerHTML = '<i class="fas fa-crosshairs mr-2"></i><span id="locationBtnText">Deteksi Lokasi Saya</span>';
             }
             
-            // Enable late reason field
             document.getElementById('alasanTerlambat').readOnly = false;
             document.getElementById('alasanTerlambat').classList.remove('bg-gray-100', 'cursor-not-allowed');
             document.getElementById('alasanTerlambat').value = '';
         }
         
-        // Submit absen masuk
         function submitAbsenMasuk() {
-            console.log('Submit absen masuk dipanggil');
-            
             const dutyAs = document.getElementById('dutyAs').value;
             const typeOfWork = document.getElementById('typeOfWork').value;
             const fotoMasuk = document.getElementById('fotoMasuk').files[0];
@@ -1496,21 +1462,8 @@
             const latitude = document.getElementById('latitude').value;
             const longitude = document.getElementById('longitude').value;
             
-            console.log('Data form:', { dutyAs, typeOfWork, fotoMasuk, lokasi, latitude, longitude });
-            
-            // Validasi input
-            if (!dutyAs || !typeOfWork) {
-                alert('Mohon lengkapi Duty As dan Type of Work!');
-                return;
-            }
-            
-            if (!fotoMasuk) {
-                alert('Mohon ambil foto untuk absen masuk!');
-                return;
-            }
-            
-            if (!lokasi || !latitude || !longitude) {
-                alert('Mohon deteksi lokasi terlebih dahulu! Klik tombol "Deteksi Lokasi Saya" atau klik pada peta untuk memilih lokasi.');
+            if (!dutyAs || !typeOfWork || !fotoMasuk || !lokasi || !latitude || !longitude) {
+                alert('Mohon lengkapi semua field yang wajib diisi!');
                 return;
             }
             
@@ -1520,13 +1473,9 @@
             const currentTime = hour * 60 + minute;
             const cutoffTime = 9 * 60;
             
-            let statusMasuk = '';
+            let statusMasuk = (currentTime <= cutoffTime) ? 'Terima Kasih Anda Telah Absen Tepat Waktu' : 'Anda Terlambat Absen';
             let alasanTerlambat = '';
-            
-            if (currentTime <= cutoffTime) {
-                statusMasuk = 'Terima Kasih Anda Telah Absen Tepat Waktu';
-            } else {
-                statusMasuk = 'Anda Terlambat Absen';
+            if (statusMasuk.includes('Terlambat')) {
                 alasanTerlambat = document.getElementById('alasanTerlambat').value || '';
                 if (!alasanTerlambat) {
                     alert('Mohon isi alasan keterlambatan!');
@@ -1534,38 +1483,20 @@
                 }
             }
             
-            // Disable button to prevent double submission
             const btnAbsenMasuk = document.getElementById('btnAbsenMasuk');
             btnAbsenMasuk.disabled = true;
             btnAbsenMasuk.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
             
-            // Convert photo to base64 for storage
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const absenRecord = {
-                        id: Date.now(),
-                        type: 'masuk',
-                        name: currentUser.name,
-                        email: currentUser.email,
-                        division: currentUser.division,
-                        position: currentUser.position,
-                        dutyAs: dutyAs,
-                        typeOfWork: typeOfWork,
-                        statusAbsen: 'on working',
-                        time: now.toLocaleString('id-ID'),
-                        timestamp: now.getTime(),
-                        date: now.toDateString(),
-                        statusMasuk: statusMasuk,
-                        alasanTerlambat: alasanTerlambat,
-                        lokasi: lokasi,
-                        latitude: latitude,
-                        longitude: longitude,
-                        fotoMasuk: fotoMasuk.name,
-                        fotoMasukData: e.target.result
+                        id: Date.now(), type: 'masuk', name: currentUser.name, email: currentUser.email,
+                        division: currentUser.division, position: currentUser.position, dutyAs, typeOfWork,
+                        statusAbsen: 'on working', time: now.toLocaleString('id-ID'), timestamp: now.getTime(),
+                        date: now.toDateString(), statusMasuk, alasanTerlambat, lokasi, latitude, longitude,
+                        fotoMasuk: fotoMasuk.name, fotoMasukData: e.target.result
                     };
-                    
-                    console.log('Menyimpan record:', absenRecord);
                     
                     absensiData.push(absenRecord);
                     localStorage.setItem('absensiData', JSON.stringify(absensiData));
@@ -1575,50 +1506,24 @@
                     loadRiwayat();
                 } catch (error) {
                     console.error('Error saving absen masuk:', error);
-                    alert('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
+                    alert('Terjadi kesalahan saat menyimpan data.');
                 } finally {
-                    // Re-enable button
                     btnAbsenMasuk.disabled = false;
                     btnAbsenMasuk.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Absen Masuk';
                 }
             };
-            
-            reader.onerror = function() {
-                console.error('Error reading file');
-                alert('Gagal membaca file foto. Silakan coba lagi.');
-                btnAbsenMasuk.disabled = false;
-                btnAbsenMasuk.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Absen Masuk';
-            };
-            
             reader.readAsDataURL(fotoMasuk);
         }
         
-        // Submit absen pulang
         function submitAbsenPulang() {
-            console.log('Submit absen pulang dipanggil');
-            
             const remarkPekerjaan = document.getElementById('remarkPekerjaan').value;
             const fotoPekerjaan = document.getElementById('fotoPekerjaan').files[0];
             const lokasiPulang = document.getElementById('lokasiPulang').value;
             const latitudePulang = document.getElementById('latitudePulang').value;
             const longitudePulang = document.getElementById('longitudePulang').value;
             
-            console.log('Data form pulang:', { remarkPekerjaan, fotoPekerjaan, lokasiPulang, latitudePulang, longitudePulang });
-            console.log('Current absen masuk:', currentAbsenMasuk);
-            
-            // Validasi input
-            if (!remarkPekerjaan) {
-                alert('Mohon isi remark pekerjaan hari ini!');
-                return;
-            }
-            
-            if (!fotoPekerjaan) {
-                alert('Mohon ambil foto pekerjaan hari ini!');
-                return;
-            }
-            
-            if (!lokasiPulang || !latitudePulang || !longitudePulang) {
-                alert('Mohon deteksi lokasi pulang terlebih dahulu! Klik tombol "Deteksi Lokasi Pulang" atau klik pada peta untuk memilih lokasi.');
+            if (!remarkPekerjaan || !fotoPekerjaan || !lokasiPulang) {
+                alert('Mohon lengkapi semua field untuk absen pulang!');
                 return;
             }
             
@@ -1630,43 +1535,22 @@
             const now = new Date();
             const pulangInfo = checkStatusPulang(currentAbsenMasuk.timestamp);
             
-            // Disable button to prevent double submission
             const btnAbsenPulang = document.getElementById('btnAbsenPulang');
             btnAbsenPulang.disabled = true;
             btnAbsenPulang.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
             
-            // Convert photo to base64 for storage
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const absenRecord = {
-                        id: Date.now(),
-                        type: 'pulang',
-                        name: currentUser.name,
-                        email: currentUser.email,
-                        division: currentUser.division,
-                        position: currentUser.position,
-                        dutyAs: currentAbsenMasuk.dutyAs,
-                        typeOfWork: currentAbsenMasuk.typeOfWork,
-                        statusAbsen: 'pulang',
-                        time: now.toLocaleString('id-ID'),
-                        timestamp: now.getTime(),
-                        date: now.toDateString(),
-                        statusPulang: pulangInfo.status,
-                        totalOvertime: pulangInfo.overtime,
-                        totalWorkTime: pulangInfo.totalWorkTime,
-                        remarkPekerjaan: remarkPekerjaan,
-                        fotoPekerjaan: fotoPekerjaan.name,
-                        fotoPekerjaanData: e.target.result,
-                        absenMasukTime: currentAbsenMasuk.time,
-                        absenMasukTimestamp: currentAbsenMasuk.timestamp,
-                        absenMasukId: currentAbsenMasuk.id,
-                        lokasi: lokasiPulang,
-                        latitude: latitudePulang,
-                        longitude: longitudePulang
+                        id: Date.now(), type: 'pulang', name: currentUser.name, email: currentUser.email,
+                        division: currentUser.division, position: currentUser.position, dutyAs: currentAbsenMasuk.dutyAs,
+                        typeOfWork: currentAbsenMasuk.typeOfWork, statusAbsen: 'pulang', time: now.toLocaleString('id-ID'),
+                        timestamp: now.getTime(), date: now.toDateString(), statusPulang: pulangInfo.status,
+                        totalOvertime: pulangInfo.overtime, totalWorkTime: pulangInfo.totalWorkTime,
+                        remarkPekerjaan, fotoPekerjaan: fotoPekerjaan.name, fotoPekerjaanData: e.target.result,
+                        absenMasukId: currentAbsenMasuk.id, lokasi: lokasiPulang, latitude: latitudePulang, longitude: longitudePulang
                     };
-                    
-                    console.log('Menyimpan record pulang:', absenRecord);
                     
                     absensiData.push(absenRecord);
                     localStorage.setItem('absensiData', JSON.stringify(absensiData));
@@ -1676,21 +1560,12 @@
                     loadRiwayat();
                 } catch (error) {
                     console.error('Error saving absen pulang:', error);
-                    alert('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
+                    alert('Terjadi kesalahan saat menyimpan data.');
                 } finally {
-                    // Re-enable button
                     btnAbsenPulang.disabled = false;
                     btnAbsenPulang.innerHTML = '<i class="fas fa-sign-out-alt mr-2"></i>Absen Pulang';
                 }
             };
-            
-            reader.onerror = function() {
-                console.error('Error reading file');
-                alert('Gagal membaca file foto. Silakan coba lagi.');
-                btnAbsenPulang.disabled = false;
-                btnAbsenPulang.innerHTML = '<i class="fas fa-sign-out-alt mr-2"></i>Absen Pulang';
-            };
-            
             reader.readAsDataURL(fotoPekerjaan);
         }
         
@@ -1699,29 +1574,31 @@
             loadRiwayat();
         }
         
-        // Load news preview on dashboard
         function loadNewsPreview() {
             const newsPreview = document.getElementById('newsPreview');
-            const latestNews = newsData.slice(0, 3); // Show latest 3 news
+            const latestNews = [...newsData].reverse().slice(0, 3);
             
             newsPreview.innerHTML = '';
             
             latestNews.forEach(news => {
                 const newsItem = document.createElement('div');
-                newsItem.className = 'border-l-4 border-blue-500 pl-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors';
+                newsItem.className = 'flex items-center space-x-4 border-l-4 border-blue-500 pl-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors';
                 newsItem.onclick = () => showArticle(news.id);
                 
-                const timeAgo = getTimeAgo(news.date);
+                const newsImage = news.imageData ? `<img src="${news.imageData}" class="w-20 h-20 object-cover rounded-md flex-shrink-0">` : '';
                 
                 newsItem.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-semibold text-gray-900 hover:text-blue-600 transition-colors">${news.title}</h4>
-                        <span class="text-xs text-gray-500 ml-2">${timeAgo}</span>
-                    </div>
-                    <p class="text-gray-600 text-sm line-clamp-2">${news.summary}</p>
-                    <div class="flex items-center mt-2">
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${news.category}</span>
-                        <span class="text-xs text-gray-500 ml-2">oleh ${news.author}</span>
+                    ${newsImage}
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-1">
+                            <h4 class="font-semibold text-gray-900 hover:text-blue-600 transition-colors">${news.title}</h4>
+                            <span class="text-xs text-gray-500 ml-2 flex-shrink-0">${getTimeAgo(news.date)}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm line-clamp-2">${news.summary}</p>
+                        <div class="flex items-center mt-2">
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${news.category}</span>
+                            <span class="text-xs text-gray-500 ml-2">oleh ${news.author}</span>
+                        </div>
                     </div>
                 `;
                 
@@ -1729,7 +1606,6 @@
             });
         }
         
-        // Calculate time ago
         function getTimeAgo(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -1742,36 +1618,37 @@
             return `${Math.ceil(diffDays / 30)} bulan yang lalu`;
         }
         
-        // Show all news modal
         function showAllNews() {
             document.getElementById('newsModal').classList.remove('hidden');
             loadAllNews();
         }
         
-        // Load all news in modal
         function loadAllNews() {
             const allNewsList = document.getElementById('allNewsList');
             allNewsList.innerHTML = '';
             
-            newsData.forEach(news => {
+            [...newsData].reverse().forEach(news => {
                 const newsCard = document.createElement('div');
-                newsCard.className = 'bg-white border border-gray-200 rounded-lg p-6 cursor-pointer hover:shadow-lg transition-shadow';
+                newsCard.className = 'bg-white border border-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow overflow-hidden';
                 newsCard.onclick = () => showArticle(news.id);
                 
-                const timeAgo = getTimeAgo(news.date);
+                const newsImage = news.imageData ? `<img src="${news.imageData}" class="w-full h-48 object-cover">` : '';
                 
                 newsCard.innerHTML = `
-                    <div class="flex justify-between items-start mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs bg-${getCategoryColor(news.category)}-100 text-${getCategoryColor(news.category)}-800 px-2 py-1 rounded">${news.category}</span>
-                            <span class="text-xs text-gray-500">${timeAgo}</span>
+                    ${newsImage}
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs bg-${getCategoryColor(news.category)}-100 text-${getCategoryColor(news.category)}-800 px-2 py-1 rounded">${news.category}</span>
+                                <span class="text-xs text-gray-500">${getTimeAgo(news.date)}</span>
+                            </div>
                         </div>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">${news.title}</h3>
-                    <p class="text-gray-600 mb-3">${news.summary}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500">oleh ${news.author}</span>
-                        <span class="text-blue-600 text-sm font-medium">Baca selengkapnya →</span>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">${news.title}</h3>
+                        <p class="text-gray-600 mb-3">${news.summary}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">oleh ${news.author}</span>
+                            <span class="text-blue-600 text-sm font-medium">Baca selengkapnya →</span>
+                        </div>
                     </div>
                 `;
                 
@@ -1779,18 +1656,13 @@
             });
         }
         
-        // Get category color
         function getCategoryColor(category) {
             const colors = {
-                'Technology': 'blue',
-                'Announcement': 'green',
-                'System': 'orange',
-                'Training': 'purple'
+                'Technology': 'blue', 'Announcement': 'green', 'System': 'orange', 'Training': 'purple'
             };
             return colors[category] || 'gray';
         }
         
-        // Show article detail
         function showArticle(newsId) {
             const article = newsData.find(news => news.id === newsId);
             if (!article) return;
@@ -1799,29 +1671,22 @@
             document.getElementById('articleModal').classList.remove('hidden');
             
             const articleContent = document.getElementById('articleContent');
-            const timeAgo = getTimeAgo(article.date);
+            const articleImage = article.imageData ? `<img src="${article.imageData}" class="w-full h-auto rounded-lg mb-6">` : '';
             
             articleContent.innerHTML = `
+                ${articleImage}
                 <div class="mb-6">
                     <div class="flex items-center space-x-2 mb-3">
                         <span class="text-sm bg-${getCategoryColor(article.category)}-100 text-${getCategoryColor(article.category)}-800 px-3 py-1 rounded">${article.category}</span>
-                        <span class="text-sm text-gray-500">${timeAgo}</span>
+                        <span class="text-sm text-gray-500">${getTimeAgo(article.date)}</span>
                     </div>
                     <div class="text-sm text-gray-600 mb-4">
                         <i class="fas fa-user mr-1"></i> ${article.author}
                         <span class="mx-2">•</span>
-                        <i class="fas fa-calendar mr-1"></i> ${new Date(article.date).toLocaleDateString('id-ID', { 
-                            weekday: 'long', 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                        })}
+                        <i class="fas fa-calendar mr-1"></i> ${new Date(article.date).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                     </div>
                 </div>
-                
-                <div class="prose max-w-none">
-                    ${article.content}
-                </div>
+                <div class="prose max-w-none">${article.content}</div>
             `;
         }
         
@@ -1833,22 +1698,19 @@
             document.getElementById(modalId).classList.add('hidden');
         }
         
-
-        
-        // Load riwayat absensi
         function loadRiwayat() {
             const riwayatList = document.getElementById('riwayatList');
             riwayatList.innerHTML = '';
             
-            if (absensiData.length === 0) {
+            const userAbsensi = absensiData.filter(record => record.email === currentUser.email);
+            if (userAbsensi.length === 0) {
                 riwayatList.innerHTML = '<p class="text-gray-500 text-center">Belum ada data absensi</p>';
                 return;
             }
             
-            // Group records by date and user for better display
-            const groupedRecords = groupAbsensiByDate(absensiData.filter(record => record.email === currentUser.email));
+            const groupedRecords = groupAbsensiByDate(userAbsensi);
             
-            Object.keys(groupedRecords).slice(-10).reverse().forEach(dateKey => {
+            Object.keys(groupedRecords).sort((a,b) => new Date(b) - new Date(a)).slice(0, 10).forEach(dateKey => {
                 const records = groupedRecords[dateKey];
                 const div = document.createElement('div');
                 div.className = 'border border-gray-200 rounded-lg p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow';
@@ -1875,8 +1737,8 @@
                             <div>
                                 <h4 class="font-semibold text-gray-900">${new Date(dateKey).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
                                 <p class="text-sm text-gray-600">
-                                    ${masukRecord ? `Masuk: ${masukRecord.time.split(' ')[1]}` : 'Tidak masuk'} 
-                                    ${pulangRecord ? `• Pulang: ${pulangRecord.time.split(' ')[1]}` : ''}
+                                    ${masukRecord ? `Masuk: ${new Date(masukRecord.timestamp).toLocaleTimeString('id-ID')}` : 'Tidak masuk'} 
+                                    ${pulangRecord ? `• Pulang: ${new Date(pulangRecord.timestamp).toLocaleTimeString('id-ID')}` : ''}
                                 </p>
                             </div>
                         </div>
@@ -1885,10 +1747,9 @@
                             <p class="text-xs text-gray-500 mt-1">Klik untuk detail</p>
                         </div>
                     </div>
-                    
                     <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                        ${masukRecord ? `<div><strong>Duty:</strong> ${masukRecord.dutyAs}</div>` : '<div><strong>Duty:</strong> -</div>'}
-                        ${masukRecord ? `<div><strong>Type:</strong> ${masukRecord.typeOfWork}</div>` : '<div><strong>Type:</strong> -</div>'}
+                        ${masukRecord ? `<div><strong>Duty:</strong> ${masukRecord.dutyAs}</div>` : ''}
+                        ${masukRecord ? `<div><strong>Type:</strong> ${masukRecord.typeOfWork}</div>` : ''}
                         ${pulangRecord && pulangRecord.totalWorkTime ? `<div class="col-span-2"><strong>Total Kerja:</strong> ${pulangRecord.totalWorkTime}</div>` : ''}
                     </div>
                 `;
@@ -1896,61 +1757,37 @@
             });
         }
         
-        // Group absensi by date
         function groupAbsensiByDate(records) {
-            const grouped = {};
-            records.forEach(record => {
+            return records.reduce((acc, record) => {
                 const date = record.date;
-                if (!grouped[date]) {
-                    grouped[date] = [];
-                }
-                grouped[date].push(record);
-            });
-            return grouped;
+                if (!acc[date]) acc[date] = [];
+                acc[date].push(record);
+                return acc;
+            }, {});
         }
         
-        // Show detailed attendance
         function showDetailedAttendance(records) {
             document.getElementById('detailAttendanceModal').classList.remove('hidden');
             
             const masukRecord = records.find(r => r.type === 'masuk');
             const pulangRecord = records.find(r => r.type === 'pulang');
-            
             const content = document.getElementById('detailAttendanceContent');
-            
-            const dateStr = new Date(records[0].date).toLocaleDateString('id-ID', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
+            const dateStr = new Date(records[0].date).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             
             content.innerHTML = `
                 <div class="mb-6">
                     <h4 class="text-lg font-semibold text-gray-900 mb-2">${dateStr}</h4>
                     <div class="flex items-center space-x-4">
-                        ${masukRecord && pulangRecord ? 
-                            '<span class="text-green-600 bg-green-100 px-3 py-1 rounded-full text-sm font-medium">Absensi Lengkap</span>' :
-                            masukRecord ? 
-                                '<span class="text-orange-600 bg-orange-100 px-3 py-1 rounded-full text-sm font-medium">Belum Absen Pulang</span>' :
-                                '<span class="text-red-600 bg-red-100 px-3 py-1 rounded-full text-sm font-medium">Tidak Ada Absen Masuk</span>'
-                        }
+                        ${masukRecord && pulangRecord ? '<span class="text-green-600 bg-green-100 px-3 py-1 rounded-full text-sm font-medium">Absensi Lengkap</span>' : masukRecord ? '<span class="text-orange-600 bg-orange-100 px-3 py-1 rounded-full text-sm font-medium">Belum Absen Pulang</span>' : '<span class="text-red-600 bg-red-100 px-3 py-1 rounded-full text-sm font-medium">Tidak Ada Absen Masuk</span>'}
                     </div>
                 </div>
-                
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     ${masukRecord ? `
                         <div class="bg-green-50 rounded-lg p-6">
                             <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                    <i class="fas fa-sign-in-alt text-green-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-green-800">Absen Masuk</h5>
-                                    <p class="text-green-600 text-sm">${masukRecord.time}</p>
-                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3"><i class="fas fa-sign-in-alt text-green-600 text-xl"></i></div>
+                                <div><h5 class="font-semibold text-green-800">Absen Masuk</h5><p class="text-green-600 text-sm">${masukRecord.time}</p></div>
                             </div>
-                            
                             <div class="space-y-3 text-sm">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div><strong>Nama:</strong> ${masukRecord.name}</div>
@@ -1959,102 +1796,38 @@
                                     <div><strong>Duty As:</strong> ${masukRecord.dutyAs}</div>
                                     <div class="col-span-2"><strong>Type of Work:</strong> ${masukRecord.typeOfWork}</div>
                                 </div>
-                                
                                 <div class="pt-2 border-t border-green-200">
-                                    <div class="mb-2">
-                                        <strong>Status Masuk:</strong>
-                                        <span class="${masukRecord.statusMasuk.includes('Terlambat') ? 'text-red-600' : 'text-green-600'} font-medium">
-                                            ${masukRecord.statusMasuk}
-                                        </span>
-                                    </div>
-                                    ${masukRecord.alasanTerlambat ? `
-                                        <div class="mb-2">
-                                            <strong>Alasan Terlambat:</strong>
-                                            <p class="text-gray-700 mt-1">${masukRecord.alasanTerlambat}</p>
-                                        </div>
-                                    ` : ''}
+                                    <div class="mb-2"><strong>Status Masuk:</strong> <span class="${masukRecord.statusMasuk.includes('Terlambat') ? 'text-red-600' : 'text-green-600'} font-medium">${masukRecord.statusMasuk}</span></div>
+                                    ${masukRecord.alasanTerlambat ? `<div class="mb-2"><strong>Alasan Terlambat:</strong><p class="text-gray-700 mt-1">${masukRecord.alasanTerlambat}</p></div>` : ''}
                                 </div>
-                                
                                 <div class="pt-2 border-t border-green-200">
-                                    <div class="mb-2">
-                                        <strong>Lokasi:</strong>
-                                        <span class="text-blue-600 cursor-pointer" onclick="showLocationOnMap('${masukRecord.latitude}', '${masukRecord.longitude}')" title="Klik untuk lihat di peta">
-                                            ${masukRecord.lokasi}
-                                        </span>
-                                    </div>
-                                    ${masukRecord.fotoMasukData ? `
-                                        <div>
-                                            <strong>Foto Masuk:</strong>
-                                            <img src="${masukRecord.fotoMasukData}" class="w-32 h-32 object-cover rounded-lg mt-2 cursor-pointer" onclick="showImageModal('${masukRecord.fotoMasukData}', 'Foto Masuk')" title="Klik untuk memperbesar">
-                                        </div>
-                                    ` : ''}
+                                    <div class="mb-2"><strong>Lokasi:</strong> <span class="text-blue-600 cursor-pointer" onclick="showLocationOnMap('${masukRecord.latitude}', '${masukRecord.longitude}')">${masukRecord.lokasi}</span></div>
+                                    ${masukRecord.fotoMasukData ? `<div><strong>Foto Masuk:</strong><img src="${masukRecord.fotoMasukData}" class="w-32 h-32 object-cover rounded-lg mt-2 cursor-pointer" onclick="showImageModal('${masukRecord.fotoMasukData}', 'Foto Masuk')"></div>` : ''}
                                 </div>
                             </div>
-                        </div>
-                    ` : `
-                        <div class="bg-gray-50 rounded-lg p-6 flex items-center justify-center">
-                            <div class="text-center text-gray-500">
-                                <i class="fas fa-sign-in-alt text-4xl mb-2"></i>
-                                <p>Tidak ada data absen masuk</p>
-                            </div>
-                        </div>
-                    `}
-                    
+                        </div>` : `<div class="bg-gray-50 rounded-lg p-6 flex items-center justify-center"><div class="text-center text-gray-500"><i class="fas fa-sign-in-alt text-4xl mb-2"></i><p>Tidak ada data absen masuk</p></div></div>`}
                     ${pulangRecord ? `
                         <div class="bg-red-50 rounded-lg p-6">
                             <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                                    <i class="fas fa-sign-out-alt text-red-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-red-800">Absen Pulang</h5>
-                                    <p class="text-red-600 text-sm">${pulangRecord.time}</p>
-                                </div>
+                                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-3"><i class="fas fa-sign-out-alt text-red-600 text-xl"></i></div>
+                                <div><h5 class="font-semibold text-red-800">Absen Pulang</h5><p class="text-red-600 text-sm">${pulangRecord.time}</p></div>
                             </div>
-                            
                             <div class="space-y-3 text-sm">
                                 <div class="grid grid-cols-1 gap-2">
                                     <div><strong>Status Pulang:</strong> <span class="text-blue-600 font-medium">${pulangRecord.statusPulang}</span></div>
                                     <div><strong>Total Waktu Kerja:</strong> <span class="text-green-600 font-medium">${pulangRecord.totalWorkTime}</span></div>
                                     ${pulangRecord.totalOvertime ? `<div><strong>Overtime:</strong> <span class="text-orange-600 font-medium">${pulangRecord.totalOvertime}</span></div>` : ''}
                                 </div>
-                                
+                                <div class="pt-2 border-t border-red-200"><div class="mb-2"><strong>Remark Pekerjaan:</strong><p class="text-gray-700 mt-1">${pulangRecord.remarkPekerjaan}</p></div></div>
                                 <div class="pt-2 border-t border-red-200">
-                                    <div class="mb-2">
-                                        <strong>Remark Pekerjaan:</strong>
-                                        <p class="text-gray-700 mt-1">${pulangRecord.remarkPekerjaan}</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="pt-2 border-t border-red-200">
-                                    <div class="mb-2">
-                                        <strong>Lokasi:</strong>
-                                        <span class="text-blue-600 cursor-pointer" onclick="showLocationOnMap('${pulangRecord.latitude}', '${pulangRecord.longitude}')" title="Klik untuk lihat di peta">
-                                            ${pulangRecord.lokasi}
-                                        </span>
-                                    </div>
-                                    ${pulangRecord.fotoPekerjaanData ? `
-                                        <div>
-                                            <strong>Foto Pekerjaan:</strong>
-                                            <img src="${pulangRecord.fotoPekerjaanData}" class="w-32 h-32 object-cover rounded-lg mt-2 cursor-pointer" onclick="showImageModal('${pulangRecord.fotoPekerjaanData}', 'Foto Pekerjaan')" title="Klik untuk memperbesar">
-                                        </div>
-                                    ` : ''}
+                                    <div class="mb-2"><strong>Lokasi:</strong> <span class="text-blue-600 cursor-pointer" onclick="showLocationOnMap('${pulangRecord.latitude}', '${pulangRecord.longitude}')">${pulangRecord.lokasi}</span></div>
+                                    ${pulangRecord.fotoPekerjaanData ? `<div><strong>Foto Pekerjaan:</strong><img src="${pulangRecord.fotoPekerjaanData}" class="w-32 h-32 object-cover rounded-lg mt-2 cursor-pointer" onclick="showImageModal('${pulangRecord.fotoPekerjaanData}', 'Foto Pekerjaan')"></div>` : ''}
                                 </div>
                             </div>
-                        </div>
-                    ` : `
-                        <div class="bg-gray-50 rounded-lg p-6 flex items-center justify-center">
-                            <div class="text-center text-gray-500">
-                                <i class="fas fa-sign-out-alt text-4xl mb-2"></i>
-                                <p>Belum absen pulang</p>
-                            </div>
-                        </div>
-                    `}
-                </div>
-            `;
+                        </div>` : `<div class="bg-gray-50 rounded-lg p-6 flex items-center justify-center"><div class="text-center text-gray-500"><i class="fas fa-sign-out-alt text-4xl mb-2"></i><p>Belum absen pulang</p></div></div>`}
+                </div>`;
         }
         
-        // Show image modal
         function showImageModal(imageSrc, title) {
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50';
@@ -2062,24 +1835,17 @@
                 <div class="bg-white rounded-xl p-4 max-w-2xl max-h-screen overflow-auto">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold">${title}</h3>
-                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
                     </div>
                     <img src="${imageSrc}" class="w-full h-auto rounded-lg">
-                </div>
-            `;
+                </div>`;
             document.body.appendChild(modal);
         }
         
-        // Show location on map (for history view)
         function showLocationOnMap(lat, lng) {
             if (!lat || !lng) return;
-            
-            // Create a simple popup with map link
             const mapUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}&zoom=16`;
             const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-            
             const popup = document.createElement('div');
             popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50';
             popup.innerHTML = `
@@ -2087,36 +1853,120 @@
                     <h3 class="text-lg font-bold mb-4">Lokasi Absensi</h3>
                     <p class="text-gray-600 mb-4">Koordinat: ${parseFloat(lat).toFixed(6)}, ${parseFloat(lng).toFixed(6)}</p>
                     <div class="space-y-3">
-                        <a href="${mapUrl}" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg transition-colors">
-                            <i class="fas fa-map-marked-alt mr-2"></i>
-                            Buka di OpenStreetMap
-                        </a>
-                        <a href="${googleMapsUrl}" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded-lg transition-colors">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            Buka di Google Maps
-                        </a>
-                        <button onclick="this.closest('.fixed').remove()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg transition-colors">
-                            Tutup
-                        </button>
+                        <a href="${mapUrl}" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg"><i class="fas fa-map-marked-alt mr-2"></i>Buka di OpenStreetMap</a>
+                        <a href="${googleMapsUrl}" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded-lg"><i class="fas fa-map-marker-alt mr-2"></i>Buka di Google Maps</a>
+                        <button onclick="this.closest('.fixed').remove()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg">Tutup</button>
                     </div>
-                </div>
-            `;
-            
+                </div>`;
             document.body.appendChild(popup);
         }
+
+        // --- ADMIN FUNCTIONS ---
+        function loadAllAttendance() {
+            const tableBody = document.getElementById('allAttendanceTableBody');
+            tableBody.innerHTML = ''; // Clear existing data
+
+            const groupedData = groupAbsensiByDate(absensiData);
+
+            Object.keys(groupedData).sort((a,b) => new Date(b) - new Date(a)).forEach(dateKey => {
+                const dailyRecords = groupedData[dateKey];
+                const userGroup = dailyRecords.reduce((acc, record) => {
+                    if (!acc[record.email]) {
+                        acc[record.email] = {};
+                    }
+                    if (record.type === 'masuk') {
+                        acc[record.email].masuk = record;
+                    } else if (record.type === 'pulang') {
+                        acc[record.email].pulang = record;
+                    }
+                    return acc;
+                }, {});
+
+                for (const email in userGroup) {
+                    const { masuk, pulang } = userGroup[email];
+                    const row = document.createElement('tr');
+                    
+                    let statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Tidak Lengkap</span>';
+                    if (masuk && pulang) {
+                        statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Lengkap</span>';
+                    } else if (masuk) {
+                        statusHtml = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Belum Pulang</span>';
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${masuk?.name || pulang?.name}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-500">${new Date(dateKey).toLocaleDateString('id-ID')}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-500">${masuk ? new Date(masuk.timestamp).toLocaleTimeString('id-ID') : '-'}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-500">${pulang ? new Date(pulang.timestamp).toLocaleTimeString('id-ID') : '-'}</div></td>
+                        <td class="px-6 py-4 whitespace-nowrap">${statusHtml}</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+
+        function showAddNewsModal() {
+            document.getElementById('addNewsForm').reset();
+            document.getElementById('newsImagePreview').innerHTML = ''; // Clear preview
+            if (currentUser) {
+                document.getElementById('newsAuthor').value = currentUser.name;
+            }
+            document.getElementById('addNewsModal').classList.remove('hidden');
+        }
+
+        function publishNews(e) {
+            e.preventDefault();
+            const title = document.getElementById('newsTitle').value;
+            const summary = document.getElementById('newsSummary').value;
+            const content = document.getElementById('newsContent').value;
+            const category = document.getElementById('newsCategory').value;
+            const author = document.getElementById('newsAuthor').value;
+            const imageFile = document.getElementById('newsImage').files[0];
+
+            if (!title || !summary || !content || !category || !author) {
+                alert('Semua field berita wajib diisi!');
+                return;
+            }
+
+            const processNews = (imageData = null) => {
+                const newNews = {
+                    id: Date.now(),
+                    title,
+                    summary,
+                    content,
+                    category,
+                    author,
+                    date: new Date().toISOString().split('T')[0],
+                    imageData
+                };
+
+                newsData.push(newNews);
+                localStorage.setItem('newsData', JSON.stringify(newsData));
+
+                alert('Berita berhasil dipublikasikan!');
+                closeModal('addNewsModal');
+            };
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    processNews(e.target.result);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                processNews();
+            }
+        }
         
-        // Close modal when clicking outside
         window.addEventListener('click', function(e) {
             if (e.target.classList.contains('fixed')) {
                 e.target.classList.add('hidden');
             }
         });
         
-        // Initialize functionality when page loads
         window.addEventListener('load', function() {
             console.log('Page loaded, initializing...');
-            loadNewsPreview();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9750702ee2461d1c',t:'MTc1NjE4MDk5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
