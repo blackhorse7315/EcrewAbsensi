@@ -89,7 +89,7 @@
                     <i class="fas fa-users text-3xl text-indigo-600"></i>
                 </div>
                 <h1 class="text-3xl font-bold text-white mb-2">ECrew</h1>
-                <p class="text-white/80">Aplikasi Absensi Modern</p>
+                <p class="text-white/80">Aplikasi Absensi Transwisata</p>
             </div>
             
             <form id="loginForm" class="space-y-6">
@@ -116,7 +116,7 @@
             </form>
             
             <div class="text-center mt-6">
-                <p class="text-white/60 text-sm">© 2024 ECrew Application</p>
+                <p class="text-white/60 text-sm">© 2025 ECrew Application</p>
             </div>
         </div>
     </div>
@@ -324,6 +324,11 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">Kelola Berita</h2>
+            <div id="adminNewsList" class="space-y-4">
+                <!-- Admin news list will be rendered here -->
             </div>
         </main>
     </div>
@@ -1328,19 +1333,22 @@
             }
             
             // Special password check for admin
-            if (employee.role === 'ADMIN' && password === 'admintwa021') {
-                // Admin login successful
-            } else if (employee.role !== 'ADMIN') {
-                const firstName = employee.name.split(' ')[0].toLowerCase();
-                if (password.toLowerCase() !== firstName) {
-                    showError(`Password salah! Gunakan nama depan Anda "${employee.name.split(' ')[0]}" sebagai password.`);
-                    return;
+            let passwordCorrect = false;
+            if (employee.role === 'ADMIN' && employee.email === 'transwisataprimaops@gmail.com') {
+                if (password === 'admintwa021') {
+                    passwordCorrect = true;
                 }
             } else {
+                const firstName = employee.name.split(' ')[0].toLowerCase();
+                if (password.toLowerCase() === firstName) {
+                    passwordCorrect = true;
+                }
+            }
+
+            if (!passwordCorrect) {
                  showError('Password salah!');
                  return;
             }
-
             
             currentUser = employee;
             document.getElementById('loginPage').style.display = 'none';
@@ -1348,6 +1356,7 @@
             if (currentUser.role === 'ADMIN') {
                 document.getElementById('adminDashboardPage').style.display = 'block';
                 loadAllAttendance();
+                loadAdminNewsList();
             } else {
                 document.getElementById('dashboardPage').style.display = 'block';
                 document.getElementById('welcomeUser').textContent = employee.name;
@@ -1515,29 +1524,28 @@
         }
         
         function resetAbsenForm() {
-            if (!confirm('Apakah Anda yakin ingin mereset semua data absensi hari ini? Data yang sudah tersimpan akan dihapus.')) {
+            if (!confirm('Apakah Anda yakin ingin mereset form absen pulang? Data yang sudah Anda isi akan hilang.')) {
                 return;
             }
             
-            const today = new Date().toDateString();
-            absensiData = absensiData.filter(record => 
-                !(record.date === today && record.email === currentUser.email)
-            );
-            localStorage.setItem('absensiData', JSON.stringify(absensiData));
+            // Clear only check-out related fields
+            document.getElementById('remarkPekerjaan').value = '';
+            document.getElementById('fotoPekerjaan').value = ''; // Reset file input
+            document.getElementById('previewFotoPekerjaan').innerHTML = '';
             
-            resetAbsenFormForNewEntry();
+            // Reset pulang location fields
+            isLocationPulangDetected = false;
+            document.getElementById('locationInfoPulang').classList.add('hidden');
+            document.getElementById('lokasiPulang').value = '';
+            document.getElementById('latitudePulang').value = '';
+            document.getElementById('longitudePulang').value = '';
             
-            document.getElementById('btnAbsenMasuk').classList.remove('hidden');
-            document.getElementById('btnAbsenPulang').classList.add('hidden');
-            document.getElementById('btnResetAbsen').classList.add('hidden');
-            document.getElementById('remarkSection').classList.add('hidden');
+            // Re-initialize the pulang map if it exists
+            if (mapPulang) {
+                initializeMapPulang();
+            }
             
-            currentAbsenMasuk = null;
-            
-            checkStatusMasuk();
-            
-            alert('Data absensi hari ini telah direset. Anda dapat melakukan absen masuk kembali.');
-            loadRiwayat();
+            alert('Form absen pulang telah direset.');
         }
         
         function enableFormElements() {
@@ -2146,6 +2154,8 @@
 
                 alert('Berita berhasil dipublikasikan!');
                 closeModal('addNewsModal');
+                loadAdminNewsList(); // Refresh admin news list
+                loadNewsPreview(); // Refresh user news preview
             };
 
             if (imageFile) {
@@ -2157,6 +2167,29 @@
             } else {
                 processNews();
             }
+        }
+
+        function loadAdminNewsList() {
+            const listContainer = document.getElementById('adminNewsList');
+            listContainer.innerHTML = '';
+            [...newsData].reverse().forEach(news => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'bg-white border rounded-lg p-4 flex items-center justify-between';
+                newsItem.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        ${news.imageData ? `<img src="${news.imageData}" class="w-16 h-16 object-cover rounded-md">` : '<div class="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center"><i class="fas fa-image text-gray-400"></i></div>'}
+                        <div>
+                            <p class="font-bold text-gray-800">${news.title}</p>
+                            <p class="text-sm text-gray-500">${news.author} - ${new Date(news.date).toLocaleDateString('id-ID')}</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="showEditNewsModal(${news.id})" class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteNews(${news.id})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                listContainer.appendChild(newsItem);
+            });
         }
         
         window.addEventListener('click', function(e) {
