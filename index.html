@@ -457,6 +457,10 @@
                         <i class="fas fa-sign-out-alt mr-2"></i>
                         Absen Pulang
                     </button>
+                    <button type="button" id="btnResetAbsen" onclick="resetAbsenForm()" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors hidden">
+                        <i class="fas fa-redo mr-2"></i>
+                        Reset Absen
+                    </button>
                     <button type="button" onclick="closeModal('absenModal')" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors">
                         Batal
                     </button>
@@ -1284,8 +1288,9 @@
             if (latestMasuk) {
                 // Show existing check-in data and prepare for check-out
                 fillExistingAbsenData(latestMasuk);
-                document.getElementById('btnAbsenMasuk').classList.remove('hidden');
+                document.getElementById('btnAbsenMasuk').classList.add('hidden');
                 document.getElementById('btnAbsenPulang').classList.remove('hidden');
+                document.getElementById('btnResetAbsen').classList.remove('hidden');
                 document.getElementById('remarkSection').classList.remove('hidden');
                 document.getElementById('statusMasukSection').classList.remove('hidden');
                 
@@ -1301,14 +1306,16 @@
                     document.getElementById('alasanTerlambatSection').classList.remove('hidden');
                     document.getElementById('alasanTerlambat').value = latestMasuk.alasanTerlambat;
                     document.getElementById('alasanTerlambat').readOnly = true;
+                    document.getElementById('alasanTerlambat').classList.add('bg-gray-100', 'cursor-not-allowed');
                 }
                 
                 currentAbsenMasuk = latestMasuk;
             } else {
                 // Show absen masuk form (no check-in yet today)
-                resetAbsenForm();
+                resetAbsenFormForNewEntry();
                 document.getElementById('btnAbsenMasuk').classList.remove('hidden');
                 document.getElementById('btnAbsenPulang').classList.add('hidden');
+                document.getElementById('btnResetAbsen').classList.add('hidden');
                 document.getElementById('remarkSection').classList.add('hidden');
                 checkStatusMasuk();
             }
@@ -1330,6 +1337,12 @@
             document.getElementById('dutyAs').value = absenData.dutyAs || '';
             document.getElementById('typeOfWork').value = absenData.typeOfWork || '';
             
+            // Make check-in fields read-only
+            document.getElementById('dutyAs').readOnly = true;
+            document.getElementById('typeOfWork').readOnly = true;
+            document.getElementById('dutyAs').classList.add('bg-gray-100', 'cursor-not-allowed');
+            document.getElementById('typeOfWork').classList.add('bg-gray-100', 'cursor-not-allowed');
+            
             // Show existing location
             if (absenData.latitude && absenData.longitude) {
                 document.getElementById('latitude').value = absenData.latitude;
@@ -1342,23 +1355,46 @@
                 document.getElementById('addressText').textContent = absenData.lokasi;
                 isLocationDetected = true;
                 
+                // Disable location detection button
+                const locationBtn = document.querySelector('button[onclick="getLocation()"]');
+                if (locationBtn) {
+                    locationBtn.disabled = true;
+                    locationBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    locationBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    locationBtn.innerHTML = '<i class="fas fa-lock mr-2"></i>Lokasi Terkunci';
+                }
+                
                 // Update map after it's initialized
                 setTimeout(() => {
                     if (map) {
                         updateLocation(parseFloat(absenData.latitude), parseFloat(absenData.longitude));
+                        // Disable map interactions
+                        map.off('click');
                     }
                 }, 200);
             }
             
-            // Show existing photo preview if available
+            // Show existing photo preview and disable photo input
             if (absenData.fotoMasukData) {
                 document.getElementById('previewFotoMasuk').innerHTML = 
-                    `<img src="${absenData.fotoMasukData}" class="w-32 h-32 object-cover rounded-lg mx-auto">`;
+                    `<img src="${absenData.fotoMasukData}" class="w-32 h-32 object-cover rounded-lg mx-auto">
+                     <p class="text-xs text-gray-500 mt-2 text-center">Foto sudah diambil</p>`;
+                
+                // Disable photo input
+                const fotoBtn = document.querySelector('button[onclick="document.getElementById(\'fotoMasuk\').click()"]');
+                if (fotoBtn) {
+                    fotoBtn.disabled = true;
+                    fotoBtn.classList.add('text-gray-400', 'cursor-not-allowed');
+                    fotoBtn.classList.remove('text-blue-600', 'hover:text-blue-800');
+                    fotoBtn.innerHTML = '<i class="fas fa-lock text-2xl mb-2"></i><p>Foto Terkunci</p>';
+                }
+                
+                document.getElementById('fotoMasuk').disabled = true;
             }
         }
         
-        // Reset absen form
-        function resetAbsenForm() {
+        // Reset absen form for new entry
+        function resetAbsenFormForNewEntry() {
             document.getElementById('dutyAs').value = '';
             document.getElementById('typeOfWork').value = '';
             document.getElementById('remarkPekerjaan').value = '';
@@ -1379,6 +1415,74 @@
             document.getElementById('longitude').value = '';
             document.getElementById('latitudePulang').value = '';
             document.getElementById('longitudePulang').value = '';
+            
+            // Enable all form elements
+            enableFormElements();
+        }
+        
+        // Reset absen form (for reset button)
+        function resetAbsenForm() {
+            if (!confirm('Apakah Anda yakin ingin mereset semua data absensi hari ini? Data yang sudah tersimpan akan dihapus.')) {
+                return;
+            }
+            
+            // Remove today's attendance records for current user
+            const today = new Date().toDateString();
+            absensiData = absensiData.filter(record => 
+                !(record.date === today && record.email === currentUser.email)
+            );
+            localStorage.setItem('absensiData', JSON.stringify(absensiData));
+            
+            // Reset form to new entry state
+            resetAbsenFormForNewEntry();
+            
+            // Update button visibility
+            document.getElementById('btnAbsenMasuk').classList.remove('hidden');
+            document.getElementById('btnAbsenPulang').classList.add('hidden');
+            document.getElementById('btnResetAbsen').classList.add('hidden');
+            document.getElementById('remarkSection').classList.add('hidden');
+            
+            // Reset current absen masuk
+            currentAbsenMasuk = null;
+            
+            // Check status for new entry
+            checkStatusMasuk();
+            
+            alert('Data absensi hari ini telah direset. Anda dapat melakukan absen masuk kembali.');
+            loadRiwayat();
+        }
+        
+        // Enable form elements
+        function enableFormElements() {
+            // Enable duty and type of work
+            document.getElementById('dutyAs').readOnly = false;
+            document.getElementById('typeOfWork').readOnly = false;
+            document.getElementById('dutyAs').classList.remove('bg-gray-100', 'cursor-not-allowed');
+            document.getElementById('typeOfWork').classList.remove('bg-gray-100', 'cursor-not-allowed');
+            
+            // Enable photo input
+            document.getElementById('fotoMasuk').disabled = false;
+            const fotoBtn = document.querySelector('button[onclick="document.getElementById(\'fotoMasuk\').click()"]');
+            if (fotoBtn) {
+                fotoBtn.disabled = false;
+                fotoBtn.classList.remove('text-gray-400', 'cursor-not-allowed');
+                fotoBtn.classList.add('text-blue-600', 'hover:text-blue-800');
+                fotoBtn.innerHTML = '<i class="fas fa-camera text-2xl mb-2"></i><p>Ambil Foto</p>';
+            }
+            
+            // Enable location button
+            const locationBtn = document.querySelector('button[onclick="getLocation()"]');
+            if (locationBtn) {
+                locationBtn.disabled = false;
+                locationBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                locationBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                locationBtn.innerHTML = '<i class="fas fa-crosshairs mr-2"></i><span id="locationBtnText">Deteksi Lokasi Saya</span>';
+            }
+            
+            // Enable late reason field
+            document.getElementById('alasanTerlambat').readOnly = false;
+            document.getElementById('alasanTerlambat').classList.remove('bg-gray-100', 'cursor-not-allowed');
+            document.getElementById('alasanTerlambat').value = '';
         }
         
         // Submit absen masuk
@@ -2014,5 +2118,5 @@
             loadNewsPreview();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97505ce76390a027',t:'MTc1NjE4MDIwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9750702ee2461d1c',t:'MTc1NjE4MDk5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
