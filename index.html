@@ -8,6 +8,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -302,6 +304,11 @@
                         </button>
                         <button onclick="resetFilters()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg">
                             <i class="fas fa-undo mr-2"></i>Reset
+                        </button>
+                    </div>
+                    <div>
+                        <button onclick="downloadPDF()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
+                            <i class="fas fa-file-pdf mr-2"></i>Unduh PDF
                         </button>
                     </div>
                 </div>
@@ -617,16 +624,17 @@
         </div>
     </div>
 
-    <!-- Add News Modal (for Admin) -->
+    <!-- Add/Edit News Modal (for Admin) -->
     <div id="addNewsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-900">Tambah Berita Baru</h3>
+                <h3 id="newsModalTitle" class="text-xl font-bold text-gray-900">Tambah Berita Baru</h3>
                 <button onclick="closeModal('addNewsModal')" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             <form id="addNewsForm" class="space-y-4">
+                <input type="hidden" id="newsId">
                 <div>
                     <label for="newsTitle" class="block text-sm font-medium text-gray-700">Judul Berita</label>
                     <input type="text" id="newsTitle" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
@@ -668,7 +676,7 @@
                 </div>
                 <div class="flex justify-end space-x-4">
                     <button type="button" onclick="closeModal('addNewsModal')" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">Batal</button>
-                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">Publikasikan</button>
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">Simpan</button>
                 </div>
             </form>
         </div>
@@ -2117,6 +2125,8 @@
         function showAddNewsModal() {
             document.getElementById('addNewsForm').reset();
             document.getElementById('newsImagePreview').innerHTML = ''; // Clear preview
+            document.getElementById('newsId').value = '';
+            document.getElementById('newsModalTitle').textContent = 'Tambah Berita Baru';
             if (currentUser) {
                 document.getElementById('newsAuthor').value = currentUser.name;
             }
@@ -2125,6 +2135,7 @@
 
         function publishNews(e) {
             e.preventDefault();
+            const newsId = document.getElementById('newsId').value;
             const title = document.getElementById('newsTitle').value;
             const summary = document.getElementById('newsSummary').value;
             const content = document.getElementById('newsContent').value;
@@ -2138,24 +2149,25 @@
             }
 
             const processNews = (imageData = null) => {
-                const newNews = {
-                    id: Date.now(),
-                    title,
-                    summary,
-                    content,
-                    category,
-                    author,
-                    date: new Date().toISOString().split('T')[0],
-                    imageData
-                };
-
-                newsData.push(newNews);
+                if (newsId) { // Editing existing news
+                    const newsIndex = newsData.findIndex(n => n.id == newsId);
+                    if (newsIndex > -1) {
+                        newsData[newsIndex] = { ...newsData[newsIndex], title, summary, content, category, author, imageData: imageData === null ? newsData[newsIndex].imageData : imageData };
+                    }
+                } else { // Adding new news
+                    const newNews = {
+                        id: Date.now(), title, summary, content, category, author,
+                        date: new Date().toISOString().split('T')[0],
+                        imageData
+                    };
+                    newsData.push(newNews);
+                }
+                
                 localStorage.setItem('newsData', JSON.stringify(newsData));
-
-                alert('Berita berhasil dipublikasikan!');
+                alert(newsId ? 'Berita berhasil diperbarui!' : 'Berita berhasil dipublikasikan!');
                 closeModal('addNewsModal');
-                loadAdminNewsList(); // Refresh admin news list
-                loadNewsPreview(); // Refresh user news preview
+                loadAdminNewsList();
+                loadNewsPreview();
             };
 
             if (imageFile) {
@@ -2190,6 +2202,34 @@
                 `;
                 listContainer.appendChild(newsItem);
             });
+        }
+
+        function showEditNewsModal(newsId) {
+            const news = newsData.find(n => n.id === newsId);
+            if (!news) return;
+
+            document.getElementById('newsModalTitle').textContent = 'Edit Berita';
+            document.getElementById('newsId').value = news.id;
+            document.getElementById('newsTitle').value = news.title;
+            document.getElementById('newsAuthor').value = news.author;
+            document.getElementById('newsCategory').value = news.category;
+            document.getElementById('newsSummary').value = news.summary;
+            document.getElementById('newsContent').value = news.content;
+            
+            const preview = document.getElementById('newsImagePreview');
+            preview.innerHTML = news.imageData ? `<img src="${news.imageData}" class="w-48 h-auto object-cover rounded-lg mx-auto">` : '';
+            
+            document.getElementById('addNewsModal').classList.remove('hidden');
+        }
+
+        function deleteNews(newsId) {
+            if (confirm('Apakah Anda yakin ingin menghapus berita ini?')) {
+                newsData = newsData.filter(n => n.id !== newsId);
+                localStorage.setItem('newsData', JSON.stringify(newsData));
+                loadAdminNewsList();
+                loadNewsPreview();
+                alert('Berita berhasil dihapus.');
+            }
         }
         
         window.addEventListener('click', function(e) {
