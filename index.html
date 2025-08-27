@@ -376,9 +376,7 @@
                             <div id="locationInfo" class="location-info hidden">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium text-gray-700">Lokasi Terdeteksi:</span>
-                                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
-                                        <i class="fas fa-check-circle mr-1"></i>Valid
-                                    </span>
+                                    <span id="locationStatusMasuk" class="text-xs px-2 py-1 rounded"></span>
                                 </div>
                                 <div class="text-sm text-gray-600" id="addressText"></div>
                                 <div class="text-xs text-gray-500 mt-1" id="coordinatesText"></div>
@@ -392,6 +390,11 @@
                             </button>
                         </div>
                     </div>
+                </div>
+                
+                <div id="outOfRadiusMasukSection" class="hidden">
+                    <label class="block text-sm font-medium text-red-700 mb-2">Anda tidak berada di radius kantor. Berikan keterangan:</label>
+                    <textarea id="alasanLuarRadiusMasuk" class="w-full px-3 py-2 border border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" rows="3" placeholder="Jelaskan alasan Anda berada di luar radius kantor..." required></textarea>
                 </div>
                 
                 <!-- Data Karyawan (Auto-filled) -->
@@ -502,9 +505,7 @@
                             <div id="locationInfoPulang" class="location-info hidden">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium text-gray-700">Lokasi Pulang Terdeteksi:</span>
-                                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
-                                        <i class="fas fa-check-circle mr-1"></i>Valid
-                                    </span>
+                                    <span id="locationStatusPulang" class="text-xs px-2 py-1 rounded"></span>
                                 </div>
                                 <div class="text-sm text-gray-600" id="addressTextPulang"></div>
                                 <div class="text-xs text-gray-500 mt-1" id="coordinatesTextPulang"></div>
@@ -517,6 +518,10 @@
                                 <span id="locationBtnTextPulang">Deteksi Lokasi Pulang</span>
                             </button>
                         </div>
+                    </div>
+                     <div id="outOfRadiusPulangSection" class="hidden">
+                        <label class="block text-sm font-medium text-red-700 mb-2">Anda tidak berada di radius kantor. Berikan keterangan:</label>
+                        <textarea id="alasanLuarRadiusPulang" class="w-full px-3 py-2 border border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" rows="3" placeholder="Jelaskan alasan Anda berada di luar radius kantor..." required></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan Hari Ini</label>
@@ -722,6 +727,10 @@
                             <label class="block text-sm font-medium text-gray-700">Alasan Terlambat</label>
                             <textarea id="editAlasanTerlambat" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
                         </div>
+                         <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Alasan di Luar Radius</label>
+                            <textarea id="editAlasanLuarRadiusMasuk" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
+                        </div>
                     </div>
                 </div>
 
@@ -740,6 +749,10 @@
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-gray-700">Remark Pekerjaan</label>
                             <textarea id="editRemark" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
+                        </div>
+                         <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Alasan di Luar Radius</label>
+                            <textarea id="editAlasanLuarRadiusPulang" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
                         </div>
                     </div>
                 </div>
@@ -2085,11 +2098,13 @@
             document.getElementById('editTimeMasuk').value = masukRecord?.time || '';
             document.getElementById('editStatusMasuk').value = masukRecord?.statusMasuk || '';
             document.getElementById('editAlasanTerlambat').value = masukRecord?.alasanTerlambat || '';
+            document.getElementById('editAlasanLuarRadiusMasuk').value = masukRecord?.alasanLuarRadius || '';
 
             // Populate Pulang
             document.getElementById('editTimePulang').value = pulangRecord?.time || '';
             document.getElementById('editStatusPulang').value = pulangRecord?.statusPulang || '';
             document.getElementById('editRemark').value = pulangRecord?.remarkPekerjaan || '';
+            document.getElementById('editAlasanLuarRadiusPulang').value = pulangRecord?.alasanLuarRadius || '';
 
             document.getElementById('editAttendanceModal').classList.remove('hidden');
         }
@@ -2107,6 +2122,7 @@
                 absensiData[masukIndex].time = document.getElementById('editTimeMasuk').value;
                 absensiData[masukIndex].statusMasuk = document.getElementById('editStatusMasuk').value;
                 absensiData[masukIndex].alasanTerlambat = document.getElementById('editAlasanTerlambat').value;
+                absensiData[masukIndex].alasanLuarRadius = document.getElementById('editAlasanLuarRadiusMasuk').value;
             }
 
             if (pulangIndex > -1) {
@@ -2114,6 +2130,7 @@
                 absensiData[pulangIndex].time = document.getElementById('editTimePulang').value;
                 absensiData[pulangIndex].statusPulang = document.getElementById('editStatusPulang').value;
                 absensiData[pulangIndex].remarkPekerjaan = document.getElementById('editRemark').value;
+                absensiData[pulangIndex].alasanLuarRadius = document.getElementById('editAlasanLuarRadiusPulang').value;
             }
 
             localStorage.setItem('absensiData', JSON.stringify(absensiData));
