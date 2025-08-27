@@ -2281,7 +2281,7 @@
             }
 
             // Prepare table data
-            const head = [['DATE', 'NAME', 'DIVISION', 'POSITION', 'DUTY AS', 'TYPE OF WORK', 'STATUS ABSEN', 'ABSEN MASUK', 'ABSEN PULANG', 'TOTAL TIME', 'REMARKS']];
+            const head = [['DATE', 'DIVISION', 'POSITION', 'DUTY AS', 'TYPE OF WORK', 'STATUS ABSEN', 'ABSEN MASUK', 'ABSEN PULANG', 'TOTAL TIME', 'REMARKS']];
             const body = [];
             const groupedData = groupAbsensiByDate(filteredData);
             const sortedDates = Object.keys(groupedData).sort((a,b) => new Date(b) - new Date(a));
@@ -2299,7 +2299,6 @@
                     const { masuk, pulang } = userGroup[email];
                     body.push([
                         new Date(dateKey).toLocaleDateString('id-ID'),
-                        masuk?.name || pulang?.name || 'N/A',
                         masuk?.division || pulang?.division || 'N/A',
                         masuk?.position || pulang?.position || 'N/A',
                         masuk?.dutyAs || 'N/A',
@@ -2336,6 +2335,7 @@
                 startY: 55,
                 theme: 'grid',
                 styles: { fontSize: 7 },
+                headStyles: { halign: 'center' }
             });
 
             doc.save(`rekap_absen_${new Date().toISOString().split('T')[0]}.pdf`);
