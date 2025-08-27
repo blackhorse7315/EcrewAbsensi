@@ -759,12 +759,34 @@
                         </label>
                         <select id="clockInDutyAs" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
                             <option value="">Pilih tugas...</option>
-                            <option value="Office Hour">Office Hour</option>
-                            <option value="Standby Flight">Standby Flight</option>
-                            <option value="Standby on Call">Standby on Call</option>
-                            <option value="Flight Duty VIP">Flight Duty VIP</option>
-                            <option value="Meeting Out of Office">Meeting Out of Office</option>
-                            <option value="Over Time">Over Time</option>
+                            <option value="Director">Director</option>
+                            <option value="Safety, Quality & Security Manager">Safety, Quality & Security Manager</option>
+                            <option value="Operation Manager">Operation Manager</option>
+                            <option value="Maintenance Manager">Maintenance Manager</option>
+                            <option value="Chief Pilot Fixed Wing">Chief Pilot Fixed Wing</option>
+                            <option value="Chief Pilot Rotary Wing">Chief Pilot Rotary Wing</option>
+                            <option value="Chief Flight Support">Chief Flight Support</option>
+                            <option value="Chief Inspector">Chief Inspector</option>
+                            <option value="Chief Engineer">Chief Engineer</option>
+                            <option value="Chief Finance, Accounting & Staf">Chief Finance, Accounting & Staf</option>
+                            <option value="Chief Engineering">Chief Engineering</option>
+                            <option value="Pilot in Command">Pilot in Command</option>
+                            <option value="Second in Command">Second in Command</option>
+                            <option value="Ground Instructor">Ground Instructor</option>
+                            <option value="Flight Instructor">Flight Instructor</option>
+                            <option value="Company Check Pilot">Company Check Pilot</option>
+                            <option value="Engineer">Engineer</option>
+                            <option value="Line Pilot">Line Pilot</option>
+                            <option value="Cabin Service">Cabin Service</option>
+                            <option value="Student">Student</option>
+                            <option value="Flight Support">Flight Support</option>
+                            <option value="Ground Support">Ground Support</option>
+                            <option value="Technical Representative">Technical Representative</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Logistic">Logistic</option>
+                            <option value="Aviation Security">Aviation Security</option>
+                            <option value="Driver">Driver</option>
                         </select>
                     </div>
                     
@@ -776,9 +798,24 @@
                             <option value="">Pilih jenis pekerjaan...</option>
                             <option value="Office Hour">Office Hour</option>
                             <option value="Standby Flight">Standby Flight</option>
+                            <option value="Standby on Call">Standby on Call</option>
+                            <option value="Pos One Gate">Pos One Gate</option>
+                            <option value="Day Off">Day Off</option>
+                            <option value="Day Off 7 Consecutive Days for Pilot">Day Off 7 Consecutive Days for Pilot</option>
+                            <option value="Flight Duty VIP">Flight Duty VIP</option>
                             <option value="Ferry Flight">Ferry Flight</option>
+                            <option value="PPC Simulator">PPC Simulator</option>
+                            <option value="PPC Aircraft">PPC Aircraft</option>
                             <option value="Test Flight">Test Flight</option>
+                            <option value="Ground Run">Ground Run</option>
                             <option value="Recurrent Training">Recurrent Training</option>
+                            <option value="Recency Flight">Recency Flight</option>
+                            <option value="Meeting Out of Office">Meeting Out of Office</option>
+                            <option value="Medical Examination">Medical Examination</option>
+                            <option value="Annual Leave">Annual Leave</option>
+                            <option value="Sick">Sick</option>
+                            <option value="Technical Representative">Technical Representative</option>
+                            <option value="Aviation Security">Aviation Security</option>
                             <option value="Over Time">Over Time</option>
                         </select>
                     </div>
@@ -1225,12 +1262,12 @@
         }
 
         function getRandomDuty() {
-            const duties = ["Office Hour", "Standby Flight", "Standby on Call", "Flight Duty VIP", "Meeting Out of Office", "Over Time"];
+            const duties = ["Director", "Safety, Quality & Security Manager", "Operation Manager", "Maintenance Manager", "Chief Pilot Fixed Wing", "Chief Pilot Rotary Wing", "Chief Flight Support", "Chief Inspector", "Chief Engineer", "Chief Finance, Accounting & Staf", "Chief Engineering", "Pilot in Command", "Second in Command", "Ground Instructor", "Flight Instructor", "Company Check Pilot", "Engineer", "Line Pilot", "Cabin Service", "Student", "Flight Support", "Ground Support", "Technical Representative", "Engineering", "Staff", "Logistic", "Aviation Security", "Driver"];
             return duties[Math.floor(Math.random() * duties.length)];
         }
 
         function getRandomWorkType() {
-            const workTypes = ["Office Hour", "Standby Flight", "Ferry Flight", "Test Flight", "Recurrent Training", "Over Time"];
+            const workTypes = ["Office Hour", "Standby Flight", "Standby on Call", "Pos One Gate", "Day Off", "Day Off 7 Consecutive Days for Pilot", "Flight Duty VIP", "Ferry Flight", "PPC Simulator", "PPC Aircraft", "Test Flight", "Ground Run", "Recurrent Training", "Recency Flight", "Meeting Out of Office", "Medical Examination", "Annual Leave", "Sick", "Technical Representative", "Aviation Security", "Over Time"];
             return workTypes[Math.floor(Math.random() * workTypes.length)];
         }
 
@@ -3027,5 +3064,5 @@
             alert(`✅ Data berhasil diexport! File: ${filename}-${new Date().toISOString().split('T')[0]}.csv`);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a42a627d43e49',t:'MTc1NjI4Mzk4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a67dcb12a49de',t:'MTc1NjI4NTUxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
