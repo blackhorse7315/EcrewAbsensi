@@ -307,6 +307,24 @@
                 </div>
             </div>
 
+            <!-- Company News & Updates -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6">
+                    <i class="fas fa-newspaper mr-2 text-indigo-600"></i>
+                    Berita & Update Terbaru
+                </h2>
+                
+                <div class="space-y-4" id="companyNews">
+                    <!-- News items will be populated by JavaScript -->
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button onclick="viewAllNews()" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                        Lihat Semua Berita <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
             <!-- Today's Status -->
             <div class="bg-white rounded-xl card-shadow p-6 mb-8">
                 <h2 class="text-xl font-semibold text-gray-800 mb-6">
@@ -1140,6 +1158,55 @@
         let currentUser = null;
         let userType = null;
 
+        // Company news data
+        const companyNews = [
+            {
+                id: 1,
+                title: "Peningkatan Protokol Keselamatan Penerbangan",
+                content: "Mulai bulan ini, Transwisata Prima Operations menerapkan protokol keselamatan baru sesuai standar internasional ICAO untuk meningkatkan keamanan operasional.",
+                date: "2024-01-15",
+                category: "Safety",
+                priority: "high",
+                author: "Safety Department"
+            },
+            {
+                id: 2,
+                title: "Update Sistem Absensi Digital",
+                content: "Sistem ECrew Absensi telah diperbarui dengan fitur foto real-time dan tracking lokasi GPS untuk meningkatkan akurasi pencatatan kehadiran karyawan.",
+                date: "2024-01-12",
+                category: "Technology",
+                priority: "medium",
+                author: "IT Department"
+            },
+            {
+                id: 3,
+                title: "Program Pelatihan Pilot Berkelanjutan",
+                content: "Transwisata meluncurkan program pelatihan berkelanjutan untuk semua pilot dengan simulator terbaru dan instruktur bersertifikat internasional.",
+                date: "2024-01-10",
+                category: "Training",
+                priority: "medium",
+                author: "Training Department"
+            },
+            {
+                id: 4,
+                title: "Maintenance Schedule Januari 2024",
+                content: "Jadwal maintenance rutin untuk semua aircraft telah dirilis. Pastikan koordinasi dengan tim maintenance untuk kelancaran operasional.",
+                date: "2024-01-08",
+                category: "Maintenance",
+                priority: "high",
+                author: "Maintenance Department"
+            },
+            {
+                id: 5,
+                title: "Kebijakan Cuti Tahunan 2024",
+                content: "Pengajuan cuti tahunan untuk tahun 2024 sudah dapat diajukan melalui sistem HRD. Pastikan mengajukan minimal 2 minggu sebelum tanggal cuti.",
+                date: "2024-01-05",
+                category: "HR",
+                priority: "low",
+                author: "Human Resources"
+            }
+        ];
+
         // Employee database with complete data and password (first name)
         const employeeData = {
             "Rustam Suhanda": { email: "managementtranswisata@gmail.com", division: "Staf", position: "President Director", password: "rustam", role: "USER" },
@@ -1434,7 +1501,10 @@
 
         // Initialize user dashboard
         function initializeUserDashboard() {
-            allAttendanceData = generateSampleData();
+            // Initialize with empty data - only real attendance will be shown
+            if (!allAttendanceData || allAttendanceData.length === 0) {
+                allAttendanceData = [];
+            }
             
             // Update user info in header
             document.getElementById('currentUserName').textContent = currentUser.name;
@@ -1461,10 +1531,107 @@
             updateUserStatistics();
             renderUserTodayStatus();
             renderUserAttendanceTable();
+            renderCompanyNews();
             
             // Start real-time clock for user
             updateUserDateTime();
             setInterval(updateUserDateTime, 1000);
+        }
+
+        // Render company news
+        function renderCompanyNews() {
+            const newsContainer = document.getElementById('companyNews');
+            const latestNews = companyNews.slice(0, 3); // Show latest 3 news
+            
+            newsContainer.innerHTML = '';
+            
+            latestNews.forEach(news => {
+                const priorityClass = {
+                    'high': 'bg-red-100 text-red-800 border-red-200',
+                    'medium': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                    'low': 'bg-green-100 text-green-800 border-green-200'
+                };
+                
+                const categoryIcon = {
+                    'Safety': 'fas fa-shield-alt',
+                    'Technology': 'fas fa-laptop-code',
+                    'Training': 'fas fa-graduation-cap',
+                    'Maintenance': 'fas fa-tools',
+                    'HR': 'fas fa-users'
+                };
+                
+                const newsItem = document.createElement('div');
+                newsItem.className = 'border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200 cursor-pointer';
+                newsItem.onclick = () => viewNewsDetail(news.id);
+                
+                newsItem.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="${categoryIcon[news.category] || 'fas fa-info-circle'} text-indigo-600"></i>
+                            <span class="text-sm font-medium text-gray-600">${news.category}</span>
+                            <span class="px-2 py-1 text-xs font-medium rounded-full border ${priorityClass[news.priority]}">
+                                ${news.priority.toUpperCase()}
+                            </span>
+                        </div>
+                        <span class="text-xs text-gray-500">${formatDate(news.date)}</span>
+                    </div>
+                    
+                    <h3 class="font-semibold text-gray-800 mb-2 hover:text-indigo-600 transition duration-200">
+                        ${news.title}
+                    </h3>
+                    
+                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                        ${news.content.substring(0, 120)}${news.content.length > 120 ? '...' : ''}
+                    </p>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-500">
+                            <i class="fas fa-user mr-1"></i>
+                            ${news.author}
+                        </span>
+                        <span class="text-indigo-600 text-sm font-medium hover:text-indigo-800">
+                            Baca Selengkapnya <i class="fas fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
+                `;
+                
+                newsContainer.appendChild(newsItem);
+            });
+        }
+
+        function viewNewsDetail(newsId) {
+            const news = companyNews.find(n => n.id === newsId);
+            if (!news) return;
+            
+            const priorityClass = {
+                'high': 'bg-red-100 text-red-800 border-red-200',
+                'medium': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                'low': 'bg-green-100 text-green-800 border-green-200'
+            };
+            
+            const categoryIcon = {
+                'Safety': 'fas fa-shield-alt',
+                'Technology': 'fas fa-laptop-code',
+                'Training': 'fas fa-graduation-cap',
+                'Maintenance': 'fas fa-tools',
+                'HR': 'fas fa-users'
+            };
+            
+            alert(`📰 ${news.title}\n\n📅 ${formatDate(news.date)}\n👤 ${news.author}\n🏷️ ${news.category} - ${news.priority.toUpperCase()}\n\n📝 ${news.content}\n\n💡 Untuk informasi lebih lanjut, hubungi departemen terkait.`);
+        }
+
+        function viewAllNews() {
+            let newsText = '📰 SEMUA BERITA & UPDATE TRANSWISATA\n\n';
+            
+            companyNews.forEach((news, index) => {
+                newsText += `${index + 1}. ${news.title}\n`;
+                newsText += `   📅 ${formatDate(news.date)} | 👤 ${news.author}\n`;
+                newsText += `   🏷️ ${news.category} - ${news.priority.toUpperCase()}\n`;
+                newsText += `   📝 ${news.content.substring(0, 100)}...\n\n`;
+            });
+            
+            newsText += '💡 Klik pada berita individual untuk membaca selengkapnya.';
+            alert(newsText);
         }
 
         // Initialize admin dashboard
@@ -3064,5 +3231,5 @@
             alert(`✅ Data berhasil diexport! File: ${filename}-${new Date().toISOString().split('T')[0]}.csv`);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a67dcb12a49de',t:'MTc1NjI4NTUxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a939f678444b2',t:'MTc1NjI4NzMwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
