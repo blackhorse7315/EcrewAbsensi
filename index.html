@@ -1403,18 +1403,22 @@
             document.getElementById('currentUserName').textContent = currentUser.name;
             document.getElementById('currentUserDivision').textContent = currentUser.division;
             
-            // Check if user has already clocked in today
+            // Check if user has any active sessions today
             const today = new Date().toISOString().split('T')[0];
-            const todayRecord = allAttendanceData.find(record => 
-                record.nama === currentUser.name && record.tanggal === today
+            const activeRecords = allAttendanceData.filter(record => 
+                record.nama === currentUser.name && record.tanggal === today && record.statusAbsen === 'On Working'
             );
             
             // Update clock out button status
             const clockOutBtn = document.getElementById('clockOutBtn');
-            if (todayRecord && todayRecord.statusAbsen === 'On Working') {
+            if (activeRecords.length > 0) {
                 clockOutBtn.disabled = false;
+                // Update button text to show number of active sessions
+                const buttonText = activeRecords.length === 1 ? 'Pulang' : `Pulang (${activeRecords.length} sesi aktif)`;
+                clockOutBtn.innerHTML = `<i class="fas fa-stop mr-1"></i>${buttonText}`;
             } else {
                 clockOutBtn.disabled = true;
+                clockOutBtn.innerHTML = '<i class="fas fa-stop mr-1"></i>Pulang';
             }
             
             updateUserStatistics();
@@ -2262,13 +2266,16 @@
             }
             
             const today = new Date().toISOString().split('T')[0];
-            const existingRecord = allAttendanceData.find(record => 
+            const existingRecords = allAttendanceData.filter(record => 
                 record.nama === currentUser.name && record.tanggal === today
             );
             
-            if (existingRecord) {
-                alert('⚠️ Anda sudah melakukan absen masuk hari ini!');
-                return;
+            // Check if user wants to add another attendance for the same day
+            if (existingRecords.length > 0) {
+                const confirmMultiple = confirm(`⚠️ Anda sudah melakukan absen masuk ${existingRecords.length}x hari ini!\n\nApakah Anda ingin menambah absen masuk lagi?\n\n✅ Ya - Tambah absen masuk baru\n❌ Tidak - Batal`);
+                if (!confirmMultiple) {
+                    return;
+                }
             }
             
             // Initialize form
@@ -2302,13 +2309,33 @@
             }
             
             const today = new Date().toISOString().split('T')[0];
-            todayClockInRecord = allAttendanceData.find(record => 
-                record.nama === currentUser.name && record.tanggal === today
+            const todayRecords = allAttendanceData.filter(record => 
+                record.nama === currentUser.name && record.tanggal === today && record.statusAbsen === 'On Working'
             );
             
-            if (!todayClockInRecord) {
-                alert('⚠️ Anda belum melakukan absen masuk hari ini!');
+            if (todayRecords.length === 0) {
+                alert('⚠️ Anda belum melakukan absen masuk hari ini atau sudah melakukan absen pulang untuk semua sesi!');
                 return;
+            }
+            
+            // If multiple records, let user choose which one to clock out
+            if (todayRecords.length > 1) {
+                let options = 'Pilih sesi absen yang ingin dipulangkan:\n\n';
+                todayRecords.forEach((record, index) => {
+                    options += `${index + 1}. ${record.keteranganSesi} - Masuk: ${record.jamMasuk}\n`;
+                });
+                
+                const choice = prompt(options + '\nMasukkan nomor pilihan (1-' + todayRecords.length + '):');
+                const choiceIndex = parseInt(choice) - 1;
+                
+                if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= todayRecords.length) {
+                    alert('❌ Pilihan tidak valid!');
+                    return;
+                }
+                
+                todayClockInRecord = todayRecords[choiceIndex];
+            } else {
+                todayClockInRecord = todayRecords[0];
             }
             
             // Set current time
@@ -2686,8 +2713,14 @@
             const today = new Date().toISOString().split('T')[0];
             const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             
+            // Generate unique ID for multiple attendance records per day
+            const existingRecords = allAttendanceData.filter(record => 
+                record.nama === currentUser.name && record.tanggal === today
+            );
+            const recordNumber = existingRecords.length + 1;
+            
             const newRecord = {
-                id: `${today}-${currentUser.name.replace(/\s+/g, '-')}`,
+                id: `${today}-${currentUser.name.replace(/\s+/g, '-')}-${recordNumber}`,
                 nama: currentUser.name,
                 email: currentUser.email,
                 divisi: currentUser.division,
@@ -2712,7 +2745,9 @@
                              document.getElementById('clockInRadiusTitle').textContent.includes('Dalam') ? 'dalam' : 'luar',
                 alasanLuarRadius: document.getElementById('clockInReasonText').value,
                 alasanTerlambat: document.getElementById('clockInLateReasonText').value,
-                statusAbsen: 'On Working'
+                statusAbsen: 'On Working',
+                sesiAbsen: recordNumber, // Track which session this is (1st, 2nd, etc.)
+                keteranganSesi: recordNumber === 1 ? 'Absen Masuk Pertama' : `Absen Masuk Ke-${recordNumber}`
             };
             
             allAttendanceData.unshift(newRecord);
@@ -2720,11 +2755,17 @@
             renderUserTodayStatus();
             renderUserAttendanceTable();
             
-            // Enable clock out button
-            document.getElementById('clockOutBtn').disabled = false;
+            // Update clock out button status
+            const activeRecords = allAttendanceData.filter(record => 
+                record.nama === currentUser.name && record.tanggal === today && record.statusAbsen === 'On Working'
+            );
+            const clockOutBtn = document.getElementById('clockOutBtn');
+            clockOutBtn.disabled = false;
+            const buttonText = activeRecords.length === 1 ? 'Pulang' : `Pulang (${activeRecords.length} sesi aktif)`;
+            clockOutBtn.innerHTML = `<i class="fas fa-stop mr-1"></i>${buttonText}`;
             
             closeClockInModal();
-            alert(`✅ Berhasil absen masuk!\n\nWaktu: ${timeStr}\nStatus: ${newRecord.status}\nLokasi: ${newRecord.radiusStatus === 'dalam' ? 'Dalam radius kantor' : 'Luar radius kantor'}`);
+            alert(`✅ Berhasil absen masuk!\n\n${newRecord.keteranganSesi}\nWaktu: ${timeStr}\nStatus: ${newRecord.status}\nLokasi: ${newRecord.radiusStatus === 'dalam' ? 'Dalam radius kantor' : 'Luar radius kantor'}`);
         });
 
         document.getElementById('clockOutForm').addEventListener('submit', function(e) {
@@ -2775,11 +2816,24 @@
             renderUserTodayStatus();
             renderUserAttendanceTable();
             
-            // Disable clock out button
-            document.getElementById('clockOutBtn').disabled = true;
+            // Update clock out button status
+            const today = new Date().toISOString().split('T')[0];
+            const remainingActiveRecords = allAttendanceData.filter(record => 
+                record.nama === currentUser.name && record.tanggal === today && record.statusAbsen === 'On Working'
+            );
+            const clockOutBtn = document.getElementById('clockOutBtn');
+            
+            if (remainingActiveRecords.length > 0) {
+                clockOutBtn.disabled = false;
+                const buttonText = remainingActiveRecords.length === 1 ? 'Pulang' : `Pulang (${remainingActiveRecords.length} sesi aktif)`;
+                clockOutBtn.innerHTML = `<i class="fas fa-stop mr-1"></i>${buttonText}`;
+            } else {
+                clockOutBtn.disabled = true;
+                clockOutBtn.innerHTML = '<i class="fas fa-stop mr-1"></i>Pulang';
+            }
             
             closeClockOutModal();
-            alert(`✅ Berhasil absen pulang!\n\nWaktu: ${timeStr}\nTotal Kerja: ${todayClockInRecord.totalKerja}\nStatus: ${todayClockInRecord.status}`);
+            alert(`✅ Berhasil absen pulang!\n\n${todayClockInRecord.keteranganSesi}\nWaktu: ${timeStr}\nTotal Kerja: ${todayClockInRecord.totalKerja}\nStatus: ${todayClockInRecord.status}`);
         });
 
         // User Dashboard Functions
@@ -2812,20 +2866,34 @@
 
         function renderUserTodayStatus() {
             const today = new Date().toISOString().split('T')[0];
-            const todayRecord = allAttendanceData.find(record => 
+            const todayRecords = allAttendanceData.filter(record => 
                 record.nama === currentUser.name && record.tanggal === today
             );
             
             const statusContainer = document.getElementById('todayStatus');
             
-            if (todayRecord) {
+            if (todayRecords.length > 0) {
+                const activeRecords = todayRecords.filter(record => record.statusAbsen === 'On Working');
+                const completedRecords = todayRecords.filter(record => record.statusAbsen === 'Pulang');
+                
+                // Calculate total work time for completed sessions
+                let totalMinutes = 0;
+                completedRecords.forEach(record => {
+                    const [hours, minutes] = record.totalKerja.split('j ')[0] === record.totalKerja ? 
+                        [parseInt(record.totalKerja.split('j')[0]), parseInt(record.totalKerja.split('j ')[1]?.split('m')[0] || 0)] :
+                        [parseInt(record.totalKerja.split('j')[0]), parseInt(record.totalKerja.split('j ')[1]?.split('m')[0] || 0)];
+                    totalMinutes += (hours * 60) + minutes;
+                });
+                const totalHours = Math.floor(totalMinutes / 60);
+                const remainingMinutes = totalMinutes % 60;
                 statusContainer.innerHTML = `
                     <div class="bg-green-50 border border-green-200 rounded-lg p-4">
                         <div class="flex items-center">
                             <i class="fas fa-check-circle text-green-600 text-2xl mr-3"></i>
                             <div>
-                                <h3 class="font-semibold text-green-800">Sudah Absen</h3>
-                                <p class="text-green-600 text-sm">Masuk: ${todayRecord.jamMasuk}</p>
+                                <h3 class="font-semibold text-green-800">Absen Hari Ini</h3>
+                                <p class="text-green-600 text-sm">${todayRecords.length} sesi absen</p>
+                                <p class="text-green-600 text-xs">${activeRecords.length} aktif, ${completedRecords.length} selesai</p>
                             </div>
                         </div>
                     </div>
@@ -2834,8 +2902,11 @@
                         <div class="flex items-center">
                             <i class="fas fa-clock text-blue-600 text-2xl mr-3"></i>
                             <div>
-                                <h3 class="font-semibold text-blue-800">Status Hari Ini</h3>
-                                <span class="status-badge ${getStatusClass(todayRecord.status)}">${todayRecord.status}</span>
+                                <h3 class="font-semibold text-blue-800">Status Terkini</h3>
+                                ${activeRecords.length > 0 ? 
+                                    `<span class="status-badge status-tepat-waktu">Sedang Bekerja</span>` :
+                                    `<span class="status-badge status-pulang-cepat">Sudah Pulang</span>`
+                                }
                             </div>
                         </div>
                     </div>
@@ -2844,8 +2915,11 @@
                         <div class="flex items-center">
                             <i class="fas fa-hourglass-half text-yellow-600 text-2xl mr-3"></i>
                             <div>
-                                <h3 class="font-semibold text-yellow-800">Total Kerja</h3>
-                                <p class="text-yellow-600 text-sm">${todayRecord.totalKerja}</p>
+                                <h3 class="font-semibold text-yellow-800">Total Kerja Hari Ini</h3>
+                                <p class="text-yellow-600 text-sm">${totalHours}j ${remainingMinutes}m</p>
+                                ${activeRecords.length > 0 ? 
+                                    `<p class="text-yellow-600 text-xs">+ ${activeRecords.length} sesi berjalan</p>` : ''
+                                }
                             </div>
                         </div>
                     </div>
@@ -2909,9 +2983,15 @@
                     row.className = 'border-b border-gray-100 hover:bg-gray-50';
                     
                     row.innerHTML = `
-                        <td class="py-3 px-4 text-gray-800">${formatDate(record.tanggal)}</td>
+                        <td class="py-3 px-4 text-gray-800">
+                            ${formatDate(record.tanggal)}
+                            ${record.sesiAbsen ? `<br><span class="text-xs text-blue-600">${record.keteranganSesi}</span>` : ''}
+                        </td>
                         <td class="py-3 px-4 text-gray-600 font-mono">${record.jamMasuk}</td>
-                        <td class="py-3 px-4 text-gray-600 font-mono">${record.jamPulang}</td>
+                        <td class="py-3 px-4 text-gray-600 font-mono">
+                            ${record.jamPulang}
+                            ${record.statusAbsen === 'On Working' ? '<br><span class="text-xs text-orange-600">Sedang Bekerja</span>' : ''}
+                        </td>
                         <td class="py-3 px-4 text-gray-600 font-semibold">${record.totalKerja}</td>
                         <td class="py-3 px-4">
                             <span class="status-badge ${getStatusClass(record.status)}">${record.status}</span>
@@ -2947,5 +3027,5 @@
             alert(`✅ Data berhasil diexport! File: ${filename}-${new Date().toISOString().split('T')[0]}.csv`);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a0b27351b6bc1',t:'MTc1NjI4MTcxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a42a627d43e49',t:'MTc1NjI4Mzk4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
