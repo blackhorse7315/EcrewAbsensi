@@ -254,7 +254,7 @@
                         <div>
                             <h3 class="text-lg font-semibold text-gray-800">Clock In</h3>
                             <p class="text-gray-600 text-sm">Absen masuk kerja</p>
-                            <button onclick="openClockInModal()" class="mt-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition duration-200">
+                            <button onclick="openClockInModal()" class="mt-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition duration-200 cursor-pointer">
                                 <i class="fas fa-play mr-1"></i>Masuk
                             </button>
                         </div>
@@ -269,7 +269,7 @@
                         <div>
                             <h3 class="text-lg font-semibold text-gray-800">Clock Out</h3>
                             <p class="text-gray-600 text-sm">Absen pulang kerja</p>
-                            <button onclick="openClockOutModal()" id="clockOutBtn" class="mt-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            <button onclick="openClockOutModal()" id="clockOutBtn" class="mt-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer">
                                 <i class="fas fa-stop mr-1"></i>Pulang
                             </button>
                         </div>
@@ -2251,8 +2251,16 @@
         let workPhotoData = null;
         let todayClockInRecord = null;
 
-        // Enhanced Clock In/Out Functions
+        // Enhanced Clock In/Out Functions (moved before initialization)
         function openClockInModal() {
+            console.log('Clock in modal opened');
+            console.log('Current user:', currentUser);
+            
+            if (!currentUser) {
+                alert('❌ User tidak ditemukan. Silakan login ulang.');
+                return;
+            }
+            
             const today = new Date().toISOString().split('T')[0];
             const existingRecord = allAttendanceData.find(record => 
                 record.nama === currentUser.name && record.tanggal === today
@@ -2285,6 +2293,14 @@
         }
 
         function openClockOutModal() {
+            console.log('Clock out modal opened');
+            console.log('Current user:', currentUser);
+            
+            if (!currentUser) {
+                alert('❌ User tidak ditemukan. Silakan login ulang.');
+                return;
+            }
+            
             const today = new Date().toISOString().split('T')[0];
             todayClockInRecord = allAttendanceData.find(record => 
                 record.nama === currentUser.name && record.tanggal === today
@@ -2931,5 +2947,5 @@
             alert(`✅ Data berhasil diexport! File: ${filename}-${new Date().toISOString().split('T')[0]}.csv`);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a02be04c96bc1',t:'MTc1NjI4MTM2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a0b27351b6bc1',t:'MTc1NjI4MTcxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
