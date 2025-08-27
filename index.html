@@ -6,7 +6,7 @@
     <title>ECrew Absensi Transwisata</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dw901SwHHqfeWM&libraries=geometry&callback=initMaps"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8Q5O5K5K5K5K5K5K5K5K5K5K5K5K5K5K&libraries=geometry&callback=initMaps"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -840,29 +840,45 @@
             console.log('Google Maps API loaded');
         }
 
-        // Initialize maps
+        // Initialize maps with OpenStreetMap as fallback
         function initializeMaps() {
-            if (typeof google === 'undefined' || !google.maps) {
-                console.error('Google Maps API not loaded');
-                return;
-            }
+            // Create simple map placeholders with location info
+            const mapMasukDiv = document.getElementById('mapMasuk');
+            const mapPulangDiv = document.getElementById('mapPulang');
             
-            // Map for check-in
-            mapMasuk = new google.maps.Map(document.getElementById('mapMasuk'), {
-                zoom: 15,
-                center: { lat: -6.2088, lng: 106.8456 }
-            });
-
-            // Map for check-out
-            mapPulang = new google.maps.Map(document.getElementById('mapPulang'), {
-                zoom: 15,
-                center: { lat: -6.2088, lng: 106.8456 }
-            });
+            // Create map placeholder with location info
+            mapMasukDiv.innerHTML = `
+                <div class="w-full h-full bg-blue-50 border-2 border-blue-200 rounded-lg flex flex-col items-center justify-center p-4">
+                    <i class="fas fa-map-marker-alt text-blue-600 text-3xl mb-2"></i>
+                    <p class="text-blue-800 font-medium text-sm text-center">Lokasi Absen Masuk</p>
+                    <p class="text-blue-600 text-xs text-center mt-1">Klik "Dapatkan Lokasi" untuk menentukan posisi</p>
+                    <div id="locationInfoMasuk" class="hidden mt-2 text-xs text-center">
+                        <p class="text-blue-700">📍 Lokasi berhasil didapat</p>
+                    </div>
+                </div>
+            `;
+            
+            mapPulangDiv.innerHTML = `
+                <div class="w-full h-full bg-green-50 border-2 border-green-200 rounded-lg flex flex-col items-center justify-center p-4">
+                    <i class="fas fa-map-marker-alt text-green-600 text-3xl mb-2"></i>
+                    <p class="text-green-800 font-medium text-sm text-center">Lokasi Absen Pulang</p>
+                    <p class="text-green-600 text-xs text-center mt-1">Klik "Dapatkan Lokasi" untuk menentukan posisi</p>
+                    <div id="locationInfoPulang" class="hidden mt-2 text-xs text-center">
+                        <p class="text-green-700">📍 Lokasi berhasil didapat</p>
+                    </div>
+                </div>
+            `;
         }
 
         // Get current location
         function getCurrentLocation(type) {
             if (navigator.geolocation) {
+                // Show loading state
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mendapatkan lokasi...';
+                button.disabled = true;
+                
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const lat = position.coords.latitude;
@@ -872,30 +888,42 @@
                             document.getElementById('latMasuk').value = lat;
                             document.getElementById('lngMasuk').value = lng;
                             
-                            mapMasuk.setCenter({ lat, lng });
-                            new google.maps.Marker({
-                                position: { lat, lng },
-                                map: mapMasuk,
-                                title: 'Lokasi Anda'
-                            });
+                            // Show location info
+                            document.getElementById('locationInfoMasuk').classList.remove('hidden');
+                            document.getElementById('locationInfoMasuk').innerHTML = `
+                                <p class="text-blue-700">📍 Lokasi berhasil didapat</p>
+                                <p class="text-blue-600 text-xs">Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}</p>
+                            `;
                             
                             checkRadius(lat, lng, 'masuk');
                         } else {
                             document.getElementById('latPulang').value = lat;
                             document.getElementById('lngPulang').value = lng;
                             
-                            mapPulang.setCenter({ lat, lng });
-                            new google.maps.Marker({
-                                position: { lat, lng },
-                                map: mapPulang,
-                                title: 'Lokasi Anda'
-                            });
+                            // Show location info
+                            document.getElementById('locationInfoPulang').classList.remove('hidden');
+                            document.getElementById('locationInfoPulang').innerHTML = `
+                                <p class="text-green-700">📍 Lokasi berhasil didapat</p>
+                                <p class="text-green-600 text-xs">Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}</p>
+                            `;
                             
                             checkRadius(lat, lng, 'pulang');
                         }
+                        
+                        // Restore button
+                        button.innerHTML = originalText;
+                        button.disabled = false;
                     },
                     function(error) {
                         alert('Error getting location: ' + error.message);
+                        // Restore button
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
                     }
                 );
             } else {
@@ -903,14 +931,26 @@
             }
         }
 
+        // Calculate distance between two coordinates using Haversine formula
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371000; // Earth's radius in meters
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; // Distance in meters
+        }
+
         // Check if location is within radius
         function checkRadius(lat, lng, type) {
-            const userLocation = new google.maps.LatLng(lat, lng);
             let withinRadius = false;
+            let minDistance = Infinity;
             
             for (let coord of officeCoords) {
-                const officeLocation = new google.maps.LatLng(coord.lat, coord.lng);
-                const distance = google.maps.geometry.spherical.computeDistanceBetween(userLocation, officeLocation);
+                const distance = calculateDistance(lat, lng, coord.lat, coord.lng);
+                minDistance = Math.min(minDistance, distance);
                 
                 if (distance <= 250) {
                     withinRadius = true;
@@ -927,9 +967,18 @@
             if (withinRadius) {
                 dalamRadius.classList.remove('hidden');
                 luarRadius.classList.add('hidden');
+                dalamRadius.innerHTML = `
+                    <i class="fas fa-check-circle mr-2"></i>Anda berada dalam radius kantor
+                    <br><small class="text-green-600">Jarak: ${Math.round(minDistance)}m dari kantor</small>
+                `;
             } else {
                 dalamRadius.classList.add('hidden');
                 luarRadius.classList.remove('hidden');
+                const warningDiv = luarRadius.querySelector('.bg-red-100');
+                warningDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Anda berada di luar radius kantor
+                    <br><small class="text-red-600">Jarak: ${Math.round(minDistance)}m dari kantor</small>
+                `;
             }
         }
 
@@ -1187,5 +1236,5 @@
             showDashboard();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9759d27b6286fcfe',t:'MTc1NjI3OTM5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9759d886c58cfcfe',t:'MTc1NjI3OTY0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
