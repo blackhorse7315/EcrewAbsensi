@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECrew Absensi Transwisata</title>
+    <title>ECrew Absensi Transwisata - Smart Login System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8Q5O5K5K5K5K5K5K5K5K5K5K5K5K5K5K&libraries=geometry&callback=initMaps"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -23,7 +23,7 @@
         }
         
         .running-text {
-            animation: scroll 20s linear infinite;
+            animation: scroll 25s linear infinite;
             white-space: nowrap;
         }
         
@@ -49,29 +49,104 @@
             transform: scale(1.02);
         }
 
-        .map-container {
-            height: 200px;
-            width: 100%;
-            border-radius: 8px;
+        .table-row {
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
 
-        .camera-preview {
-            width: 100%;
-            height: 200px;
-            background: #f3f4f6;
-            border: 2px dashed #d1d5db;
-            border-radius: 8px;
-            display: flex;
+        .table-row:hover {
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .editable-field {
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .editable-field:hover {
+            border-color: #cbd5e0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .editable-field:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .status-badge {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            flex-direction: column;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .photo-preview {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
+        .status-tepat-waktu {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-terlambat {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .status-pulang-cepat {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fed7aa;
+        }
+
+        .status-overtime {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-tidak-hadir {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .modal-overlay {
+            backdrop-filter: blur(4px);
+        }
+
+        .search-highlight {
+            background-color: #fef08a;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+
+        .loading-spinner {
+            border: 2px solid #f3f4f6;
+            border-top: 2px solid #4f46e5;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
         }
     </style>
 </head>
@@ -84,7 +159,7 @@
                     <i class="fas fa-users text-indigo-600 text-3xl"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800 mb-2">ECrew Absensi</h1>
-                <p class="text-gray-600">Transwisata</p>
+                <p class="text-gray-600">Transwisata Prima Operations</p>
             </div>
             
             <form id="loginForm" class="space-y-6">
@@ -92,7 +167,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <div class="relative">
                         <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="email" id="username" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Masukkan email" required>
+                        <input type="email" id="loginEmail" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Masukkan email Anda" required>
                     </div>
                 </div>
                 
@@ -100,41 +175,59 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
                     <div class="relative">
                         <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="password" id="password" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Masukkan password" required>
+                        <input type="password" id="loginPassword" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Masukkan password" required>
                     </div>
                 </div>
                 
                 <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-200 hover-scale">
-                    Masuk
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    <span id="loginButtonText">Masuk ke Sistem</span>
                 </button>
             </form>
+            
+
         </div>
     </div>
 
-    <!-- Dashboard Page -->
-    <div id="dashboardPage" class="hidden min-h-screen bg-gray-50">
+    <!-- User Dashboard -->
+    <div id="userDashboard" class="hidden min-h-screen bg-gray-50">
         <!-- Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200">
+        <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
-                        <div class="bg-indigo-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-users text-indigo-600 text-lg"></i>
+                        <div class="bg-blue-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-blue-600 text-lg"></i>
                         </div>
-                        <h1 class="text-xl font-semibold text-gray-800">ECrew Absensi</h1>
+                        <div>
+                            <h1 class="text-xl font-semibold text-gray-800">Dashboard Karyawan</h1>
+                            <p class="text-xs text-gray-500">Transwisata Prima Operations</p>
+                        </div>
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="bg-indigo-100 w-10 h-10 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-indigo-600"></i>
+                        <div class="hidden md:flex items-center space-x-4">
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span id="userCurrentTime"></span>
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800" id="userName">John Doe</p>
-                                <p class="text-xs text-gray-500">Karyawan</p>
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-calendar mr-1"></i>
+                                <span id="userCurrentDate"></span>
                             </div>
                         </div>
-                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700 transition duration-200">
+                        
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <div class="hidden md:block">
+                                <p class="text-sm font-medium text-gray-800" id="currentUserName">Karyawan</p>
+                                <p class="text-xs text-gray-500" id="currentUserDivision">Division</p>
+                            </div>
+                        </div>
+                        
+                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700 transition duration-200 p-2 rounded-lg hover:bg-gray-100">
                             <i class="fas fa-sign-out-alt text-lg"></i>
                         </button>
                     </div>
@@ -143,1098 +236,1877 @@
         </header>
 
         <!-- Running Text -->
-        <div class="bg-indigo-600 text-white py-2 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 overflow-hidden">
             <div class="running-text text-sm font-medium">
-                🎉 Selamat datang di ECrew Application - Sistem Absensi Digital Transwisata 🎉
+                👋 Selamat datang di ECrew Absensi - Kelola kehadiran Anda dengan mudah dan efisien 👋
             </div>
         </div>
 
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-xl card-shadow p-6 hover-scale cursor-pointer" onclick="showTambahAbsen()">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
                     <div class="flex items-center">
                         <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-plus text-green-600 text-xl"></i>
+                            <i class="fas fa-clock text-green-600 text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800">Tambah Absen</h3>
-                            <p class="text-gray-600 text-sm">Catat kehadiran hari ini</p>
+                            <h3 class="text-lg font-semibold text-gray-800">Clock In</h3>
+                            <p class="text-gray-600 text-sm">Absen masuk kerja</p>
+                            <button onclick="clockIn()" class="mt-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition duration-200">
+                                <i class="fas fa-play mr-1"></i>Masuk
+                            </button>
                         </div>
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-xl card-shadow p-6 hover-scale cursor-pointer" onclick="showRiwayatAbsen()">
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
+                    <div class="flex items-center">
+                        <div class="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-stop text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Clock Out</h3>
+                            <p class="text-gray-600 text-sm">Absen pulang kerja</p>
+                            <button onclick="clockOut()" class="mt-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition duration-200">
+                                <i class="fas fa-stop mr-1"></i>Pulang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
                     <div class="flex items-center">
                         <div class="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-history text-blue-600 text-xl"></i>
+                            <i class="fas fa-calendar-check text-blue-600 text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800">Riwayat Absen</h3>
-                            <p class="text-gray-600 text-sm">Lihat data kehadiran</p>
+                            <h3 class="text-lg font-semibold text-gray-800" id="userTotalHadir">0</h3>
+                            <p class="text-gray-600 text-sm">Hari hadir bulan ini</p>
+                            <p class="text-xs text-blue-600 mt-1">
+                                <i class="fas fa-chart-line mr-1"></i>Tracking otomatis
+                            </p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
                     <div class="flex items-center">
-                        <div class="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-chart-bar text-purple-600 text-xl"></i>
+                        <div class="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-hourglass-half text-yellow-600 text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800">Statistik</h3>
-                            <p class="text-gray-600 text-sm">85% kehadiran bulan ini</p>
+                            <h3 class="text-lg font-semibold text-gray-800" id="userTotalJam">0j 0m</h3>
+                            <p class="text-gray-600 text-sm">Total jam kerja</p>
+                            <p class="text-xs text-yellow-600 mt-1">
+                                <i class="fas fa-clock mr-1"></i>Bulan ini
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Content Area -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Content -->
-                <div class="lg:col-span-2">
-                    <!-- Dashboard Overview -->
-                    <div id="dashboardOverview" class="bg-white rounded-xl card-shadow p-6">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-6">Dashboard Overview</h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-gradient-to-r from-green-400 to-green-600 rounded-lg p-6 text-white">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-green-100">Hari Ini</p>
-                                        <p class="text-2xl font-bold">Hadir</p>
-                                        <p class="text-sm text-green-100">08:15 WIB</p>
-                                    </div>
-                                    <i class="fas fa-check-circle text-3xl text-green-200"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg p-6 text-white">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-blue-100">Bulan Ini</p>
-                                        <p class="text-2xl font-bold">22 Hari</p>
-                                        <p class="text-sm text-blue-100">Total kehadiran</p>
-                                    </div>
-                                    <i class="fas fa-calendar-check text-3xl text-blue-200"></i>
-                                </div>
-                            </div>
+            <!-- Today's Status -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6">
+                    <i class="fas fa-calendar-day mr-2 text-blue-600"></i>
+                    Status Hari Ini
+                </h2>
+                
+                <div id="todayStatus" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Recent Attendance -->
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-history mr-2 text-indigo-600"></i>
+                        Riwayat Absensi Terbaru
+                    </h2>
+                    <button onclick="viewAllAttendance()" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                        Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200 bg-gray-50">
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Tanggal</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Jam Masuk</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Jam Pulang</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Total Kerja</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userAttendanceTable">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden min-h-screen bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="bg-indigo-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-user-shield text-indigo-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-semibold text-gray-800">Admin Dashboard</h1>
+                            <p class="text-xs text-gray-500">Transwisata Prima Operations</p>
                         </div>
                     </div>
-
-                    <!-- Tambah Absen Form -->
-                    <div id="tambahAbsenForm" class="hidden bg-white rounded-xl card-shadow p-6 fade-in">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xl font-semibold text-gray-800">Form Absensi Lengkap</h2>
-                            <button onclick="showDashboard()" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times text-xl"></i>
-                            </button>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden md:flex items-center space-x-4">
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span id="currentTime"></span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-calendar mr-1"></i>
+                                <span id="currentDate"></span>
+                            </div>
                         </div>
                         
-                        <form id="absenForm" class="space-y-6">
-                            <!-- Personal Information -->
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-800 mb-4">Informasi Personal</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                                        <input type="text" id="namaLengkap" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                        <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
-                                        <input type="text" id="divisi" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required readonly>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Posisi</label>
-                                        <input type="text" id="posisi" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Bertugas Sebagai</label>
-                                        <select id="dutyas" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-                                            <option value="">Pilih Tugas</option>
-                                            <option value="Director">Director</option>
-                                            <option value="Safety, Quality & Security Manager">Safety, Quality & Security Manager</option>
-                                            <option value="Operation Manager">Operation Manager</option>
-                                            <option value="Maintenance Manager">Maintenance Manager</option>
-                                            <option value="Chief Pilot Fixed Wing">Chief Pilot Fixed Wing</option>
-                                            <option value="Chief Pilot Rotary Wing">Chief Pilot Rotary Wing</option>
-                                            <option value="Chief Flight Support">Chief Flight Support</option>
-                                            <option value="Chief Inspector">Chief Inspector</option>
-                                            <option value="Chief Engineer">Chief Engineer</option>
-                                            <option value="Chief Finance, Accounting & Staf">Chief Finance, Accounting & Staf</option>
-                                            <option value="Chief Engineering">Chief Engineering</option>
-                                            <option value="Pilot in Command">Pilot in Command</option>
-                                            <option value="Second in Command">Second in Command</option>
-                                            <option value="Ground Instructor">Ground Instructor</option>
-                                            <option value="Flight Instructor">Flight Instructor</option>
-                                            <option value="Company Check Pilot">Company Check Pilot</option>
-                                            <option value="Engineer">Engineer</option>
-                                            <option value="Line Pilot">Line Pilot</option>
-                                            <option value="Cabin Service">Cabin Service</option>
-                                            <option value="Student">Student</option>
-                                            <option value="Flight Support">Flight Support</option>
-                                            <option value="Ground Support">Ground Support</option>
-                                            <option value="Technical Representative">Technical Representative</option>
-                                            <option value="Engineering">Engineering</option>
-                                            <option value="Staff">Staff</option>
-                                            <option value="Logistic">Logistic</option>
-                                            <option value="Aviation Security">Aviation Security</option>
-                                            <option value="Driver">Driver</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Pekerjaan</label>
-                                        <select id="typeOfWork" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-                                            <option value="">Pilih Jenis</option>
-                                            <option value="Office Hour">Office Hour</option>
-                                            <option value="Standby Flight">Standby Flight</option>
-                                            <option value="Standby on Call">Standby on Call</option>
-                                            <option value="Pos One Gate">Pos One Gate</option>
-                                            <option value="Day Off">Day Off</option>
-                                            <option value="Day Off 7 Consecutive Days for Pilot">Day Off 7 Consecutive Days for Pilot</option>
-                                            <option value="Flight Duty VIP">Flight Duty VIP</option>
-                                            <option value="Ferry Flight">Ferry Flight</option>
-                                            <option value="PPC Simulator">PPC Simulator</option>
-                                            <option value="PPC Aircraft">PPC Aircraft</option>
-                                            <option value="Test Flight">Test Flight</option>
-                                            <option value="Ground Run">Ground Run</option>
-                                            <option value="Recurrent Training">Recurrent Training</option>
-                                            <option value="Recency Flight">Recency Flight</option>
-                                            <option value="Meeting Out of Office">Meeting Out of Office</option>
-                                            <option value="Medical Examination">Medical Examination</option>
-                                            <option value="Annual Leave">Annual Leave</option>
-                                            <option value="Sick">Sick</option>
-                                            <option value="Technical Representative">Technical Representative</option>
-                                            <option value="Aviation Security">Aviation Security</option>
-                                            <option value="Over Time">Over Time</option>
-                                        </select>
-                                    </div>
-                                </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-red-100 w-10 h-10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-shield text-red-600"></i>
                             </div>
-
-                            <!-- Status Absen -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Status Absen</label>
-                                <select id="statusAbsen" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required onchange="toggleAbsenSections()">
-                                    <option value="">Pilih Status</option>
-                                    <option value="masuk">Absen Masuk</option>
-                                    <option value="pulang">Absen Pulang</option>
-                                </select>
+                            <div class="hidden md:block">
+                                <p class="text-sm font-medium text-gray-800">Administrator</p>
+                                <p class="text-xs text-gray-500">Super Admin</p>
                             </div>
-
-                            <!-- Absen Masuk Section -->
-                            <div id="absenMasukSection" class="hidden bg-blue-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-800 mb-4">Absen Masuk</h3>
-                                
-                                <!-- Date -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Masuk</label>
-                                    <input type="date" id="tanggalMasuk" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-                                </div>
-
-                                <!-- Foto Masuk -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Foto Masuk</label>
-                                    <div id="cameraPreviewMasuk" class="camera-preview mb-2">
-                                        <i class="fas fa-camera text-4xl text-gray-400 mb-2"></i>
-                                        <p class="text-gray-500 text-sm">Klik untuk mengambil foto</p>
-                                    </div>
-                                    <button type="button" onclick="openCamera('masuk')" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200">
-                                        <i class="fas fa-camera mr-2"></i>Ambil Foto
-                                    </button>
-                                    <canvas id="canvasMasuk" style="display: none;"></canvas>
-                                </div>
-
-                                <!-- Location Masuk -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Masuk</label>
-                                    <div id="mapMasuk" class="map-container mb-2"></div>
-                                    <button type="button" onclick="getCurrentLocation('masuk')" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-200">
-                                        <i class="fas fa-map-marker-alt mr-2"></i>Dapatkan Lokasi Saat Ini
-                                    </button>
-                                    <input type="hidden" id="latMasuk">
-                                    <input type="hidden" id="lngMasuk">
-                                </div>
-
-                                <!-- Radius Status -->
-                                <div id="radiusStatusMasuk" class="hidden mb-4">
-                                    <div id="dalamRadiusMasuk" class="hidden bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-lg">
-                                        <i class="fas fa-check-circle mr-2"></i>Anda berada dalam radius kantor
-                                    </div>
-                                    <div id="luarRadiusMasuk" class="hidden">
-                                        <div class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-lg mb-2">
-                                            <i class="fas fa-exclamation-triangle mr-2"></i>Anda berada di luar radius kantor
-                                        </div>
-                                        <textarea id="alasanLuarRadiusMasuk" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Jelaskan alasan berada di luar radius kantor" required></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Waktu Masuk -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Masuk</label>
-                                    <input type="text" id="waktuMasuk" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" readonly>
-                                </div>
-
-                                <!-- Status Masuk -->
-                                <div id="statusMasukDiv" class="hidden mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Masuk</label>
-                                    <div id="statusMasukText" class="px-4 py-3 rounded-lg font-medium"></div>
-                                </div>
-
-                                <!-- Alasan Terlambat -->
-                                <div id="alasanTerlambatDiv" class="hidden mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Terlambat</label>
-                                    <textarea id="alasanTerlambat" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Jelaskan alasan keterlambatan" required></textarea>
-                                </div>
-
-                                <button type="button" onclick="submitAbsenMasuk()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-200">
-                                    Submit Absen Masuk
-                                </button>
-                            </div>
-
-                            <!-- Absen Pulang Section -->
-                            <div id="absenPulangSection" class="hidden bg-orange-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-800 mb-4">Absen Pulang</h3>
-                                
-                                <!-- Remark Pekerjaan -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan Hari Ini</label>
-                                    <textarea id="remarkPekerjaan" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Deskripsikan pekerjaan yang telah diselesaikan hari ini" required></textarea>
-                                </div>
-
-                                <!-- Foto Pekerjaan -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan Hari Ini</label>
-                                    <div id="photoPreviewPekerjaan" class="camera-preview mb-2">
-                                        <i class="fas fa-image text-4xl text-gray-400 mb-2"></i>
-                                        <p class="text-gray-500 text-sm">Pilih foto dari galeri</p>
-                                    </div>
-                                    <input type="file" id="fotoPekerjaan" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="previewImage(this, 'photoPreviewPekerjaan')" required>
-                                </div>
-
-                                <!-- Location Pulang -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Pulang</label>
-                                    <div id="mapPulang" class="map-container mb-2"></div>
-                                    <button type="button" onclick="getCurrentLocation('pulang')" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-200">
-                                        <i class="fas fa-map-marker-alt mr-2"></i>Dapatkan Lokasi Saat Ini
-                                    </button>
-                                    <input type="hidden" id="latPulang">
-                                    <input type="hidden" id="lngPulang">
-                                </div>
-
-                                <!-- Radius Status Pulang -->
-                                <div id="radiusStatusPulang" class="hidden mb-4">
-                                    <div id="dalamRadiusPulang" class="hidden bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-lg">
-                                        <i class="fas fa-check-circle mr-2"></i>Anda berada dalam radius kantor
-                                    </div>
-                                    <div id="luarRadiusPulang" class="hidden">
-                                        <div class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-lg mb-2">
-                                            <i class="fas fa-exclamation-triangle mr-2"></i>Anda berada di luar radius kantor
-                                        </div>
-                                        <textarea id="alasanLuarRadiusPulang" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Jelaskan alasan berada di luar radius kantor" required></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Waktu Pulang -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Pulang</label>
-                                    <input type="text" id="waktuPulang" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" readonly>
-                                </div>
-
-                                <!-- Status Pulang -->
-                                <div id="statusPulangDiv" class="hidden mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Pulang</label>
-                                    <div id="statusPulangText" class="px-4 py-3 rounded-lg font-medium"></div>
-                                </div>
-
-                                <!-- Total Overtime -->
-                                <div id="totalOvertimeDiv" class="hidden mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Overtime</label>
-                                    <div id="totalOvertimeText" class="px-4 py-3 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg font-medium"></div>
-                                </div>
-
-                                <!-- Total Worktime -->
-                                <div id="totalWorktimeDiv" class="hidden mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Waktu Kerja</label>
-                                    <div id="totalWorktimeText" class="px-4 py-3 bg-blue-100 border border-blue-300 text-blue-800 rounded-lg font-medium"></div>
-                                </div>
-
-                                <button type="button" onclick="submitAbsenPulang()" class="w-full bg-orange-600 text-white py-3 rounded-lg font-medium hover:bg-orange-700 transition duration-200">
-                                    Submit Absen Pulang
-                                </button>
-                            </div>
-                        </form>
+                        </div>
+                        
+                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700 transition duration-200 p-2 rounded-lg hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt text-lg"></i>
+                        </button>
                     </div>
+                </div>
+            </div>
+        </header>
 
-                    <!-- Riwayat Absen -->
-                    <div id="riwayatAbsenTable" class="hidden bg-white rounded-xl card-shadow p-6 fade-in">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xl font-semibold text-gray-800">Riwayat Absen</h2>
-                            <button onclick="showDashboard()" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times text-xl"></i>
-                            </button>
+        <!-- Running Text -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 overflow-hidden">
+            <div class="running-text text-sm font-medium">
+                🔧 Admin Dashboard - Kelola Data Absensi Seluruh Karyawan Transwisata | Real-time Analytics & Comprehensive Management System 🔧
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-green-600 text-xl"></i>
                         </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="border-b border-gray-200">
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Tanggal</th>
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Masuk</th>
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Pulang</th>
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Total Kerja</th>
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="riwayatAbsenBody">
-                                    <tr class="border-b border-gray-100">
-                                        <td class="py-3 px-4 text-gray-800">2024-01-15</td>
-                                        <td class="py-3 px-4 text-gray-600">08:15</td>
-                                        <td class="py-3 px-4 text-gray-600">17:30</td>
-                                        <td class="py-3 px-4 text-gray-600">9j 15m</td>
-                                        <td class="py-3 px-4">
-                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Tepat Waktu</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800" id="totalKaryawan">52</h3>
+                            <p class="text-gray-600 text-sm">Total Karyawan</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i>+2 bulan ini
+                            </p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Sidebar -->
-                <div class="lg:col-span-1">
-                    <!-- Update News -->
-                    <div class="bg-white rounded-xl card-shadow p-6 mb-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Update News</h3>
-                        
-                        <div class="space-y-4">
-                            <div class="border-l-4 border-indigo-500 pl-4">
-                                <h4 class="font-medium text-gray-800 text-sm">Sistem Absensi Baru</h4>
-                                <p class="text-gray-600 text-xs mt-1">Fitur absensi digital telah aktif untuk semua karyawan</p>
-                                <p class="text-gray-400 text-xs mt-2">2 hari yang lalu</p>
-                            </div>
-                            
-                            <div class="border-l-4 border-green-500 pl-4">
-                                <h4 class="font-medium text-gray-800 text-sm">Libur Nasional</h4>
-                                <p class="text-gray-600 text-xs mt-1">Hari Kemerdekaan RI - 17 Agustus 2024</p>
-                                <p class="text-gray-400 text-xs mt-2">1 minggu yang lalu</p>
-                            </div>
-                            
-                            <div class="border-l-4 border-yellow-500 pl-4">
-                                <h4 class="font-medium text-gray-800 text-sm">Maintenance Server</h4>
-                                <p class="text-gray-600 text-xs mt-1">Sistem akan maintenance setiap Minggu pukul 02:00-04:00</p>
-                                <p class="text-gray-400 text-xs mt-2">2 minggu yang lalu</p>
-                            </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-check-circle text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800" id="hadirHariIni">48</h3>
+                            <p class="text-gray-600 text-sm">Hadir Hari Ini</p>
+                            <p class="text-xs text-blue-600 mt-1">
+                                <i class="fas fa-percentage mr-1"></i><span id="persentaseHadir">92%</span> kehadiran
+                            </p>
                         </div>
                     </div>
-
-                    <!-- Quick Info -->
-                    <div class="bg-white rounded-xl card-shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Info Cepat</h3>
-                        
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 text-sm">Senin - Jumat</span>
-                                <span class="text-gray-800 text-sm font-medium">09:00 - 17:00</span>
-                            </div>
-                            
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 text-sm">Sabtu</span>
-                                <span class="text-gray-800 text-sm font-medium">09:00 - 14:30</span>
-                            </div>
-                            
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 text-sm">Toleransi</span>
-                                <span class="text-gray-800 text-sm font-medium">1 menit</span>
-                            </div>
+                </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
+                    <div class="flex items-center">
+                        <div class="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-clock text-yellow-600 text-xl"></i>
                         </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800" id="terlambatHariIni">3</h3>
+                            <p class="text-gray-600 text-sm">Terlambat Hari Ini</p>
+                            <p class="text-xs text-yellow-600 mt-1">
+                                <i class="fas fa-clock mr-1"></i>Rata-rata 15 menit
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6 hover-scale">
+                    <div class="flex items-center">
+                        <div class="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800" id="tidakHadirHariIni">4</h3>
+                            <p class="text-gray-600 text-sm">Tidak Hadir</p>
+                            <p class="text-xs text-red-600 mt-1">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>Perlu tindak lanjut
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
+                        Trend Kehadiran Mingguan
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-chart-pie mr-2 text-purple-600"></i>
+                        Distribusi Status Kehadiran
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Filter Section -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-filter mr-2 text-indigo-600"></i>
+                        Filter & Pencarian Lanjutan
+                    </h2>
+                    <div class="flex items-center space-x-2">
+                        <div class="loading-spinner hidden" id="filterLoading"></div>
+                        <span class="text-sm text-gray-500" id="filterStatus">Siap untuk filter</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1"></i>Nama Karyawan
+                        </label>
+                        <select id="filterNama" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                            <option value="">Semua Karyawan</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-building mr-1"></i>Divisi
+                        </label>
+                        <select id="filterDivisi" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                            <option value="">Semua Divisi</option>
+                            <option value="Operation">Operation</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Safety">Safety</option>
+                            <option value="Staf">Staf</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar mr-1"></i>Periode
+                        </label>
+                        <select id="filterPeriode" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="handlePeriodeChange()">
+                            <option value="hari">Hari Ini</option>
+                            <option value="minggu">Minggu Ini</option>
+                            <option value="bulan">Bulan Ini</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-info-circle mr-1"></i>Status
+                        </label>
+                        <select id="filterStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                            <option value="">Semua Status</option>
+                            <option value="Tepat Waktu">Tepat Waktu</option>
+                            <option value="Terlambat">Terlambat</option>
+                            <option value="Pulang Cepat">Pulang Cepat</option>
+                            <option value="Overtime">Overtime</option>
+                            <option value="Tidak Hadir">Tidak Hadir</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Custom Date Range (Hidden by default) -->
+                <div id="customDateRange" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-alt mr-1"></i>Tanggal Mulai
+                        </label>
+                        <input type="date" id="filterTanggalMulai" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-alt mr-1"></i>Tanggal Akhir
+                        </label>
+                        <input type="date" id="filterTanggalAkhir" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-search mr-1"></i>Pencarian Global
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="globalSearch" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Cari nama, email, divisi, atau keterangan..." oninput="applyFilters()">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-4">
+                    <button onclick="applyFilters()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200 flex items-center">
+                        <i class="fas fa-filter mr-2"></i>Terapkan Filter
+                    </button>
+                    <button onclick="resetFilters()" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-200 flex items-center">
+                        <i class="fas fa-refresh mr-2"></i>Reset Filter
+                    </button>
+                    <button onclick="exportData()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition duration-200 flex items-center">
+                        <i class="fas fa-download mr-2"></i>Export Excel
+                    </button>
+                    <button onclick="addNewRecord()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center">
+                        <i class="fas fa-plus mr-2"></i>Tambah Data
+                    </button>
+                    <button onclick="bulkActions()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-200 flex items-center">
+                        <i class="fas fa-tasks mr-2"></i>Bulk Actions
+                    </button>
+                </div>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-table mr-2 text-indigo-600"></i>
+                        Rekap Absensi Karyawan
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-sm text-gray-600">
+                            Total: <span class="font-semibold text-indigo-600" id="totalRecords">0</span> record
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm text-gray-600">Show:</label>
+                            <select id="itemsPerPageSelect" class="border border-gray-300 rounded px-2 py-1 text-sm" onchange="changeItemsPerPage()">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200 bg-gray-50">
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="mr-2">
+                                    No
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-100" onclick="sortTable('nama')">
+                                    <i class="fas fa-user mr-1"></i>Nama
+                                    <i class="fas fa-sort text-xs ml-1"></i>
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-100" onclick="sortTable('divisi')">
+                                    <i class="fas fa-building mr-1"></i>Divisi
+                                    <i class="fas fa-sort text-xs ml-1"></i>
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-100" onclick="sortTable('tanggal')">
+                                    <i class="fas fa-calendar mr-1"></i>Tanggal
+                                    <i class="fas fa-sort text-xs ml-1"></i>
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700">
+                                    <i class="fas fa-clock mr-1"></i>Jam Masuk
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700">
+                                    <i class="fas fa-clock mr-1"></i>Jam Pulang
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700">
+                                    <i class="fas fa-hourglass-half mr-1"></i>Total Kerja
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700 cursor-pointer hover:bg-gray-100" onclick="sortTable('status')">
+                                    <i class="fas fa-info-circle mr-1"></i>Status
+                                    <i class="fas fa-sort text-xs ml-1"></i>
+                                </th>
+                                <th class="text-left py-4 px-4 font-semibold text-gray-700">
+                                    <i class="fas fa-cogs mr-1"></i>Aksi
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Enhanced Pagination -->
+                <div class="flex flex-col md:flex-row items-center justify-between mt-6 space-y-4 md:space-y-0">
+                    <div class="text-sm text-gray-600">
+                        Menampilkan <span class="font-semibold" id="showingStart">1</span> - 
+                        <span class="font-semibold" id="showingEnd">10</span> dari 
+                        <span class="font-semibold" id="totalData">0</span> data
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <button onclick="goToPage(1)" id="firstBtn" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-angle-double-left"></i>
+                        </button>
+                        <button onclick="previousPage()" id="prevBtn" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        <div id="pageNumbers" class="flex space-x-2">
+                            <!-- Page numbers will be generated here -->
+                        </div>
+                        
+                        <button onclick="nextPage()" id="nextBtn" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button onclick="goToPage('last')" id="lastBtn" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-angle-double-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Camera Modal -->
-    <div id="cameraModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold">Ambil Foto</h3>
-                <button onclick="closeCameraModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
+    <!-- Enhanced Detail Modal -->
+    <div id="detailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-6xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">
+                    <i class="fas fa-user-edit mr-2 text-indigo-600"></i>
+                    Detail & Edit Absensi Karyawan
+                </h3>
+                <button onclick="closeDetailModal()" class="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            <video id="cameraVideo" class="w-full h-64 bg-gray-200 rounded-lg mb-4" autoplay></video>
-            <div class="flex space-x-3">
-                <button onclick="capturePhoto()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-                    <i class="fas fa-camera mr-2"></i>Ambil Foto
-                </button>
-                <button onclick="closeCameraModal()" class="flex-1 bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700">
-                    Batal
-                </button>
+            
+            <div id="detailContent" class="space-y-6">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            
+            <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                <div class="text-sm text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Semua perubahan akan disimpan secara real-time
+                </div>
+                <div class="flex space-x-4">
+                    <button onclick="closeDetailModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-200">
+                        <i class="fas fa-times mr-2"></i>Tutup
+                    </button>
+                    <button onclick="saveChanges()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">
+                        <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                    </button>
+                    <button onclick="deleteRecord()" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200">
+                        <i class="fas fa-trash mr-2"></i>Hapus Data
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // Global variables
-        let currentCameraType = '';
-        let cameraStream = null;
-        let mapMasuk, mapPulang;
-        let absenMasukData = null;
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let filteredData = [];
+        let allAttendanceData = [];
+        let currentEditingRecord = null;
+        let sortColumn = '';
+        let sortDirection = 'asc';
+        let selectedRecords = [];
+        let currentUser = null;
+        let userType = null;
 
-        // Office coordinates
-        const officeCoords = [
-            { lat: -6.267716, lng: 106.897317 },
-            { lat: -6.265146, lng: 106.885701 }
-        ];
-
-        // Employee database
+        // Employee database with complete data and password (first name)
         const employeeData = {
-            "Rustam Suhanda": { email: "managementtranswisata@gmail.com", division: "Staf", position: "President Director", role: "USER" },
-            "Selfy Warauw": { email: "warauw_1@yahoo.com", division: "Staf", position: "Director", role: "USER" },
-            "Muhamad Ramdani Masri": { email: "crunkbolcow@gmail.com", division: "Operation", position: "Chief Pilot Rotary Wing", role: "USER" },
-            "Sulaksono Teddy Prabowo": { email: "fly5103@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Marcelino Bhaharoenawanto": { email: "marcelino412ep@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Muhamad Sofwan": { email: "sofwanm819@gmail.com", division: "Operation", position: "Chief Pilot Fixed Wing", role: "USER" },
-            "Sofian M. L. Tobing": { email: "sofiantobing692@gmail.com", division: "Operation", position: "General Manager", role: "USER" },
-            "Rico Febdiandana": { email: "ricofebdi@gmail.com", division: "Operation", position: "Chief Flight Support", role: "USER" },
-            "Alfajri": { email: "alfajri_koto@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Eli Setya": { email: "tioxpilot@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Susetyo Harijanto": { email: "harijantosusetyo@gmail.com", division: "Operation", position: "Operation Manager", role: "USER" },
-            "Purwoko": { email: "purwoko.mulyono@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Riza Hanindita": { email: "icul2122@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Henaldy Arifia Sudrajat": { email: "henaldy.ts204@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Kadek Amelia Nadya Berliana": { email: "amelberliana@yahoo.co.id", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Qorry Maulidya Natawijaya": { email: "qnatawijaya@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            "Shentira Anggia Putri": { email: "anggiashentira@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            "Tiffani Pricilia Hasan": { email: "tiffanipriciliaaaa@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            "Agustin Zulfani Prihatini": { email: "agustinzulfani74@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            "Nadya Casey Ivanka": { email: "ivankacasey99@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            "Yanu Prihatno": { email: "prihatnoyanu@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Bayu Nugroho": { email: "bayu.avicena@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Wahyudi Suseno": { email: "nawawahyudisuseno090@gmail.com", division: "Maintenance", position: "Avionic", role: "USER" },
-            "Sigit Hardadi": { email: "sigithardadi88@yahoo.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Hadi Sutrisno": { email: "hadikamilatun@gmail.com", division: "Maintenance", position: "Maintenance Manager", role: "USER" },
-            "Suhairi": { email: "suhairitwa@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Suyanto": { email: "yanto.umardin@gmail.com", division: "Maintenance", position: "Avionic", role: "USER" },
-            "Lazarus Rio Raymond": { email: "rioraymond89@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Febie Aguti Effendi": { email: "mpiipie@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Diki Hariyanto": { email: "dikiatnu7@gmail.com", division: "Maintenance", position: "Chief Engineer", role: "USER" },
-            "Prayit Susonggo": { email: "prayitsusonggo@yahoo.com", division: "Maintenance", position: "Avionic", role: "USER" },
-            "Iskandar Akbar Hakim": { email: "iskandarakbarhakim@gmail.com", division: "Maintenance", position: "Chief Inspector", role: "USER" },
-            "Arif Vrybadi Halim": { email: "GlexXRSvpcgo@outlook.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Alfiza Eka Putra": { email: "alfizaekap@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Dedi Prasetyo": { email: "deditren99@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            "Media H Marbun": { email: "mediamarbun@gmail.com", division: "Staf", position: "Human Resource Development", role: "USER" },
-            "Fatmawati": { email: "ulieumeda@gmail.com", division: "Staf", position: "Finance", role: "USER" },
-            "Dede Rahman Arafiq": { email: "d2rahman@yahoo.co.id", division: "Staf", position: "Finance", role: "USER" },
-            "Leo Fitzgerald Sinay": { email: "leosinay@gmail.com", division: "Maintenance", position: "Chief Engineering", role: "USER" },
-            "Khairul Zaman Pohan": { email: "pohan16zaman@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            "Sentot Basuki": { email: "sentotbasuki@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            "Bobby Feisal Mahardhika": { email: "bobby.feisal22@gmail.com", division: "Staf", position: "Engineering", role: "USER" },
-            "Tri Widayat": { email: "tri3wiwid@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            "Isdarminto": { email: "is.darminto35@gmail.com", division: "Staf", position: "Logistic", role: "USER" },
-            "Sulaichan Noor Ali": { email: "sulaichann@gmail.com", division: "Staf", position: "Logistic", role: "USER" },
-            "Sri Muljono Bayu Putro": { email: "sbayuputro@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            "Asri Gatot Yulianto": { email: "Asrigatot.67@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            "Nanang Chabibi": { email: "nanangchabibi3@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            "Hariyanto": { email: "katellisna423@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            "Supriyono": { email: "fardhan0509@gmail.com", division: "Staf", position: "Kurir", role: "USER" },
-            "Kasna": { email: "kasna.pjln799@gmail.com", division: "Staf", position: "Driver", role: "USER" },
-            "Rizal Setiawan": { email: "rizalsetiawan020812@gmail.com", division: "Staf", position: "Driver", role: "USER" },
-            "Ardi Rizki": { email: "ardi.rizk91@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            "Wawan Setiawan": { email: "setiawanwawan7312@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            "Tommy Saputra": { email: "tommysaputra473@gmail.com", division: "Staf", position: "Chief Finance, Accounting & Tax", role: "USER" },
-            "Mochamad Riza": { email: "mch_riza@yahoo.com", division: "Safety", position: "Quality, Safety, Security Manager", role: "USER" },
-            "Alexander Anggarda Yunan Devata": { email: "alexanderdevata@yahoo.co.id", division: "Operation", position: "Flight Support", role: "USER" },
-            "Sukyono": { email: "sskkyy020@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            "Admin-TWA": { email: "admin@twa.com", division: "HRD", position: "Admin", role: "ADMIN" }
+            "Rustam Suhanda": { email: "managementtranswisata@gmail.com", division: "Staf", position: "President Director", password: "rustam", role: "USER" },
+            "Selfy Warauw": { email: "warauw_1@yahoo.com", division: "Staf", position: "Director", password: "selfy", role: "USER" },
+            "Muhamad Ramdani Masri": { email: "crunkbolcow@gmail.com", division: "Operation", position: "Chief Pilot Rotary Wing", password: "muhamad", role: "USER" },
+            "Sulaksono Teddy Prabowo": { email: "fly5103@gmail.com", division: "Operation", position: "Line Pilot", password: "sulaksono", role: "USER" },
+            "Marcelino Bhaharoenawanto": { email: "marcelino412ep@gmail.com", division: "Operation", position: "Line Pilot", password: "marcelino", role: "USER" },
+            "Muhamad Sofwan": { email: "sofwanm819@gmail.com", division: "Operation", position: "Chief Pilot Fixed Wing", password: "muhamad", role: "USER" },
+            "Sofian M. L. Tobing": { email: "sofiantobing692@gmail.com", division: "Operation", position: "General Manager", password: "sofian", role: "USER" },
+            "Rico Febdiandana": { email: "ricofebdi@gmail.com", division: "Operation", position: "Chief Flight Support", password: "rico", role: "USER" },
+            "Alfajri": { email: "alfajri_koto@yahoo.com", division: "Operation", position: "Line Pilot", password: "alfajri", role: "USER" },
+            "Eli Setya": { email: "tioxpilot@gmail.com", division: "Operation", position: "Line Pilot", password: "eli", role: "USER" },
+            "Susetyo Harijanto": { email: "harijantosusetyo@gmail.com", division: "Operation", position: "Operation Manager", password: "susetyo", role: "USER" },
+            "Purwoko": { email: "purwoko.mulyono@yahoo.com", division: "Operation", position: "Line Pilot", password: "purwoko", role: "USER" },
+            "Riza Hanindita": { email: "icul2122@gmail.com", division: "Operation", position: "Line Pilot", password: "riza", role: "USER" },
+            "Henaldy Arifia Sudrajat": { email: "henaldy.ts204@gmail.com", division: "Operation", position: "Line Pilot", password: "henaldy", role: "USER" },
+            "Kadek Amelia Nadya Berliana": { email: "amelberliana@yahoo.co.id", division: "Operation", position: "Line Pilot", password: "kadek", role: "USER" },
+            "Qorry Maulidya Natawijaya": { email: "qnatawijaya@gmail.com", division: "Operation", position: "Cabin Service", password: "qorry", role: "USER" },
+            "Shentira Anggia Putri": { email: "anggiashentira@gmail.com", division: "Operation", position: "Cabin Service", password: "shentira", role: "USER" },
+            "Tiffani Pricilia Hasan": { email: "tiffanipriciliaaaa@gmail.com", division: "Operation", position: "Cabin Service", password: "tiffani", role: "USER" },
+            "Agustin Zulfani Prihatini": { email: "agustinzulfani74@gmail.com", division: "Operation", position: "Cabin Service", password: "agustin", role: "USER" },
+            "Nadya Casey Ivanka": { email: "ivankacasey99@gmail.com", division: "Operation", position: "Cabin Service", password: "nadya", role: "USER" },
+            "Yanu Prihatno": { email: "prihatnoyanu@gmail.com", division: "Maintenance", position: "Engineer", password: "yanu", role: "USER" },
+            "Bayu Nugroho": { email: "bayu.avicena@gmail.com", division: "Maintenance", position: "Engineer", password: "bayu", role: "USER" },
+            "Wahyudi Suseno": { email: "nawawahyudisuseno090@gmail.com", division: "Maintenance", position: "Avionic", password: "wahyudi", role: "USER" },
+            "Sigit Hardadi": { email: "sigithardadi88@yahoo.com", division: "Maintenance", position: "Engineer", password: "sigit", role: "USER" },
+            "Hadi Sutrisno": { email: "hadikamilatun@gmail.com", division: "Maintenance", position: "Maintenance Manager", password: "hadi", role: "USER" },
+            "Suhairi": { email: "suhairitwa@gmail.com", division: "Maintenance", position: "Engineer", password: "suhairi", role: "USER" },
+            "Suyanto": { email: "yanto.umardin@gmail.com", division: "Maintenance", position: "Avionic", password: "suyanto", role: "USER" },
+            "Lazarus Rio Raymond": { email: "rioraymond89@gmail.com", division: "Maintenance", position: "Engineer", password: "lazarus", role: "USER" },
+            "Febie Aguti Effendi": { email: "mpiipie@gmail.com", division: "Maintenance", position: "Engineer", password: "febie", role: "USER" },
+            "Diki Hariyanto": { email: "dikiatnu7@gmail.com", division: "Maintenance", position: "Chief Engineer", password: "diki", role: "USER" },
+            "Prayit Susonggo": { email: "prayitsusonggo@yahoo.com", division: "Maintenance", position: "Avionic", password: "prayit", role: "USER" },
+            "Iskandar Akbar Hakim": { email: "iskandarakbarhakim@gmail.com", division: "Maintenance", position: "Chief Inspector", password: "iskandar", role: "USER" },
+            "Arif Vrybadi Halim": { email: "GlexXRSvpcgo@outlook.com", division: "Maintenance", position: "Engineer", password: "arif", role: "USER" },
+            "Alfiza Eka Putra": { email: "alfizaekap@gmail.com", division: "Maintenance", position: "Engineer", password: "alfiza", role: "USER" },
+            "Dedi Prasetyo": { email: "deditren99@gmail.com", division: "Safety", position: "Aviation Security", password: "dedi", role: "USER" },
+            "Media H Marbun": { email: "mediamarbun@gmail.com", division: "Staf", position: "Human Resource Development", password: "media", role: "USER" },
+            "Fatmawati": { email: "ulieumeda@gmail.com", division: "Staf", position: "Finance", password: "fatmawati", role: "USER" },
+            "Dede Rahman Arafiq": { email: "d2rahman@yahoo.co.id", division: "Staf", position: "Finance", password: "dede", role: "USER" },
+            "Leo Fitzgerald Sinay": { email: "leosinay@gmail.com", division: "Maintenance", position: "Chief Engineering", password: "leo", role: "USER" },
+            "Khairul Zaman Pohan": { email: "pohan16zaman@gmail.com", division: "Operation", position: "Flight Support", password: "khairul", role: "USER" },
+            "Sentot Basuki": { email: "sentotbasuki@gmail.com", division: "Operation", position: "Flight Support", password: "sentot", role: "USER" },
+            "Bobby Feisal Mahardhika": { email: "bobby.feisal22@gmail.com", division: "Staf", position: "Engineering", password: "bobby", role: "USER" },
+            "Tri Widayat": { email: "tri3wiwid@gmail.com", division: "Operation", position: "Flight Support", password: "tri", role: "USER" },
+            "Isdarminto": { email: "is.darminto35@gmail.com", division: "Staf", position: "Logistic", password: "isdarminto", role: "USER" },
+            "Sulaichan Noor Ali": { email: "sulaichann@gmail.com", division: "Staf", position: "Logistic", password: "sulaichan", role: "USER" },
+            "Sri Muljono Bayu Putro": { email: "sbayuputro@gmail.com", division: "Operation", position: "Flight Support", password: "sri", role: "USER" },
+            "Asri Gatot Yulianto": { email: "Asrigatot.67@gmail.com", division: "Safety", position: "Aviation Security", password: "asri", role: "USER" },
+            "Nanang Chabibi": { email: "nanangchabibi3@gmail.com", division: "Safety", position: "Aviation Security", password: "nanang", role: "USER" },
+            "Hariyanto": { email: "katellisna423@gmail.com", division: "Safety", position: "Aviation Security", password: "hariyanto", role: "USER" },
+            "Supriyono": { email: "fardhan0509@gmail.com", division: "Staf", position: "Kurir", password: "supriyono", role: "USER" },
+            "Kasna": { email: "kasna.pjln799@gmail.com", division: "Staf", position: "Driver", password: "kasna", role: "USER" },
+            "Rizal Setiawan": { email: "rizalsetiawan020812@gmail.com", division: "Staf", position: "Driver", password: "rizal", role: "USER" },
+            "Ardi Rizki": { email: "ardi.rizk91@gmail.com", division: "Maintenance", position: "Engineer", password: "ardi", role: "USER" },
+            "Wawan Setiawan": { email: "setiawanwawan7312@gmail.com", division: "Operation", position: "Line Pilot", password: "wawan", role: "USER" },
+            "Tommy Saputra": { email: "tommysaputra473@gmail.com", division: "Staf", position: "Chief Finance, Accounting & Tax", password: "tommy", role: "USER" }
         };
 
-        // Create email to employee mapping for login
-        const emailToEmployee = {};
-        Object.keys(employeeData).forEach(name => {
-            emailToEmployee[employeeData[name].email] = {
-                name: name,
-                ...employeeData[name]
+        // Demo fill functions
+        function fillAdminDemo() {
+            document.getElementById('loginEmail').value = 'transwisataprimaops@gmail.com';
+            document.getElementById('loginPassword').value = 'admintwa021';
+        }
+
+        function fillUserDemo() {
+            document.getElementById('loginEmail').value = 'managementtranswisata@gmail.com';
+            document.getElementById('loginPassword').value = 'rustam';
+        }
+
+        // Generate comprehensive sample data
+        function generateSampleData() {
+            const sampleData = [];
+            const employees = Object.keys(employeeData);
+            const today = new Date();
+            
+            // Generate data for the last 60 days for more comprehensive testing
+            for (let i = 0; i < 60; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // Skip weekends for more realistic data
+                if (date.getDay() === 0 || date.getDay() === 6) continue;
+                
+                // Generate attendance for random employees each day (85-95% attendance rate)
+                const attendanceRate = 0.85 + Math.random() * 0.1;
+                const dailyAttendees = employees.slice(0, Math.floor(employees.length * attendanceRate));
+                
+                dailyAttendees.forEach((name, index) => {
+                    const employee = employeeData[name];
+                    const jamMasuk = generateRandomTime(7, 10); // 07:00 - 10:00
+                    const jamPulang = generateRandomTime(16, 19); // 16:00 - 19:00
+                    const totalKerja = calculateWorkHours(jamMasuk, jamPulang);
+                    const status = getAttendanceStatus(jamMasuk, jamPulang);
+                    
+                    sampleData.push({
+                        id: `${dateStr}-${name.replace(/\s+/g, '-')}`,
+                        nama: name,
+                        email: employee.email,
+                        divisi: employee.division,
+                        posisi: employee.position,
+                        tanggal: dateStr,
+                        jamMasuk: jamMasuk,
+                        jamPulang: jamPulang,
+                        totalKerja: totalKerja,
+                        status: status,
+                        dutyas: getRandomDuty(),
+                        typeOfWork: getRandomWorkType(),
+                        lokasi: getRandomLocation(),
+                        keterangan: getRandomKeterangan(status),
+                        overtime: status === 'Overtime' ? calculateOvertime(jamPulang) : '0 jam 0 menit',
+                        createdAt: new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000).toISOString(),
+                        updatedAt: new Date().toISOString()
+                    });
+                });
+            }
+            
+            return sampleData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+        }
+
+        function getRandomDuty() {
+            const duties = ["Office Hour", "Standby Flight", "Standby on Call", "Flight Duty VIP", "Meeting Out of Office", "Over Time"];
+            return duties[Math.floor(Math.random() * duties.length)];
+        }
+
+        function getRandomWorkType() {
+            const workTypes = ["Office Hour", "Standby Flight", "Ferry Flight", "Test Flight", "Recurrent Training", "Over Time"];
+            return workTypes[Math.floor(Math.random() * workTypes.length)];
+        }
+
+        function getRandomLocation() {
+            const locations = ["Kantor Pusat", "Hangar 1", "Hangar 2", "Runway Area", "Control Tower", "Maintenance Bay"];
+            return locations[Math.floor(Math.random() * locations.length)];
+        }
+
+        function getRandomKeterangan(status) {
+            const keteranganMap = {
+                'Terlambat': ['Terjebak macet', 'Kendala transportasi', 'Urusan keluarga mendesak', 'Cuaca buruk'],
+                'Pulang Cepat': ['Urusan keluarga', 'Kondisi kesehatan', 'Izin khusus', 'Meeting eksternal'],
+                'Overtime': ['Penyelesaian project', 'Maintenance darurat', 'Flight delay', 'Koordinasi tim'],
+                'Tepat Waktu': ['', 'Performa excellent', 'Dedikasi tinggi', '']
             };
-        });
+            
+            const options = keteranganMap[status] || [''];
+            return options[Math.floor(Math.random() * options.length)];
+        }
 
-        // Set current date and time
-        function setCurrentDateTime() {
+        function generateRandomTime(startHour, endHour) {
+            const hour = Math.floor(Math.random() * (endHour - startHour)) + startHour;
+            const minute = Math.floor(Math.random() * 60);
+            return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        }
+
+        function calculateWorkHours(jamMasuk, jamPulang) {
+            const [masukHour, masukMinute] = jamMasuk.split(':').map(Number);
+            const [pulangHour, pulangMinute] = jamPulang.split(':').map(Number);
+            
+            const masukTotal = masukHour * 60 + masukMinute;
+            const pulangTotal = pulangHour * 60 + pulangMinute;
+            
+            const totalMinutes = pulangTotal - masukTotal;
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            
+            return `${hours}j ${minutes}m`;
+        }
+
+        function getAttendanceStatus(jamMasuk, jamPulang) {
+            const [masukHour, masukMinute] = jamMasuk.split(':').map(Number);
+            const [pulangHour, pulangMinute] = jamPulang.split(':').map(Number);
+            
+            const masukTotal = masukHour * 60 + masukMinute;
+            const pulangTotal = pulangHour * 60 + pulangMinute;
+            
+            if (masukTotal > 9 * 60) return 'Terlambat';
+            if (pulangTotal < 17 * 60) return 'Pulang Cepat';
+            if (pulangTotal > 17 * 60 + 30) return 'Overtime';
+            return 'Tepat Waktu';
+        }
+
+        function calculateOvertime(jamPulang) {
+            const [hour, minute] = jamPulang.split(':').map(Number);
+            const pulangTotal = hour * 60 + minute;
+            const batasNormal = 17 * 60 + 30; // 17:30
+            
+            if (pulangTotal > batasNormal) {
+                const overtimeMinutes = pulangTotal - batasNormal;
+                const overtimeHours = Math.floor(overtimeMinutes / 60);
+                const remainingMinutes = overtimeMinutes % 60;
+                return `${overtimeHours} jam ${remainingMinutes} menit`;
+            }
+            return '0 jam 0 menit';
+        }
+
+        // Update current time and date for admin
+        function updateDateTime() {
             const now = new Date();
-            const today = now.toISOString().split('T')[0];
+            const timeStr = now.toLocaleTimeString('id-ID');
+            const dateStr = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
             
-            document.getElementById('tanggalMasuk').value = today;
-            updateCurrentTime();
+            document.getElementById('currentTime').textContent = timeStr;
+            document.getElementById('currentDate').textContent = dateStr;
         }
 
-        // Update current time with seconds
-        function updateCurrentTime() {
+        // Update current time and date for user
+        function updateUserDateTime() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const currentTime = `${hours}:${minutes}:${seconds}`;
+            const timeStr = now.toLocaleTimeString('id-ID');
+            const dateStr = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
             
-            // Update both time fields with current time
-            const waktuMasukField = document.getElementById('waktuMasuk');
-            const waktuPulangField = document.getElementById('waktuPulang');
-            
-            if (waktuMasukField) {
-                waktuMasukField.value = currentTime;
-                // Auto-check status when time updates
-                if (!waktuMasukField.classList.contains('hidden')) {
-                    checkStatusMasuk();
-                }
-            }
-            if (waktuPulangField) {
-                waktuPulangField.value = currentTime;
-                // Auto-check status when time updates
-                if (!waktuPulangField.classList.contains('hidden') && absenMasukData) {
-                    checkStatusPulang();
-                }
-            }
+            document.getElementById('userCurrentTime').textContent = timeStr;
+            document.getElementById('userCurrentDate').textContent = dateStr;
         }
 
-        // Start real-time clock
-        function startClock() {
-            updateCurrentTime();
-            setInterval(updateCurrentTime, 1000); // Update every second
-        }
-
-        // Auto-fill user data
-        function fillUserData() {
-            if (window.currentUser) {
-                document.getElementById('namaLengkap').value = window.currentUser.name;
-                document.getElementById('email').value = window.currentUser.email;
-                document.getElementById('divisi').value = window.currentUser.division;
-                document.getElementById('posisi').value = window.currentUser.position;
-                
-                // Make these fields readonly since they're auto-filled
-                document.getElementById('namaLengkap').readOnly = true;
-                document.getElementById('email').readOnly = true;
-                document.getElementById('divisi').readOnly = true;
-                document.getElementById('posisi').readOnly = true;
-                
-                // Add styling to show they're auto-filled
-                document.getElementById('namaLengkap').classList.add('bg-gray-100');
-                document.getElementById('email').classList.add('bg-gray-100');
-                document.getElementById('divisi').classList.add('bg-gray-100');
-                document.getElementById('posisi').classList.add('bg-gray-100');
-            }
-        }
-
-        // Login functionality
+        // Smart Login functionality
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             
-            // Check if email exists in database
-            const employee = emailToEmployee[email];
-            if (!employee) {
-                alert('Email tidak ditemukan dalam database karyawan!');
+            // Check if admin
+            if (email === 'transwisataprimaops@gmail.com' && password === 'admintwa021') {
+                userType = 'admin';
+                currentUser = {
+                    name: 'Administrator',
+                    email: email,
+                    division: 'Management',
+                    position: 'Super Admin'
+                };
+                
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                initializeAdminDashboard();
                 return;
             }
             
-            // Get first name for password validation
-            const firstName = employee.name.split(' ')[0].toLowerCase();
-            if (password.toLowerCase() !== firstName) {
-                alert('Password salah! Gunakan nama depan Anda.');
+            // Check if regular user (employee)
+            const employee = findEmployeeByEmail(email);
+            if (employee && password.toLowerCase() === employee.password.toLowerCase()) {
+                userType = 'user';
+                currentUser = employee;
+                
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('userDashboard').classList.remove('hidden');
+                initializeUserDashboard();
                 return;
             }
             
-            // Store current user data
-            window.currentUser = employee;
-            
-            document.getElementById('userName').textContent = employee.name;
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('dashboardPage').classList.remove('hidden');
-            setCurrentDateTime();
-            startClock(); // Start the real-time clock
-            
-            // Auto-fill form with user data
-            fillUserData();
+            // Login failed
+            alert('❌ Email atau password salah!\n\nGunakan:\n• Admin: transwisataprimaops@gmail.com / admintwa021\n• Karyawan: [email karyawan] / [nama depan]\n\nContoh: managementtranswisata@gmail.com / rustam');
         });
 
-        // Navigation functions
-        function showTambahAbsen() {
-            document.getElementById('dashboardOverview').classList.add('hidden');
-            document.getElementById('riwayatAbsenTable').classList.add('hidden');
-            document.getElementById('tambahAbsenForm').classList.remove('hidden');
-            setCurrentDateTime();
-            
-            // Initialize maps with delay to ensure DOM is ready
-            setTimeout(() => {
-                initializeMaps();
-            }, 500);
-            
-            fillUserData(); // Auto-fill when opening form
-            
-            // Auto-check status when time updates
-            setTimeout(() => {
-                checkStatusMasuk();
-                if (absenMasukData) {
-                    checkStatusPulang();
+        // Find employee by email
+        function findEmployeeByEmail(email) {
+            for (const [name, data] of Object.entries(employeeData)) {
+                if (data.email === email) {
+                    return {
+                        name: name,
+                        email: email,
+                        division: data.division,
+                        position: data.position,
+                        password: data.password,
+                        role: data.role
+                    };
                 }
-            }, 1000);
-        }
-
-        function showRiwayatAbsen() {
-            document.getElementById('dashboardOverview').classList.add('hidden');
-            document.getElementById('tambahAbsenForm').classList.add('hidden');
-            document.getElementById('riwayatAbsenTable').classList.remove('hidden');
-        }
-
-        function showDashboard() {
-            document.getElementById('tambahAbsenForm').classList.add('hidden');
-            document.getElementById('riwayatAbsenTable').classList.add('hidden');
-            document.getElementById('dashboardOverview').classList.remove('hidden');
+            }
+            return null;
         }
 
         function logout() {
-            document.getElementById('dashboardPage').classList.add('hidden');
+            // Hide all dashboards
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('userDashboard').classList.add('hidden');
             document.getElementById('loginPage').classList.remove('hidden');
+            
+            // Reset form and variables
             document.getElementById('loginForm').reset();
+            currentUser = null;
+            userType = null;
         }
 
-        // Toggle absen sections
-        function toggleAbsenSections() {
-            const status = document.getElementById('statusAbsen').value;
-            const masukSection = document.getElementById('absenMasukSection');
-            const pulangSection = document.getElementById('absenPulangSection');
+        // Initialize user dashboard
+        function initializeUserDashboard() {
+            allAttendanceData = generateSampleData();
             
-            if (status === 'masuk') {
-                masukSection.classList.remove('hidden');
-                pulangSection.classList.add('hidden');
-            } else if (status === 'pulang') {
-                if (!absenMasukData) {
-                    alert('Anda harus melakukan absen masuk terlebih dahulu!');
-                    document.getElementById('statusAbsen').value = '';
-                    return;
-                }
-                masukSection.classList.add('hidden');
-                pulangSection.classList.remove('hidden');
+            // Update user info in header
+            document.getElementById('currentUserName').textContent = currentUser.name;
+            document.getElementById('currentUserDivision').textContent = currentUser.division;
+            
+            updateUserStatistics();
+            renderUserTodayStatus();
+            renderUserAttendanceTable();
+            
+            // Start real-time clock for user
+            updateUserDateTime();
+            setInterval(updateUserDateTime, 1000);
+        }
+
+        // Initialize admin dashboard
+        function initializeAdminDashboard() {
+            allAttendanceData = generateSampleData();
+            filteredData = [...allAttendanceData];
+            
+            populateEmployeeFilter();
+            setDefaultDates();
+            updateStatistics();
+            renderTable();
+            initializeCharts();
+            
+            // Start real-time clock
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        }
+
+        // Populate employee filter dropdown
+        function populateEmployeeFilter() {
+            const filterNama = document.getElementById('filterNama');
+            const employees = Object.keys(employeeData).sort();
+            
+            employees.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                filterNama.appendChild(option);
+            });
+        }
+
+        // Set default dates
+        function setDefaultDates() {
+            const today = new Date();
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            
+            document.getElementById('filterTanggalMulai').value = weekAgo.toISOString().split('T')[0];
+            document.getElementById('filterTanggalAkhir').value = today.toISOString().split('T')[0];
+        }
+
+        // Handle periode change
+        function handlePeriodeChange() {
+            const periode = document.getElementById('filterPeriode').value;
+            const customRange = document.getElementById('customDateRange');
+            
+            if (periode === 'custom') {
+                customRange.classList.remove('hidden');
             } else {
-                masukSection.classList.add('hidden');
-                pulangSection.classList.add('hidden');
+                customRange.classList.add('hidden');
+                applyFilters();
             }
         }
 
-        // Global callback for Google Maps API
-        function initMaps() {
-            // This function is called when Google Maps API is loaded
-            console.log('Google Maps API loaded');
+        // Update statistics
+        function updateStatistics() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayData = allAttendanceData.filter(record => record.tanggal === today);
+            
+            const totalKaryawan = Object.keys(employeeData).length;
+            const hadirHariIni = todayData.length;
+            const terlambatHariIni = todayData.filter(r => r.status === 'Terlambat').length;
+            const tidakHadirHariIni = totalKaryawan - hadirHariIni;
+            const persentaseHadir = Math.round((hadirHariIni / totalKaryawan) * 100);
+            
+            document.getElementById('totalKaryawan').textContent = totalKaryawan;
+            document.getElementById('hadirHariIni').textContent = hadirHariIni;
+            document.getElementById('terlambatHariIni').textContent = terlambatHariIni;
+            document.getElementById('tidakHadirHariIni').textContent = tidakHadirHariIni;
+            document.getElementById('persentaseHadir').textContent = persentaseHadir + '%';
         }
 
-        // Initialize maps with OpenStreetMap as fallback
-        function initializeMaps() {
-            // Create simple map placeholders with location info
-            const mapMasukDiv = document.getElementById('mapMasuk');
-            const mapPulangDiv = document.getElementById('mapPulang');
-            
-            // Create map placeholder with location info
-            mapMasukDiv.innerHTML = `
-                <div class="w-full h-full bg-blue-50 border-2 border-blue-200 rounded-lg flex flex-col items-center justify-center p-4">
-                    <i class="fas fa-map-marker-alt text-blue-600 text-3xl mb-2"></i>
-                    <p class="text-blue-800 font-medium text-sm text-center">Lokasi Absen Masuk</p>
-                    <p class="text-blue-600 text-xs text-center mt-1">Klik "Dapatkan Lokasi" untuk menentukan posisi</p>
-                    <div id="locationInfoMasuk" class="hidden mt-2 text-xs text-center">
-                        <p class="text-blue-700">📍 Lokasi berhasil didapat</p>
-                    </div>
-                </div>
-            `;
-            
-            mapPulangDiv.innerHTML = `
-                <div class="w-full h-full bg-green-50 border-2 border-green-200 rounded-lg flex flex-col items-center justify-center p-4">
-                    <i class="fas fa-map-marker-alt text-green-600 text-3xl mb-2"></i>
-                    <p class="text-green-800 font-medium text-sm text-center">Lokasi Absen Pulang</p>
-                    <p class="text-green-600 text-xs text-center mt-1">Klik "Dapatkan Lokasi" untuk menentukan posisi</p>
-                    <div id="locationInfoPulang" class="hidden mt-2 text-xs text-center">
-                        <p class="text-green-700">📍 Lokasi berhasil didapat</p>
-                    </div>
-                </div>
-            `;
+        // Initialize charts
+        function initializeCharts() {
+            initWeeklyChart();
+            initStatusChart();
         }
 
-        // Get current location
-        function getCurrentLocation(type) {
-            if (navigator.geolocation) {
-                // Show loading state
-                const button = event.target;
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mendapatkan lokasi...';
-                button.disabled = true;
+        function initWeeklyChart() {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            
+            // Get last 7 days data
+            const last7Days = [];
+            const attendanceData = [];
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const dayName = date.toLocaleDateString('id-ID', { weekday: 'short' });
                 
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        if (type === 'masuk') {
-                            document.getElementById('latMasuk').value = lat;
-                            document.getElementById('lngMasuk').value = lng;
-                            
-                            // Show location info
-                            document.getElementById('locationInfoMasuk').classList.remove('hidden');
-                            document.getElementById('locationInfoMasuk').innerHTML = `
-                                <p class="text-blue-700">📍 Lokasi berhasil didapat</p>
-                                <p class="text-blue-600 text-xs">Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}</p>
-                            `;
-                            
-                            checkRadius(lat, lng, 'masuk');
-                        } else {
-                            document.getElementById('latPulang').value = lat;
-                            document.getElementById('lngPulang').value = lng;
-                            
-                            // Show location info
-                            document.getElementById('locationInfoPulang').classList.remove('hidden');
-                            document.getElementById('locationInfoPulang').innerHTML = `
-                                <p class="text-green-700">📍 Lokasi berhasil didapat</p>
-                                <p class="text-green-600 text-xs">Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}</p>
-                            `;
-                            
-                            checkRadius(lat, lng, 'pulang');
+                last7Days.push(dayName);
+                const dayAttendance = allAttendanceData.filter(record => record.tanggal === dateStr).length;
+                attendanceData.push(dayAttendance);
+            }
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: last7Days,
+                    datasets: [{
+                        label: 'Kehadiran',
+                        data: attendanceData,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
                         }
-                        
-                        // Restore button
-                        button.innerHTML = originalText;
-                        button.disabled = false;
                     },
-                    function(error) {
-                        alert('Error getting location: ' + error.message);
-                        // Restore button
-                        button.innerHTML = originalText;
-                        button.disabled = false;
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 60000
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: Object.keys(employeeData).length
+                        }
                     }
-                );
+                }
+            });
+        }
+
+        function initStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            // Count status distribution
+            const statusCounts = {
+                'Tepat Waktu': 0,
+                'Terlambat': 0,
+                'Pulang Cepat': 0,
+                'Overtime': 0
+            };
+            
+            allAttendanceData.forEach(record => {
+                if (statusCounts.hasOwnProperty(record.status)) {
+                    statusCounts[record.status]++;
+                }
+            });
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: [
+                            '#10b981', // Green for Tepat Waktu
+                            '#ef4444', // Red for Terlambat
+                            '#f59e0b', // Yellow for Pulang Cepat
+                            '#3b82f6'  // Blue for Overtime
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Apply filters with loading state
+        function applyFilters() {
+            const filterLoading = document.getElementById('filterLoading');
+            const filterStatus = document.getElementById('filterStatus');
+            
+            filterLoading.classList.remove('hidden');
+            filterStatus.textContent = 'Memproses filter...';
+            
+            setTimeout(() => {
+                const filterNama = document.getElementById('filterNama').value;
+                const filterDivisi = document.getElementById('filterDivisi').value;
+                const filterPeriode = document.getElementById('filterPeriode').value;
+                const filterStatus = document.getElementById('filterStatus').value;
+                const filterTanggalMulai = document.getElementById('filterTanggalMulai').value;
+                const filterTanggalAkhir = document.getElementById('filterTanggalAkhir').value;
+                const globalSearch = document.getElementById('globalSearch').value.toLowerCase();
+                
+                filteredData = allAttendanceData.filter(record => {
+                    let matchNama = !filterNama || record.nama === filterNama;
+                    let matchDivisi = !filterDivisi || record.divisi === filterDivisi;
+                    let matchStatus = !filterStatus || record.status === filterStatus;
+                    let matchTanggal = true;
+                    let matchSearch = true;
+                    
+                    // Date filtering
+                    if (filterPeriode === 'hari') {
+                        const today = new Date().toISOString().split('T')[0];
+                        matchTanggal = record.tanggal === today;
+                    } else if (filterPeriode === 'minggu') {
+                        const today = new Date();
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        const recordDate = new Date(record.tanggal);
+                        matchTanggal = recordDate >= weekAgo && recordDate <= today;
+                    } else if (filterPeriode === 'bulan') {
+                        const today = new Date();
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(monthAgo.getMonth() - 1);
+                        const recordDate = new Date(record.tanggal);
+                        matchTanggal = recordDate >= monthAgo && recordDate <= today;
+                    } else if (filterPeriode === 'custom' && filterTanggalMulai && filterTanggalAkhir) {
+                        const recordDate = new Date(record.tanggal);
+                        const startDate = new Date(filterTanggalMulai);
+                        const endDate = new Date(filterTanggalAkhir);
+                        matchTanggal = recordDate >= startDate && recordDate <= endDate;
+                    }
+                    
+                    // Global search
+                    if (globalSearch) {
+                        matchSearch = record.nama.toLowerCase().includes(globalSearch) ||
+                                    record.email.toLowerCase().includes(globalSearch) ||
+                                    record.divisi.toLowerCase().includes(globalSearch) ||
+                                    record.posisi.toLowerCase().includes(globalSearch) ||
+                                    record.keterangan.toLowerCase().includes(globalSearch);
+                    }
+                    
+                    return matchNama && matchDivisi && matchStatus && matchTanggal && matchSearch;
+                });
+                
+                currentPage = 1;
+                renderTable();
+                
+                filterLoading.classList.add('hidden');
+                document.getElementById('filterStatus').textContent = `${filteredData.length} record ditemukan`;
+            }, 500);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('filterNama').value = '';
+            document.getElementById('filterDivisi').value = '';
+            document.getElementById('filterPeriode').value = 'hari';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('globalSearch').value = '';
+            document.getElementById('customDateRange').classList.add('hidden');
+            setDefaultDates();
+            filteredData = [...allAttendanceData];
+            currentPage = 1;
+            renderTable();
+            document.getElementById('filterStatus').textContent = 'Filter direset';
+        }
+
+        // Sort table
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
             } else {
-                alert('Geolocation is not supported by this browser.');
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            
+            filteredData.sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+                
+                if (column === 'tanggal') {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                }
+                
+                if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            renderTable();
+        }
+
+        // Change items per page
+        function changeItemsPerPage() {
+            itemsPerPage = parseInt(document.getElementById('itemsPerPageSelect').value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        // Toggle select all
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+            
+            updateSelectedRecords();
+        }
+
+        function updateSelectedRecords() {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]:checked');
+            selectedRecords = Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // Render table with enhanced features
+        function renderTable() {
+            const tbody = document.getElementById('attendanceTableBody');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+            
+            tbody.innerHTML = '';
+            
+            if (pageData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="py-8 px-4 text-center text-gray-500">
+                            <i class="fas fa-search text-4xl mb-4 block"></i>
+                            <p class="text-lg font-medium">Tidak ada data yang ditemukan</p>
+                            <p class="text-sm">Coba ubah filter atau kriteria pencarian</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                pageData.forEach((record, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'table-row border-b border-gray-100';
+                    row.onclick = () => viewDetail(record.id);
+                    
+                    const statusClass = getStatusClass(record.status);
+                    
+                    row.innerHTML = `
+                        <td class="py-3 px-4 text-gray-800">
+                            <input type="checkbox" value="${record.id}" onclick="event.stopPropagation(); updateSelectedRecords()" class="mr-2">
+                            ${startIndex + index + 1}
+                        </td>
+                        <td class="py-3 px-4 text-gray-800 font-medium">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-indigo-600 font-semibold text-sm">${record.nama.charAt(0)}</span>
+                                </div>
+                                ${highlightSearchTerm(record.nama)}
+                            </div>
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                ${highlightSearchTerm(record.divisi)}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">${formatDate(record.tanggal)}</td>
+                        <td class="py-3 px-4 text-gray-600">
+                            <span class="font-mono">${record.jamMasuk}</span>
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">
+                            <span class="font-mono">${record.jamPulang}</span>
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">
+                            <span class="font-semibold">${record.totalKerja}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="status-badge ${statusClass}">${record.status}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="flex items-center space-x-2">
+                                <button onclick="event.stopPropagation(); viewDetail('${record.id}')" class="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50" title="Lihat Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); editRecord('${record.id}')" class="text-green-600 hover:text-green-800 p-1 rounded hover:bg-green-50" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); deleteRecordConfirm('${record.id}')" class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+            }
+            
+            updatePagination();
+            updateRecordCount();
+        }
+
+        function highlightSearchTerm(text) {
+            const searchTerm = document.getElementById('globalSearch').value.toLowerCase();
+            if (!searchTerm) return text;
+            
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Tepat Waktu': return 'status-tepat-waktu';
+                case 'Terlambat': return 'status-terlambat';
+                case 'Pulang Cepat': return 'status-pulang-cepat';
+                case 'Overtime': return 'status-overtime';
+                default: return 'status-tidak-hadir';
             }
         }
 
-        // Calculate distance between two coordinates using Haversine formula
-        function calculateDistance(lat1, lng1, lat2, lng2) {
-            const R = 6371000; // Earth's radius in meters
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLng = (lng2 - lng1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLng/2) * Math.sin(dLng/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c; // Distance in meters
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
         }
 
-        // Check if location is within radius
-        function checkRadius(lat, lng, type) {
-            let withinRadius = false;
-            let minDistance = Infinity;
+        // Enhanced pagination
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const pageNumbers = document.getElementById('pageNumbers');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const firstBtn = document.getElementById('firstBtn');
+            const lastBtn = document.getElementById('lastBtn');
             
-            for (let coord of officeCoords) {
-                const distance = calculateDistance(lat, lng, coord.lat, coord.lng);
-                minDistance = Math.min(minDistance, distance);
+            pageNumbers.innerHTML = '';
+            
+            // Calculate page range to show
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            // Adjust range if we're near the beginning or end
+            if (currentPage <= 3) {
+                endPage = Math.min(5, totalPages);
+            }
+            if (currentPage >= totalPages - 2) {
+                startPage = Math.max(totalPages - 4, 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = `px-3 py-2 border rounded-lg transition duration-200 ${
+                    i === currentPage 
+                        ? 'bg-indigo-600 text-white border-indigo-600' 
+                        : 'border-gray-300 hover:bg-gray-50'
+                }`;
+                button.onclick = () => goToPage(i);
+                pageNumbers.appendChild(button);
+            }
+            
+            // Update button states
+            firstBtn.disabled = currentPage === 1;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            lastBtn.disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        function goToPage(page) {
+            if (page === 'last') {
+                currentPage = Math.ceil(filteredData.length / itemsPerPage);
+            } else {
+                currentPage = page;
+            }
+            renderTable();
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
+        function updateRecordCount() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+            
+            document.getElementById('totalRecords').textContent = filteredData.length;
+            document.getElementById('showingStart').textContent = filteredData.length > 0 ? startIndex + 1 : 0;
+            document.getElementById('showingEnd').textContent = endIndex;
+            document.getElementById('totalData').textContent = filteredData.length;
+        }
+
+        // Enhanced detail view
+        function viewDetail(recordId) {
+            const record = allAttendanceData.find(r => r.id === recordId);
+            if (!record) return;
+            
+            currentEditingRecord = { ...record };
+            
+            const detailContent = document.getElementById('detailContent');
+            detailContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Personal Information -->
+                    <div class="lg:col-span-3">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-user mr-2 text-indigo-600"></i>
+                            Informasi Personal
+                        </h4>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                        <select class="editable-field w-full" onchange="autoFillEmployeeData(this.value)">
+                            <option value="">Pilih Nama Karyawan</option>
+                            ${Object.keys(employeeData).sort().map(name => 
+                                `<option value="${name}" ${record.nama === name ? 'selected' : ''}>${name}</option>`
+                            ).join('')}
+                        </select>
+                        <input type="text" class="editable-field w-full mt-2" value="${record.nama}" onchange="updateField('nama', this.value)" placeholder="Atau ketik nama manual">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" class="editable-field w-full" value="${record.email}" onchange="updateField('email', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
+                        <select class="editable-field w-full" onchange="updateField('divisi', this.value)">
+                            <option value="Operation" ${record.divisi === 'Operation' ? 'selected' : ''}>Operation</option>
+                            <option value="Maintenance" ${record.divisi === 'Maintenance' ? 'selected' : ''}>Maintenance</option>
+                            <option value="Safety" ${record.divisi === 'Safety' ? 'selected' : ''}>Safety</option>
+                            <option value="Staf" ${record.divisi === 'Staf' ? 'selected' : ''}>Staf</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Posisi</label>
+                        <input type="text" class="editable-field w-full" value="${record.posisi}" onchange="updateField('posisi', this.value)">
+                    </div>
+                    
+                    <!-- Attendance Information -->
+                    <div class="lg:col-span-3 mt-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-clock mr-2 text-green-600"></i>
+                            Informasi Kehadiran
+                        </h4>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
+                        <input type="date" class="editable-field w-full" value="${record.tanggal}" onchange="updateField('tanggal', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jam Masuk</label>
+                        <input type="time" class="editable-field w-full" value="${record.jamMasuk}" onchange="updateTimeField('jamMasuk', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jam Pulang</label>
+                        <input type="time" class="editable-field w-full" value="${record.jamPulang}" onchange="updateTimeField('jamPulang', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Total Kerja</label>
+                        <input type="text" class="editable-field w-full bg-gray-100" value="${record.totalKerja}" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select class="editable-field w-full" onchange="updateField('status', this.value)">
+                            <option value="Tepat Waktu" ${record.status === 'Tepat Waktu' ? 'selected' : ''}>Tepat Waktu</option>
+                            <option value="Terlambat" ${record.status === 'Terlambat' ? 'selected' : ''}>Terlambat</option>
+                            <option value="Pulang Cepat" ${record.status === 'Pulang Cepat' ? 'selected' : ''}>Pulang Cepat</option>
+                            <option value="Overtime" ${record.status === 'Overtime' ? 'selected' : ''}>Overtime</option>
+                            <option value="Tidak Hadir" ${record.status === 'Tidak Hadir' ? 'selected' : ''}>Tidak Hadir</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Overtime</label>
+                        <input type="text" class="editable-field w-full bg-gray-100" value="${record.overtime}" readonly>
+                    </div>
+                    
+                    <!-- Work Information -->
+                    <div class="lg:col-span-3 mt-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-briefcase mr-2 text-purple-600"></i>
+                            Informasi Pekerjaan
+                        </h4>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Bertugas Sebagai</label>
+                        <input type="text" class="editable-field w-full" value="${record.dutyas}" onchange="updateField('dutyas', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Pekerjaan</label>
+                        <input type="text" class="editable-field w-full" value="${record.typeOfWork}" onchange="updateField('typeOfWork', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi</label>
+                        <input type="text" class="editable-field w-full" value="${record.lokasi}" onchange="updateField('lokasi', this.value)">
+                    </div>
+                    
+                    <div class="lg:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
+                        <textarea class="editable-field w-full" rows="3" onchange="updateField('keterangan', this.value)">${record.keterangan}</textarea>
+                    </div>
+                    
+                    <!-- Metadata -->
+                    <div class="lg:col-span-3 mt-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                            Metadata
+                        </h4>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Dibuat Pada</label>
+                        <input type="text" class="editable-field w-full bg-gray-100" value="${new Date(record.createdAt).toLocaleString('id-ID')}" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Terakhir Diupdate</label>
+                        <input type="text" class="editable-field w-full bg-gray-100" value="${new Date(record.updatedAt).toLocaleString('id-ID')}" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ID Record</label>
+                        <input type="text" class="editable-field w-full bg-gray-100" value="${record.id}" readonly>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function editRecord(recordId) {
+            viewDetail(recordId);
+        }
+
+        function updateField(field, value) {
+            if (currentEditingRecord) {
+                currentEditingRecord[field] = value;
+                currentEditingRecord.updatedAt = new Date().toISOString();
+            }
+        }
+
+        function autoFillEmployeeData(selectedName) {
+            if (currentEditingRecord && selectedName && employeeData[selectedName]) {
+                const employee = employeeData[selectedName];
                 
-                if (distance <= 250) {
-                    withinRadius = true;
-                    break;
+                // Update current editing record
+                currentEditingRecord.nama = selectedName;
+                currentEditingRecord.email = employee.email;
+                currentEditingRecord.divisi = employee.division;
+                currentEditingRecord.posisi = employee.position;
+                currentEditingRecord.updatedAt = new Date().toISOString();
+                
+                // Refresh the modal to show updated data
+                viewDetail(currentEditingRecord.id);
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                successMsg.innerHTML = `
+                    <i class="fas fa-check mr-2"></i>
+                    Data ${selectedName} berhasil diisi otomatis!
+                `;
+                document.body.appendChild(successMsg);
+                
+                setTimeout(() => {
+                    document.body.removeChild(successMsg);
+                }, 3000);
+            }
+        }
+
+        function updateTimeField(field, value) {
+            if (currentEditingRecord) {
+                currentEditingRecord[field] = value;
+                
+                // Recalculate total work hours and status
+                if (currentEditingRecord.jamMasuk && currentEditingRecord.jamPulang) {
+                    currentEditingRecord.totalKerja = calculateWorkHours(currentEditingRecord.jamMasuk, currentEditingRecord.jamPulang);
+                    currentEditingRecord.status = getAttendanceStatus(currentEditingRecord.jamMasuk, currentEditingRecord.jamPulang);
+                    currentEditingRecord.overtime = calculateOvertime(currentEditingRecord.jamPulang);
+                    currentEditingRecord.updatedAt = new Date().toISOString();
+                    
+                    // Update the display
+                    viewDetail(currentEditingRecord.id);
                 }
             }
-            
-            const radiusStatus = document.getElementById(`radiusStatus${type.charAt(0).toUpperCase() + type.slice(1)}`);
-            const dalamRadius = document.getElementById(`dalamRadius${type.charAt(0).toUpperCase() + type.slice(1)}`);
-            const luarRadius = document.getElementById(`luarRadius${type.charAt(0).toUpperCase() + type.slice(1)}`);
-            
-            radiusStatus.classList.remove('hidden');
-            
-            if (withinRadius) {
-                dalamRadius.classList.remove('hidden');
-                luarRadius.classList.add('hidden');
-                dalamRadius.innerHTML = `
-                    <i class="fas fa-check-circle mr-2"></i>Anda berada dalam radius kantor
-                    <br><small class="text-green-600">Jarak: ${Math.round(minDistance)}m dari kantor</small>
-                `;
-            } else {
-                dalamRadius.classList.add('hidden');
-                luarRadius.classList.remove('hidden');
-                const warningDiv = luarRadius.querySelector('.bg-red-100');
-                warningDiv.innerHTML = `
-                    <i class="fas fa-exclamation-triangle mr-2"></i>Anda berada di luar radius kantor
-                    <br><small class="text-red-600">Jarak: ${Math.round(minDistance)}m dari kantor</small>
-                `;
+        }
+
+        function saveChanges() {
+            if (currentEditingRecord) {
+                const index = allAttendanceData.findIndex(r => r.id === currentEditingRecord.id);
+                if (index !== -1) {
+                    allAttendanceData[index] = { ...currentEditingRecord };
+                    applyFilters();
+                    closeDetailModal();
+                    alert('✅ Perubahan berhasil disimpan!');
+                } else {
+                    // New record
+                    allAttendanceData.unshift({ ...currentEditingRecord });
+                    applyFilters();
+                    closeDetailModal();
+                    alert('✅ Data baru berhasil ditambahkan!');
+                }
             }
         }
 
-        // Camera functions
-        function openCamera(type) {
-            currentCameraType = type;
-            document.getElementById('cameraModal').classList.remove('hidden');
-            
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
-                    cameraStream = stream;
-                    document.getElementById('cameraVideo').srcObject = stream;
-                })
-                .catch(function(error) {
-                    alert('Error accessing camera: ' + error.message);
-                    closeCameraModal();
-                });
-        }
-
-        function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('canvasMasuk');
-            const context = canvas.getContext('2d');
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0);
-            
-            const imageData = canvas.toDataURL('image/jpeg');
-            
-            // Display captured photo
-            const preview = document.getElementById('cameraPreviewMasuk');
-            preview.innerHTML = `<img src="${imageData}" class="photo-preview" alt="Foto Masuk">`;
-            
-            closeCameraModal();
-        }
-
-        function closeCameraModal() {
-            document.getElementById('cameraModal').classList.add('hidden');
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
+        function deleteRecord() {
+            if (currentEditingRecord && confirm('⚠️ Apakah Anda yakin ingin menghapus data ini?\n\nData yang dihapus tidak dapat dikembalikan.')) {
+                const index = allAttendanceData.findIndex(r => r.id === currentEditingRecord.id);
+                if (index !== -1) {
+                    allAttendanceData.splice(index, 1);
+                    applyFilters();
+                    closeDetailModal();
+                    alert('✅ Data berhasil dihapus!');
+                }
             }
         }
 
-        // Preview image from file input
-        function previewImage(input, previewId) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(previewId).innerHTML = 
-                        `<img src="${e.target.result}" class="photo-preview" alt="Preview">`;
-                };
-                reader.readAsDataURL(input.files[0]);
+        function deleteRecordConfirm(recordId) {
+            if (confirm('⚠️ Apakah Anda yakin ingin menghapus data ini?')) {
+                const index = allAttendanceData.findIndex(r => r.id === recordId);
+                if (index !== -1) {
+                    allAttendanceData.splice(index, 1);
+                    applyFilters();
+                    alert('✅ Data berhasil dihapus!');
+                }
             }
         }
 
-        // Check status masuk
-        function checkStatusMasuk() {
-            const waktu = document.getElementById('waktuMasuk').value;
-            if (!waktu) return;
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            currentEditingRecord = null;
+        }
+
+        function addNewRecord() {
+            const newId = `new-${Date.now()}`;
+            const today = new Date().toISOString().split('T')[0];
             
-            const statusDiv = document.getElementById('statusMasukDiv');
-            const statusText = document.getElementById('statusMasukText');
-            const alasanDiv = document.getElementById('alasanTerlambatDiv');
+            currentEditingRecord = {
+                id: newId,
+                nama: '',
+                email: '',
+                divisi: 'Operation',
+                posisi: '',
+                tanggal: today,
+                jamMasuk: '09:00',
+                jamPulang: '17:00',
+                totalKerja: '8j 0m',
+                status: 'Tepat Waktu',
+                dutyas: 'Office Hour',
+                typeOfWork: 'Office Hour',
+                lokasi: 'Kantor Pusat',
+                keterangan: '',
+                overtime: '0 jam 0 menit',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
             
-            statusDiv.classList.remove('hidden');
+            viewDetail(newId);
+        }
+
+        function bulkActions() {
+            if (selectedRecords.length === 0) {
+                alert('Pilih minimal satu record untuk bulk action');
+                return;
+            }
             
-            // Parse time with seconds (HH:MM:SS format)
-            const timeParts = waktu.split(':');
-            const hours = parseInt(timeParts[0]);
-            const minutes = parseInt(timeParts[1]);
-            const waktuMasuk = hours * 60 + minutes;
-            const batasWaktu = 9 * 60; // 09:00
+            const action = prompt(`Bulk Actions untuk ${selectedRecords.length} record:\n\n1. Delete - Hapus semua record terpilih\n2. Export - Export record terpilih\n3. Update Status - Update status semua record\n\nMasukkan nomor pilihan (1-3):`);
             
-            if (waktuMasuk <= batasWaktu) {
-                statusText.textContent = 'Terima Kasih Anda Telah Absen Tepat Waktu';
-                statusText.className = 'px-4 py-3 bg-green-100 border border-green-300 text-green-800 rounded-lg font-medium';
-                alasanDiv.classList.add('hidden');
-            } else {
-                statusText.textContent = 'Anda Terlambat Absen';
-                statusText.className = 'px-4 py-3 bg-red-100 border border-red-300 text-red-800 rounded-lg font-medium';
-                alasanDiv.classList.remove('hidden');
+            switch(action) {
+                case '1':
+                    if (confirm(`Hapus ${selectedRecords.length} record terpilih?`)) {
+                        allAttendanceData = allAttendanceData.filter(record => !selectedRecords.includes(record.id));
+                        selectedRecords = [];
+                        applyFilters();
+                        alert('Bulk delete berhasil!');
+                    }
+                    break;
+                case '2':
+                    exportSelectedData();
+                    break;
+                case '3':
+                    const newStatus = prompt('Masukkan status baru:\n1. Tepat Waktu\n2. Terlambat\n3. Pulang Cepat\n4. Overtime');
+                    const statusMap = {'1': 'Tepat Waktu', '2': 'Terlambat', '3': 'Pulang Cepat', '4': 'Overtime'};
+                    if (statusMap[newStatus]) {
+                        allAttendanceData.forEach(record => {
+                            if (selectedRecords.includes(record.id)) {
+                                record.status = statusMap[newStatus];
+                                record.updatedAt = new Date().toISOString();
+                            }
+                        });
+                        applyFilters();
+                        alert('Bulk update status berhasil!');
+                    }
+                    break;
             }
         }
 
-        // Check status pulang
-        function checkStatusPulang() {
-            const waktu = document.getElementById('waktuPulang').value;
-            if (!waktu || !absenMasukData) return;
+        function exportData() {
+            exportToCSV(filteredData, 'rekap-absensi-lengkap');
+        }
+
+        function exportSelectedData() {
+            const selectedData = allAttendanceData.filter(record => selectedRecords.includes(record.id));
+            exportToCSV(selectedData, 'rekap-absensi-terpilih');
+        }
+
+        // User Dashboard Functions
+        function updateUserStatistics() {
+            const userAttendance = allAttendanceData.filter(record => record.nama === currentUser.name);
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
             
-            const statusDiv = document.getElementById('statusPulangDiv');
-            const statusText = document.getElementById('statusPulangText');
-            const overtimeDiv = document.getElementById('totalOvertimeDiv');
-            const overtimeText = document.getElementById('totalOvertimeText');
-            const worktimeDiv = document.getElementById('totalWorktimeDiv');
-            const worktimeText = document.getElementById('totalWorktimeText');
+            const monthlyAttendance = userAttendance.filter(record => {
+                const recordDate = new Date(record.tanggal);
+                return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
+            });
             
-            statusDiv.classList.remove('hidden');
-            worktimeDiv.classList.remove('hidden');
+            const totalHadir = monthlyAttendance.length;
+            let totalMinutes = 0;
             
-            // Parse time with seconds (HH:MM:SS format)
-            const timeParts = waktu.split(':');
-            const hours = parseInt(timeParts[0]);
-            const minutes = parseInt(timeParts[1]);
-            const waktuPulang = hours * 60 + minutes;
-            const batas1 = 17 * 60; // 17:00
-            const batas2 = 17 * 60 + 30; // 17:30
-            const batas3 = 17 * 60 + 31; // 17:31
+            monthlyAttendance.forEach(record => {
+                const [hours, minutes] = record.totalKerja.split('j ')[0] === record.totalKerja ? 
+                    [parseInt(record.totalKerja.split('j')[0]), parseInt(record.totalKerja.split('j ')[1]?.split('m')[0] || 0)] :
+                    [parseInt(record.totalKerja.split('j')[0]), parseInt(record.totalKerja.split('j ')[1]?.split('m')[0] || 0)];
+                totalMinutes += (hours * 60) + minutes;
+            });
             
-            // Calculate total worktime
-            const masukTimeParts = absenMasukData.waktu.split(':');
-            const waktuMasukMinutes = parseInt(masukTimeParts[0]) * 60 + parseInt(masukTimeParts[1]);
-            const totalMinutes = waktuPulang - waktuMasukMinutes;
             const totalHours = Math.floor(totalMinutes / 60);
             const remainingMinutes = totalMinutes % 60;
             
-            worktimeText.textContent = `${totalHours} jam ${remainingMinutes} menit`;
+            document.getElementById('userTotalHadir').textContent = totalHadir;
+            document.getElementById('userTotalJam').textContent = `${totalHours}j ${remainingMinutes}m`;
+        }
+
+        function renderUserTodayStatus() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayRecord = allAttendanceData.find(record => 
+                record.nama === currentUser.name && record.tanggal === today
+            );
             
-            if (waktuPulang < batas1) {
-                statusText.textContent = 'Anda Pulang Sebelum Waktunya';
-                statusText.className = 'px-4 py-3 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-lg font-medium';
-                overtimeDiv.classList.add('hidden');
-            } else if (waktuPulang >= batas1 && waktuPulang <= batas2) {
-                statusText.textContent = 'Anda Pulang Tepat Waktu';
-                statusText.className = 'px-4 py-3 bg-green-100 border border-green-300 text-green-800 rounded-lg font-medium';
-                overtimeDiv.classList.add('hidden');
-            } else if (waktuPulang >= batas3) {
-                statusText.textContent = 'Waktu Kerja Melebihi';
-                statusText.className = 'px-4 py-3 bg-blue-100 border border-blue-300 text-blue-800 rounded-lg font-medium';
-                
-                // Calculate overtime
-                const overtimeMinutes = waktuPulang - batas2;
-                const overtimeHours = Math.floor(overtimeMinutes / 60);
-                const remainingOvertimeMinutes = overtimeMinutes % 60;
-                
-                overtimeText.textContent = `${overtimeHours} jam ${remainingOvertimeMinutes} menit`;
-                overtimeDiv.classList.remove('hidden');
+            const statusContainer = document.getElementById('todayStatus');
+            
+            if (todayRecord) {
+                statusContainer.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 text-2xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-green-800">Sudah Absen</h3>
+                                <p class="text-green-600 text-sm">Masuk: ${todayRecord.jamMasuk}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-clock text-blue-600 text-2xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-blue-800">Status Hari Ini</h3>
+                                <span class="status-badge ${getStatusClass(todayRecord.status)}">${todayRecord.status}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-hourglass-half text-yellow-600 text-2xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-yellow-800">Total Kerja</h3>
+                                <p class="text-yellow-600 text-sm">${todayRecord.totalKerja}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                statusContainer.innerHTML = `
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle text-gray-600 text-2xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Belum Absen</h3>
+                                <p class="text-gray-600 text-sm">Silakan lakukan absen masuk</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-info-circle text-blue-600 text-2xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-blue-800">Jam Kerja</h3>
+                                <p class="text-blue-600 text-sm">09:00 - 17:00 WIB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-play text-green-600 text-2xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-green-800">Siap Bekerja</h3>
+                                <p class="text-green-600 text-sm">Klik tombol Clock In</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        // Submit absen masuk
-        function submitAbsenMasuk() {
-            const form = document.getElementById('absenForm');
-            const formData = new FormData(form);
+        function renderUserAttendanceTable() {
+            const userAttendance = allAttendanceData
+                .filter(record => record.nama === currentUser.name)
+                .slice(0, 10); // Show last 10 records
             
-            // Validate required fields for absen masuk
-            const requiredFields = ['namaLengkap', 'email', 'divisi', 'posisi', 'dutyas', 'typeOfWork', 'tanggalMasuk', 'waktuMasuk'];
-            let isValid = true;
+            const tbody = document.getElementById('userAttendanceTable');
+            tbody.innerHTML = '';
             
-            for (let field of requiredFields) {
-                if (!document.getElementById(field).value) {
-                    isValid = false;
-                    break;
-                }
+            if (userAttendance.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-8 px-4 text-center text-gray-500">
+                            <i class="fas fa-calendar-times text-4xl mb-4 block"></i>
+                            <p class="text-lg font-medium">Belum ada riwayat absensi</p>
+                            <p class="text-sm">Mulai dengan melakukan absen masuk</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                userAttendance.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-100 hover:bg-gray-50';
+                    
+                    row.innerHTML = `
+                        <td class="py-3 px-4 text-gray-800">${formatDate(record.tanggal)}</td>
+                        <td class="py-3 px-4 text-gray-600 font-mono">${record.jamMasuk}</td>
+                        <td class="py-3 px-4 text-gray-600 font-mono">${record.jamPulang}</td>
+                        <td class="py-3 px-4 text-gray-600 font-semibold">${record.totalKerja}</td>
+                        <td class="py-3 px-4">
+                            <span class="status-badge ${getStatusClass(record.status)}">${record.status}</span>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
             }
+        }
+
+        function clockIn() {
+            const today = new Date().toISOString().split('T')[0];
+            const existingRecord = allAttendanceData.find(record => 
+                record.nama === currentUser.name && record.tanggal === today
+            );
             
-            // Check if photo is taken
-            const photoPreview = document.getElementById('cameraPreviewMasuk');
-            if (!photoPreview.querySelector('img')) {
-                alert('Silakan ambil foto terlebih dahulu!');
+            if (existingRecord) {
+                alert('⚠️ Anda sudah melakukan absen masuk hari ini!');
                 return;
             }
             
-            // Check if location is set
-            if (!document.getElementById('latMasuk').value) {
-                alert('Silakan dapatkan lokasi terlebih dahulu!');
-                return;
-            }
+            const now = new Date();
+            const jamMasuk = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             
-            if (!isValid) {
-                alert('Silakan lengkapi semua field yang diperlukan!');
-                return;
-            }
-            
-            // Store absen masuk data
-            absenMasukData = {
-                nama: document.getElementById('namaLengkap').value,
-                email: document.getElementById('email').value,
-                divisi: document.getElementById('divisi').value,
-                posisi: document.getElementById('posisi').value,
-                dutyas: document.getElementById('dutyas').value,
-                typeOfWork: document.getElementById('typeOfWork').value,
-                tanggal: document.getElementById('tanggalMasuk').value,
-                waktu: document.getElementById('waktuMasuk').value,
-                lat: document.getElementById('latMasuk').value,
-                lng: document.getElementById('lngMasuk').value
+            // Create new attendance record
+            const newRecord = {
+                id: `${today}-${currentUser.name.replace(/\s+/g, '-')}`,
+                nama: currentUser.name,
+                email: currentUser.email,
+                divisi: currentUser.division,
+                posisi: currentUser.position,
+                tanggal: today,
+                jamMasuk: jamMasuk,
+                jamPulang: '17:00', // Default end time
+                totalKerja: calculateWorkHours(jamMasuk, '17:00'),
+                status: getAttendanceStatus(jamMasuk, '17:00'),
+                dutyas: 'Office Hour',
+                typeOfWork: 'Office Hour',
+                lokasi: 'Kantor Pusat',
+                keterangan: 'Absen otomatis via sistem',
+                overtime: '0 jam 0 menit',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
             };
             
-            alert('Absen masuk berhasil disimpan!');
+            allAttendanceData.unshift(newRecord);
+            updateUserStatistics();
+            renderUserTodayStatus();
+            renderUserAttendanceTable();
             
-            // Reset form and show dashboard
-            document.getElementById('statusAbsen').value = '';
-            document.getElementById('absenMasukSection').classList.add('hidden');
+            alert(`✅ Berhasil absen masuk!\n\nWaktu: ${jamMasuk}\nTanggal: ${formatDate(today)}`);
         }
 
-        // Submit absen pulang
-        function submitAbsenPulang() {
-            // Validate required fields for absen pulang
-            const requiredFields = ['remarkPekerjaan', 'waktuPulang'];
-            let isValid = true;
+        function clockOut() {
+            const today = new Date().toISOString().split('T')[0];
+            const existingRecord = allAttendanceData.find(record => 
+                record.nama === currentUser.name && record.tanggal === today
+            );
             
-            for (let field of requiredFields) {
-                if (!document.getElementById(field).value) {
-                    isValid = false;
-                    break;
-                }
-            }
-            
-            // Check if photo is uploaded
-            if (!document.getElementById('fotoPekerjaan').files[0]) {
-                alert('Silakan pilih foto pekerjaan!');
+            if (!existingRecord) {
+                alert('⚠️ Anda belum melakukan absen masuk hari ini!');
                 return;
             }
             
-            // Check if location is set
-            if (!document.getElementById('latPulang').value) {
-                alert('Silakan dapatkan lokasi terlebih dahulu!');
-                return;
-            }
+            const now = new Date();
+            const jamPulang = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             
-            if (!isValid) {
-                alert('Silakan lengkapi semua field yang diperlukan!');
-                return;
-            }
+            // Update existing record
+            existingRecord.jamPulang = jamPulang;
+            existingRecord.totalKerja = calculateWorkHours(existingRecord.jamMasuk, jamPulang);
+            existingRecord.status = getAttendanceStatus(existingRecord.jamMasuk, jamPulang);
+            existingRecord.overtime = calculateOvertime(jamPulang);
+            existingRecord.updatedAt = new Date().toISOString();
             
-            // Add to riwayat table
-            const tbody = document.getElementById('riwayatAbsenBody');
-            const newRow = document.createElement('tr');
-            newRow.className = 'border-b border-gray-100';
+            updateUserStatistics();
+            renderUserTodayStatus();
+            renderUserAttendanceTable();
             
-            const waktuMasuk = absenMasukData.waktu;
-            const waktuPulang = document.getElementById('waktuPulang').value;
-            const totalWorktime = document.getElementById('totalWorktimeText').textContent;
+            alert(`✅ Berhasil absen pulang!\n\nWaktu: ${jamPulang}\nTotal Kerja: ${existingRecord.totalKerja}\nStatus: ${existingRecord.status}`);
+        }
+
+        function viewAllAttendance() {
+            alert('🚧 Fitur "Lihat Semua Riwayat" akan segera hadir!\n\nSaat ini menampilkan 10 record terbaru di tabel.');
+        }
+
+        function exportToCSV(data, filename) {
+            let csv = 'No,Nama,Email,Divisi,Posisi,Tanggal,Jam Masuk,Jam Pulang,Total Kerja,Status,Bertugas Sebagai,Jenis Pekerjaan,Lokasi,Overtime,Keterangan,Dibuat Pada,Terakhir Diupdate\n';
             
-            newRow.innerHTML = `
-                <td class="py-3 px-4 text-gray-800">${absenMasukData.tanggal}</td>
-                <td class="py-3 px-4 text-gray-600">${waktuMasuk}</td>
-                <td class="py-3 px-4 text-gray-600">${waktuPulang}</td>
-                <td class="py-3 px-4 text-gray-600">${totalWorktime}</td>
-                <td class="py-3 px-4">
-                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Lengkap</span>
-                </td>
-            `;
+            data.forEach((record, index) => {
+                csv += `${index + 1},"${record.nama}","${record.email}","${record.divisi}","${record.posisi}","${record.tanggal}","${record.jamMasuk}","${record.jamPulang}","${record.totalKerja}","${record.status}","${record.dutyas}","${record.typeOfWork}","${record.lokasi}","${record.overtime}","${record.keterangan}","${new Date(record.createdAt).toLocaleString('id-ID')}","${new Date(record.updatedAt).toLocaleString('id-ID')}"\n`;
+            });
             
-            tbody.insertBefore(newRow, tbody.firstChild);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
             
-            alert('Absen pulang berhasil disimpan!');
-            
-            // Reset form and show dashboard
-            document.getElementById('absenForm').reset();
-            document.getElementById('statusAbsen').value = '';
-            document.getElementById('absenPulangSection').classList.add('hidden');
-            absenMasukData = null;
-            showDashboard();
+            alert(`✅ Data berhasil diexport! File: ${filename}-${new Date().toISOString().split('T')[0]}.csv`);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9759d886c58cfcfe',t:'MTc1NjI3OTY0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9759faab83766bc1',t:'MTc1NjI4MTAzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
