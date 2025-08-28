@@ -123,6 +123,15 @@
             position: relative;
             height: 300px;
         }
+        .profile-picture-container {
+            cursor: pointer;
+        }
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -186,8 +195,8 @@
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <div class="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-blue-600"></i>
+                            <div class="profile-picture-container" onclick="triggerProfilePictureUpload()">
+                                <img id="userProfilePicture" src="https://placehold.co/40x40/dbeafe/1e40af?text=U" class="profile-picture" alt="Profile Picture">
                             </div>
                             <div class="hidden md:block">
                                 <p class="text-sm font-medium text-gray-800" id="currentUserName">Karyawan</p>
@@ -655,6 +664,9 @@
         </main>
     </div>
 
+    <!-- Hidden file input for profile picture -->
+    <input type="file" id="profilePictureInput" class="hidden" accept="image/*">
+
     <!-- Clock In Modal -->
     <div id="clockInModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
@@ -1064,6 +1076,30 @@
             </div>
         </div>
     </div>
+    
+    <!-- User Attendance Detail Modal -->
+    <div id="userAttendanceDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">
+                    <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                    Detail Riwayat Absensi
+                </h3>
+                <button onclick="closeUserAttendanceDetailModal()" class="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="userAttendanceDetailContent" class="space-y-4">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            <div class="flex justify-end mt-6 pt-4 border-t border-gray-200">
+                <button onclick="closeUserAttendanceDetailModal()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
     // =================================================================
@@ -1253,6 +1289,9 @@
         renderCompanyNews();
         updateDateTime(false);
         setInterval(() => updateDateTime(false), 1000);
+        
+        // Add event listener for profile picture upload
+        document.getElementById('profilePictureInput').addEventListener('change', handleProfilePictureUpload);
     }
 
     function initializeAdminDashboard() {
@@ -1273,8 +1312,28 @@
     }
 
     // =================================================================
-    // USER DASHBOARD UI
+    // USER DASHBOARD UI & PROFILE PICTURE
     // =================================================================
+    function triggerProfilePictureUpload() {
+        document.getElementById('profilePictureInput').click();
+    }
+
+    function handleProfilePictureUpload(event) {
+        const file = event.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imageUrl = e.target.result;
+                document.getElementById('userProfilePicture').src = imageUrl;
+                // Optionally save to currentUser object for session persistence
+                if (currentUser) {
+                    currentUser.profilePicture = imageUrl;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
     function updateUserUI() {
         updateUserStatistics();
         renderUserTodayStatus();
@@ -1331,7 +1390,7 @@
         const tbody = document.getElementById('userAttendanceTable');
         tbody.innerHTML = userAttendance.length === 0 ? `<tr><td colspan="5" class="text-center py-8">Belum ada riwayat.</td></tr>` : 
             userAttendance.map(r => `
-                <tr class="border-b hover:bg-gray-50">
+                <tr class="table-row border-b hover:bg-gray-50" onclick="viewUserAttendanceDetail('${r.id}')">
                     <td class="py-3 px-4">${formatDate(r.tanggal)}</td>
                     <td class="py-3 px-4 font-mono">${r.jamMasuk}</td>
                     <td class="py-3 px-4 font-mono">${r.jamPulang || '-'}</td>
@@ -1774,7 +1833,7 @@
     });
 
     // =================================================================
-    // DATA MANIPULATION (Admin)
+    // DATA MANIPULATION & MODALS (Admin & User)
     // =================================================================
     function saveChanges() {
         if (!currentEditingRecord) return;
@@ -1836,6 +1895,51 @@
                 </div>
             </div>`;
         document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function viewUserAttendanceDetail(recordId) {
+        const record = allAttendanceData.find(r => r.id === recordId);
+        if (!record) {
+            alert('Data absensi tidak ditemukan.');
+            return;
+        }
+
+        const detailContent = document.getElementById('userAttendanceDetailContent');
+        detailContent.innerHTML = `
+            <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                <div class="font-semibold text-gray-500">Tanggal</div>
+                <div class="text-gray-800">${formatDate(record.tanggal)}</div>
+
+                <div class="font-semibold text-gray-500">Jam Masuk</div>
+                <div class="text-gray-800 font-mono">${record.jamMasuk}</div>
+
+                <div class="font-semibold text-gray-500">Jam Pulang</div>
+                <div class="text-gray-800 font-mono">${record.jamPulang || 'Belum Clock Out'}</div>
+
+                <div class="font-semibold text-gray-500">Total Kerja</div>
+                <div class="text-gray-800 font-semibold">${record.totalKerja}</div>
+
+                <div class="font-semibold text-gray-500">Status</div>
+                <div><span class="status-badge ${getStatusClass(record.status)}">${record.status}</span></div>
+
+                <div class="col-span-2 border-t mt-2 pt-3"></div>
+
+                <div class="font-semibold text-gray-500">Bertugas Sebagai</div>
+                <div class="text-gray-800">${record.dutyas}</div>
+
+                <div class="font-semibold text-gray-500">Jenis Pekerjaan</div>
+                <div class="text-gray-800">${record.typeOfWork}</div>
+
+                <div class="col-span-2 font-semibold text-gray-500 mt-2">Keterangan</div>
+                <div class="col-span-2 text-gray-800 bg-gray-50 p-2 rounded-md">${record.keterangan || 'Tidak ada keterangan.'}</div>
+            </div>
+        `;
+
+        document.getElementById('userAttendanceDetailModal').classList.remove('hidden');
+    }
+
+    function closeUserAttendanceDetailModal() {
+        document.getElementById('userAttendanceDetailModal').classList.add('hidden');
     }
 
     function autoFillEmployeeData(selectedName) {
