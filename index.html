@@ -2231,7 +2231,7 @@
         doc.text(`Periode: ${formatDateForPDF(startDate)} - ${formatDateForPDF(endDate)}`, 14, 30);
 
         // Table
-        const head = [['DATE', 'NAME', 'DIVISION', 'POSITION', 'DUTY AS', 'TYPE OF WORK', 'STATUS ABSEN', 'ABSEN MASUK', 'ABSEN PULANG', 'TOTAL TIME', 'REMARKS']];
+        const head = [['DATE', 'NAME', 'DIVISION', 'POSITION', 'DUTY AS', 'TYPE OF WORK', 'STATUS ABSEN', 'ABSEN MASUK', 'ABSEN PULANG', 'TOTAL TIME', 'REMARK PEKERJAAN']];
         const body = filteredData.map(record => [
             formatDate(record.tanggal),
             record.nama,
@@ -2243,7 +2243,7 @@
             record.jamMasuk || '-',
             record.jamPulang || '-',
             record.totalKerja,
-            record.keterangan || '-'
+            record.remarkPekerjaan || record.keterangan || '-'
         ]);
 
         doc.autoTable({
