@@ -70,7 +70,11 @@
                 </button>
             </form>
             
-
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">Demo Login:</p>
+                <p class="text-xs text-gray-500">Username: admin | Password: admin (untuk admin)</p>
+                <p class="text-xs text-gray-500">Username: user | Password: user (untuk user)</p>
+            </div>
         </div>
     </div>
 
@@ -214,20 +218,41 @@
                 <div id="newsContent" class="p-6 hidden">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Berita & Pengumuman</h3>
                     <div class="space-y-4">
-                        <div class="border-l-4 border-blue-500 pl-4 py-2">
-                            <h4 class="font-medium text-gray-800">Libur Tahun Baru 2024</h4>
-                            <p class="text-sm text-gray-600 mt-1">Kantor akan tutup pada tanggal 1 Januari 2024. Selamat tahun baru!</p>
-                            <p class="text-xs text-gray-500 mt-2">20 Des 2023</p>
+                        <div class="border-l-4 border-blue-500 pl-4 py-2 hover:bg-blue-50 cursor-pointer transition-colors rounded-r-lg" onclick="showNewsDetail('news1')">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Libur Tahun Baru 2024</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Kantor akan tutup pada tanggal 1 Januari 2024. Selamat tahun baru!</p>
+                                    <p class="text-xs text-gray-500 mt-2">20 Des 2023</p>
+                                </div>
+                                <div class="ml-4 text-blue-500">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div class="border-l-4 border-green-500 pl-4 py-2">
-                            <h4 class="font-medium text-gray-800">Update Sistem Absensi</h4>
-                            <p class="text-sm text-gray-600 mt-1">Sistem absensi telah diperbarui dengan fitur-fitur baru untuk kemudahan Anda.</p>
-                            <p class="text-xs text-gray-500 mt-2">18 Des 2023</p>
+                        <div class="border-l-4 border-green-500 pl-4 py-2 hover:bg-green-50 cursor-pointer transition-colors rounded-r-lg" onclick="showNewsDetail('news2')">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Update Sistem Absensi</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Sistem absensi telah diperbarui dengan fitur-fitur baru untuk kemudahan Anda.</p>
+                                    <p class="text-xs text-gray-500 mt-2">18 Des 2023</p>
+                                </div>
+                                <div class="ml-4 text-green-500">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div class="border-l-4 border-yellow-500 pl-4 py-2">
-                            <h4 class="font-medium text-gray-800">Reminder: Meeting Bulanan</h4>
-                            <p class="text-sm text-gray-600 mt-1">Jangan lupa meeting bulanan hari Jumat pukul 14:00 di ruang konferensi.</p>
-                            <p class="text-xs text-gray-500 mt-2">15 Des 2023</p>
+                        <div class="border-l-4 border-yellow-500 pl-4 py-2 hover:bg-yellow-50 cursor-pointer transition-colors rounded-r-lg" onclick="showNewsDetail('news3')">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">Reminder: Meeting Bulanan</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Jangan lupa meeting bulanan hari Jumat pukul 14:00 di ruang konferensi.</p>
+                                    <p class="text-xs text-gray-500 mt-2">15 Des 2023</p>
+                                </div>
+                                <div class="ml-4 text-yellow-500">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -354,44 +379,6 @@
                                     <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Hadir</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                            <span class="text-purple-600 font-medium">JS</span>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">Jane Smith</div>
-                                            <div class="text-sm text-gray-500">EMP002</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">HR</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">08:15</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Terlambat</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                            <span class="text-green-600 font-medium">MB</span>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">Mike Brown</div>
-                                            <div class="text-sm text-gray-500">EMP003</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Finance</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Tidak Hadir</span>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -424,7 +411,7 @@
                                 <i class="fas fa-camera text-gray-400 text-3xl mb-2"></i>
                                 <p class="text-gray-500 text-sm">Ambil foto dari kamera</p>
                             </div>
-                            <button type="button" onclick="startCamera('clockIn')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                            <button type="button" onclick="openCamera('clockIn')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-camera mr-2"></i>Buka Kamera
                             </button>
                         </div>
@@ -444,162 +431,6 @@
                             <input type="hidden" id="clockInLng" name="longitude">
                         </div>
                     </div>
-                </div>
-
-                <!-- Radius Status -->
-                <div id="clockInRadiusStatus" class="hidden p-4 rounded-lg">
-                    <div class="flex items-center">
-                        <i id="clockInRadiusIcon" class="fas fa-map-marker-alt text-xl mr-3"></i>
-                        <span id="clockInRadiusText" class="font-medium"></span>
-                    </div>
-                </div>
-
-                <!-- Reason for Outside Radius -->
-                <div id="clockInOutsideReason" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Berada di Luar Radius *</label>
-                    <textarea id="clockInReasonText" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" rows="3" placeholder="Jelaskan alasan Anda berada di luar radius kantor..."></textarea>
-                </div>
-
-                <!-- Personal Information -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Masuk</label>
-                        <input type="date" id="clockInDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                        <input type="text" id="clockInName" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="clockInEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
-                        <input type="text" id="clockInDivision" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Posisi</label>
-                        <select id="clockInPosition" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                            <option value="">Pilih Posisi...</option>
-                            <option value="President Director">President Director</option>
-                            <option value="Director">Director</option>
-                            <option value="General Manager">General Manager</option>
-                            <option value="Operation Manager">Operation Manager</option>
-                            <option value="Maintenance Manager">Maintenance Manager</option>
-                            <option value="Chief Pilot Fixed Wing">Chief Pilot Fixed Wing</option>
-                            <option value="Chief Pilot Rotary Wing">Chief Pilot Rotary Wing</option>
-                            <option value="Chief Flight Support">Chief Flight Support</option>
-                            <option value="Chief Inspector">Chief Inspector</option>
-                            <option value="Chief Engineer">Chief Engineer</option>
-                            <option value="Chief Engineering">Chief Engineering</option>
-                            <option value="Chief Finance, Accounting & Tax">Chief Finance, Accounting & Tax</option>
-                            <option value="Line Pilot">Line Pilot</option>
-                            <option value="Cabin Service">Cabin Service</option>
-                            <option value="Flight Support">Flight Support</option>
-                            <option value="Engineer">Engineer</option>
-                            <option value="Avionic">Avionic</option>
-                            <option value="Aviation Security">Aviation Security</option>
-                            <option value="Human Resource Development">Human Resource Development</option>
-                            <option value="Finance">Finance</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Logistic">Logistic</option>
-                            <option value="Kurir">Kurir</option>
-                            <option value="Driver">Driver</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Bertugas Sebagai</label>
-                        <select id="clockInDuty" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                            <option value="">Pilih Tugas...</option>
-                            <option value="Director">Director</option>
-                            <option value="Safety, Quality & Security Manager">Safety, Quality & Security Manager</option>
-                            <option value="Operation Manager">Operation Manager</option>
-                            <option value="Maintenance Manager">Maintenance Manager</option>
-                            <option value="Chief Pilot Fixed Wing">Chief Pilot Fixed Wing</option>
-                            <option value="Chief Pilot Rotary Wing">Chief Pilot Rotary Wing</option>
-                            <option value="Chief Flight Support">Chief Flight Support</option>
-                            <option value="Chief Inspector">Chief Inspector</option>
-                            <option value="Chief Engineer">Chief Engineer</option>
-                            <option value="Chief Finance, Accounting & Staf">Chief Finance, Accounting & Staf</option>
-                            <option value="Chief Engineering">Chief Engineering</option>
-                            <option value="Pilot in Command">Pilot in Command</option>
-                            <option value="Second in Command">Second in Command</option>
-                            <option value="Ground Instructor">Ground Instructor</option>
-                            <option value="Flight Instructor">Flight Instructor</option>
-                            <option value="Company Check Pilot">Company Check Pilot</option>
-                            <option value="Engineer">Engineer</option>
-                            <option value="Line Pilot">Line Pilot</option>
-                            <option value="Cabin Service">Cabin Service</option>
-                            <option value="Student">Student</option>
-                            <option value="Flight Support">Flight Support</option>
-                            <option value="Ground Support">Ground Support</option>
-                            <option value="Technical Representative">Technical Representative</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Staff">Staff</option>
-                            <option value="Logistic">Logistic</option>
-                            <option value="Aviation Security">Aviation Security</option>
-                            <option value="Driver">Driver</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Pekerjaan</label>
-                    <select id="clockInWorkType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                        <option value="Office Hour">Office Hour</option>
-                        <option value="Standby Flight">Standby Flight</option>
-                        <option value="Standby on Call">Standby on Call</option>
-                        <option value="Pos One Gate">Pos One Gate</option>
-                        <option value="Day Off">Day Off</option>
-                        <option value="Day Off 7 Consecutive Days for Pilot">Day Off 7 Consecutive Days for Pilot</option>
-                        <option value="Flight Duty VIP">Flight Duty VIP</option>
-                        <option value="Ferry Flight">Ferry Flight</option>
-                        <option value="PPC Simulator">PPC Simulator</option>
-                        <option value="PPC Aircraft">PPC Aircraft</option>
-                        <option value="Test Flight">Test Flight</option>
-                        <option value="Ground Run">Ground Run</option>
-                        <option value="Recurrent Training">Recurrent Training</option>
-                        <option value="Recency Flight">Recency Flight</option>
-                        <option value="Meeting Out of Office">Meeting Out of Office</option>
-                        <option value="Medical Examination">Medical Examination</option>
-                        <option value="Annual Leave">Annual Leave</option>
-                        <option value="Sick">Sick</option>
-                        <option value="Technical Representative">Technical Representative</option>
-                        <option value="Aviation Security">Aviation Security</option>
-                        <option value="Over Time">Over Time</option>
-                    </select>
-                </div>
-
-                <!-- Status Information (Auto-filled) -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-medium text-gray-800 mb-3">Status Absensi</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Status Absen</label>
-                            <input type="text" value="On Working" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Absen Masuk</label>
-                            <input type="text" id="clockInTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" readonly>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Status Masuk</label>
-                        <div id="clockInStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- Late Reason (Conditional) -->
-                <div id="clockInLateReason" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Terlambat *</label>
-                    <textarea id="clockInLateReasonText" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" rows="3" placeholder="Jelaskan alasan keterlambatan Anda..."></textarea>
                 </div>
 
                 <!-- Submit Button -->
@@ -628,82 +459,10 @@
             </div>
             
             <form id="clockOutForm" class="space-y-6">
-                <!-- Location Section -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Pulang *</label>
-                    <div class="border border-gray-300 rounded-lg p-4">
-                        <div id="clockOutMap" class="w-full h-32 bg-gray-200 rounded-lg mb-2 flex items-center justify-center">
-                            <i class="fas fa-map-marker-alt text-gray-400 text-2xl"></i>
-                        </div>
-                        <button type="button" onclick="getCurrentLocation('clockOut')" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
-                            <i class="fas fa-location-arrow mr-2"></i>Dapatkan Lokasi
-                        </button>
-                        <input type="hidden" id="clockOutLat" name="latitude">
-                        <input type="hidden" id="clockOutLng" name="longitude">
-                    </div>
-                </div>
-
-                <!-- Radius Status -->
-                <div id="clockOutRadiusStatus" class="hidden p-4 rounded-lg">
-                    <div class="flex items-center">
-                        <i id="clockOutRadiusIcon" class="fas fa-map-marker-alt text-xl mr-3"></i>
-                        <span id="clockOutRadiusText" class="font-medium"></span>
-                    </div>
-                </div>
-
-                <!-- Reason for Outside Radius -->
-                <div id="clockOutOutsideReason" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Berada di Luar Radius *</label>
-                    <textarea id="clockOutReasonText" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" rows="3" placeholder="Jelaskan alasan Anda berada di luar radius kantor..."></textarea>
-                </div>
-
                 <!-- Work Report -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan Hari Ini *</label>
                     <textarea id="clockOutWorkReport" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" rows="4" placeholder="Jelaskan pekerjaan yang telah Anda selesaikan hari ini..."></textarea>
-                </div>
-
-                <!-- Work Photo -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan Hari Ini *</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                        <div id="clockOutPhotoPreview" class="hidden">
-                            <img id="clockOutPhotoImg" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg mb-2">
-                        </div>
-                        <div id="clockOutPhotoPlaceholder">
-                            <i class="fas fa-image text-gray-400 text-3xl mb-2"></i>
-                            <p class="text-gray-500 text-sm">Pilih foto dari galeri</p>
-                        </div>
-                        <input type="file" id="clockOutPhotoInput" accept="image/*" class="hidden" onchange="previewWorkPhoto(event)">
-                        <button type="button" onclick="document.getElementById('clockOutPhotoInput').click()" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
-                            <i class="fas fa-image mr-2"></i>Pilih Foto
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Status Information (Auto-filled) -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-medium text-gray-800 mb-3">Status Pulang</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Absen Pulang</label>
-                            <input type="text" id="clockOutTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Status Pulang</label>
-                            <div id="clockOutStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white font-medium"></div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div id="clockOutOvertimeSection" class="hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Total Overtime</label>
-                            <input type="text" id="clockOutOvertime" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Total Waktu Kerja</label>
-                            <input type="text" id="clockOutWorktime" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" readonly>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -763,12 +522,8 @@
                     <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-200 mx-auto mb-4">
                         <img id="profileImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23e5e7eb'/%3E%3Ccircle cx='50' cy='35' r='15' fill='%236b7280'/%3E%3Cpath d='M20 80 Q20 65 35 65 h30 Q80 65 80 80' fill='%236b7280'/%3E%3C/svg%3E" alt="Profile" class="w-full h-full object-cover">
                     </div>
-                    <button onclick="document.getElementById('photoInput').click()" class="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-all transform hover:scale-110">
-                        <i class="fas fa-camera text-sm"></i>
-                    </button>
                 </div>
-                <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="changeProfilePhoto(event)">
-                <p class="text-sm text-gray-600">Klik ikon kamera untuk mengubah foto</p>
+                <p class="text-sm text-gray-600">Foto Profil</p>
             </div>
             
             <!-- Profile Info -->
@@ -779,36 +534,15 @@
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ID Karyawan</label>
-                    <input type="text" value="EMP001" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Departemen</label>
-                    <select id="profileDepartment" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                        <option value="IT">IT</option>
-                        <option value="HR">HR</option>
-                        <option value="Finance">Finance</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Operations">Operations</option>
-                    </select>
-                </div>
-                
-                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input type="email" id="profileEmail" value="john.doe@transwisata.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">No. Telepon</label>
-                    <input type="tel" id="profilePhone" value="+62 812-3456-7890" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                 </div>
             </div>
             
             <!-- Action Buttons -->
             <div class="flex space-x-3 mt-6">
                 <button onclick="saveProfile()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105">
-                    <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                    <i class="fas fa-save mr-2"></i>Simpan
                 </button>
                 <button onclick="closeProfile()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-medium transition-all">
                     <i class="fas fa-times mr-2"></i>Batal
@@ -817,19 +551,19 @@
         </div>
     </div>
 
-    <!-- Attendance Detail Modal -->
-    <div id="attendanceDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4">
+    <!-- News Detail Modal -->
+    <div id="newsDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4">
         <div class="bg-white rounded-xl p-4 sm:p-6 max-w-4xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-semibold text-gray-800">
-                    <i class="fas fa-calendar-check mr-2 text-blue-600"></i>Detail Absensi
+                    <i class="fas fa-newspaper mr-2 text-blue-600"></i>Detail Berita
                 </h3>
-                <button onclick="closeAttendanceDetail()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <button onclick="closeNewsDetail()" class="text-gray-500 hover:text-gray-700 transition-colors">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
-            <div id="attendanceDetailContent">
+            <div id="newsDetailContent">
                 <!-- Content will be populated by JavaScript -->
             </div>
         </div>
@@ -855,274 +589,158 @@
         // Current user state
         let currentUser = null;
         let currentTime = new Date();
+        let attendanceData = [];
+        let isClockInDone = false;
+        let currentCameraType = null;
+        let cameraStream = null;
 
-        // Employee Database
-        const employeeDatabase = [
-            { name: "Rustam Suhanda", email: "managementtranswisata@gmail.com", division: "Staf", position: "President Director", role: "USER" },
-            { name: "Selfy Warauw", email: "warauw_1@yahoo.com", division: "Staf", position: "Director", role: "USER" },
-            { name: "Muhamad Ramdani Masri", email: "crunkbolcow@gmail.com", division: "Operation", position: "Chief Pilot Rotary Wing", role: "USER" },
-            { name: "Sulaksono Teddy Prabowo", email: "fly5103@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Marcelino Bhaharoenawanto", email: "marcelino412ep@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Muhamad Sofwan", email: "sofwanm819@gmail.com", division: "Operation", position: "Chief Pilot Fixed Wing", role: "USER" },
-            { name: "Sofian M. L. Tobing", email: "sofiantobing692@gmail.com", division: "Operation", position: "General Manager", role: "USER" },
-            { name: "Rico Febdiandana", email: "ricofebdi@gmail.com", division: "Operation", position: "Chief Flight Support", role: "USER" },
-            { name: "Alfajri", email: "alfajri_koto@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Eli Setya", email: "tioxpilot@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Susetyo Harijanto", email: "harijantosusetyo@gmail.com", division: "Operation", position: "Operation Manager", role: "USER" },
-            { name: "Purwoko", email: "purwoko.mulyono@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Riza Hanindita", email: "icul2122@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Henaldy Arifia Sudrajat", email: "henaldy.ts204@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Kadek Amelia Nadya Berliana", email: "amelberliana@yahoo.co.id", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Qorry Maulidya Natawijaya", email: "qnatawijaya@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            { name: "Shentira Anggia Putri", email: "anggiashentira@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            { name: "Tiffani Pricilia Hasan", email: "tiffanipriciliaaaa@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            { name: "Agustin Zulfani Prihatini", email: "agustinzulfani74@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            { name: "Nadya Casey Ivanka", email: "ivankacasey99@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
-            { name: "Yanu Prihatno", email: "prihatnoyanu@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Bayu Nugroho", email: "bayu.avicena@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Wahyudi Suseno", email: "nawawahyudisuseno090@gmail.com", division: "Maintenance", position: "Avionic", role: "USER" },
-            { name: "Sigit Hardadi", email: "sigithardadi88@yahoo.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Hadi Sutrisno", email: "hadikamilatun@gmail.com", division: "Maintenance", position: "Maintenance Manager", role: "USER" },
-            { name: "Suhairi", email: "suhairitwa@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Suyanto", email: "yanto.umardin@gmail.com", division: "Maintenance", position: "Avionic", role: "USER" },
-            { name: "Lazarus Rio Raymond", email: "rioraymond89@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Febie Aguti Effendi", email: "mpiipie@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Diki Hariyanto", email: "dikiatnu7@gmail.com", division: "Maintenance", position: "Chief Engineer", role: "USER" },
-            { name: "Prayit Susonggo", email: "prayitsusonggo@yahoo.com", division: "Maintenance", position: "Avionic", role: "USER" },
-            { name: "Iskandar Akbar Hakim", email: "iskandarakbarhakim@gmail.com", division: "Maintenance", position: "Chief Inspector", role: "USER" },
-            { name: "Arif Vrybadi Halim", email: "GlexXRSvpcgo@outlook.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Alfiza Eka Putra", email: "alfizaekap@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Dedi Prasetyo", email: "deditren99@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            { name: "Media H Marbun", email: "mediamarbun@gmail.com", division: "Staf", position: "Human Resource Development", role: "USER" },
-            { name: "Fatmawati", email: "ulieumeda@gmail.com", division: "Staf", position: "Finance", role: "USER" },
-            { name: "Dede Rahman Arafiq", email: "d2rahman@yahoo.co.id", division: "Staf", position: "Finance", role: "USER" },
-            { name: "Leo Fitzgerald Sinay", email: "leosinay@gmail.com", division: "Maintenance", position: "Chief Engineering", role: "USER" },
-            { name: "Khairul Zaman Pohan", email: "pohan16zaman@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            { name: "Sentot Basuki", email: "sentotbasuki@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            { name: "Bobby Feisal Mahardhika", email: "bobby.feisal22@gmail.com", division: "Staf", position: "Engineering", role: "USER" },
-            { name: "Tri Widayat", email: "tri3wiwid@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            { name: "Isdarminto", email: "is.darminto35@gmail.com", division: "Staf", position: "Logistic", role: "USER" },
-            { name: "Sulaichan Noor Ali", email: "sulaichann@gmail.com", division: "Staf", position: "Logistic", role: "USER" },
-            { name: "Sri Muljono Bayu Putro", email: "sbayuputro@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
-            { name: "Asri Gatot Yulianto", email: "Asrigatot.67@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            { name: "Nanang Chabibi", email: "nanangchabibi3@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            { name: "Hariyanto", email: "katellisna423@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
-            { name: "Supriyono", email: "fardhan0509@gmail.com", division: "Staf", position: "Kurir", role: "USER" },
-            { name: "Kasna", email: "kasna.pjln799@gmail.com", division: "Staf", position: "Driver", role: "USER" },
-            { name: "Rizal Setiawan", email: "rizalsetiawan020812@gmail.com", division: "Staf", position: "Driver", role: "USER" },
-            { name: "Ardi Rizki", email: "ardi.rizk91@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
-            { name: "Wawan Setiawan", email: "setiawanwawan7312@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
-            { name: "Tommy Saputra", email: "tommysaputra473@gmail.com", division: "Staf", position: "Chief Finance, Accounting & Tax", role: "USER" }
-        ];
-
-        // Function to get first name from full name
-        function getFirstName(fullName) {
-            return fullName.split(' ')[0].toLowerCase();
-        }
-
-        // Function to find employee by email
-        function findEmployeeByEmail(email) {
-            return employeeDatabase.find(emp => emp.email.toLowerCase() === email.toLowerCase());
-        }
-
-        // Initialize app
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            updateClock();
-            setInterval(updateClock, 1000);
-            // Change running text every 15 seconds
-            setInterval(changeRunningMessage, 15000);
-            // Load attendance history when page loads
-            loadAttendanceHistory();
+            initializeApp();
         });
 
-        // Update clock display
+        function initializeApp() {
+            // Set up login form
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+
+            // Set up clock in form
+            const clockInForm = document.getElementById('clockInForm');
+            if (clockInForm) {
+                clockInForm.addEventListener('submit', handleClockIn);
+            }
+
+            // Set up clock out form
+            const clockOutForm = document.getElementById('clockOutForm');
+            if (clockOutForm) {
+                clockOutForm.addEventListener('submit', handleClockOut);
+            }
+
+            // Start clock
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Update date
+            updateDate();
+        }
+
+        // Login functionality
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                alert('Mohon isi username dan password');
+                return;
+            }
+
+            // Simple login validation
+            if (username === 'admin' && password === 'admin') {
+                currentUser = { name: 'Admin User', role: 'ADMIN' };
+                showDashboard('admin');
+            } else if (username === 'user' && password === 'user') {
+                currentUser = { name: 'John Doe', role: 'USER' };
+                showDashboard('user');
+            } else {
+                alert('Username atau password salah');
+                return;
+            }
+
+            // Clear form
+            document.getElementById('loginForm').reset();
+        }
+
+        function showDashboard(type) {
+            document.getElementById('loginPage').classList.add('hidden');
+            
+            if (type === 'admin') {
+                document.getElementById('adminDashboard').classList.remove('hidden');
+            } else {
+                document.getElementById('userDashboard').classList.remove('hidden');
+                updateUserInfo();
+            }
+        }
+
+        function updateUserInfo() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name;
+                updateGreeting();
+            }
+        }
+
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'Selamat Pagi';
+            
+            if (hour >= 12 && hour < 15) {
+                greeting = 'Selamat Siang';
+            } else if (hour >= 15 && hour < 18) {
+                greeting = 'Selamat Sore';
+            } else if (hour >= 18) {
+                greeting = 'Selamat Malam';
+            }
+
+            const greetingTitle = document.getElementById('greetingTitle');
+            if (greetingTitle && currentUser) {
+                greetingTitle.textContent = `${greeting}, ${currentUser.name.split(' ')[0]}!`;
+            }
+        }
+
         function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('id-ID', { 
-                hour12: false,
+            const timeString = now.toLocaleTimeString('id-ID', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
-            const dateString = now.toLocaleDateString('id-ID', { 
+            
+            const currentTimeElement = document.getElementById('currentTime');
+            if (currentTimeElement) {
+                currentTimeElement.textContent = timeString;
+            }
+        }
+
+        function updateDate() {
+            const now = new Date();
+            const dateString = now.toLocaleDateString('id-ID', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
             
-            const timeElement = document.getElementById('currentTime');
-            const dateElement = document.getElementById('currentDate');
+            const currentDateElement = document.getElementById('currentDate');
+            if (currentDateElement) {
+                currentDateElement.textContent = dateString;
+            }
+
             const todayDateElement = document.getElementById('todayDate');
-            
-            if (timeElement) timeElement.textContent = timeString;
-            if (dateElement) dateElement.textContent = dateString;
             if (todayDateElement) {
-                todayDateElement.textContent = now.toLocaleDateString('id-ID', { 
+                todayDateElement.textContent = now.toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'short'
                 });
             }
         }
 
-        // Update greeting based on time
-        function updateGreeting() {
-            const now = new Date();
-            const hour = now.getHours();
-            const greetingElement = document.getElementById('greetingTitle');
-            
-            if (!greetingElement || !currentUser) return;
-            
-            let greeting = '';
-            if (hour >= 5 && hour < 12) {
-                greeting = `Selamat Pagi, ${currentUser.name}! ☀️`;
-            } else if (hour >= 12 && hour < 15) {
-                greeting = `Selamat Siang, ${currentUser.name}! 🌤️`;
-            } else if (hour >= 15 && hour < 18) {
-                greeting = `Selamat Sore, ${currentUser.name}! 🌅`;
-            } else {
-                greeting = `Selamat Malam, ${currentUser.name}! 🌙`;
-            }
-            
-            greetingElement.textContent = greeting;
-        }
-
-        // Running text messages array
-        const runningMessages = [
-            "🎉 Selamat datang di sistem absensi ECrew Transwisata! • 📅 Jangan lupa catat kehadiran Anda hari ini • ⏰ Jam kerja: 08:00 - 17:00 WIB • 🏆 Tingkatkan produktivitas dengan disiplin waktu • 💼 Terima kasih atas dedikasi Anda untuk perusahaan • 🌟 Semangat bekerja dan raih prestasi terbaik!",
-            "📢 Pengumuman: Meeting bulanan akan diadakan hari Jumat • 🎯 Target bulan ini: 100% kehadiran tepat waktu • 💡 Tips: Gunakan fitur clock in/out untuk akurasi absensi • 🏅 Apresiasi untuk karyawan teladan bulan ini • 🚀 Mari bersama membangun masa depan yang lebih baik!",
-            "⚡ Sistem absensi telah diperbarui dengan fitur terbaru • 🔔 Notifikasi otomatis untuk reminder absensi • 📊 Lihat statistik kehadiran Anda di menu riwayat • 🎊 Selamat kepada tim yang mencapai perfect attendance • 💪 Konsistensi adalah kunci kesuksesan!"
-        ];
-
-        let currentMessageIndex = 0;
-
-        // Change running text message
-        function changeRunningMessage() {
-            const runningTextElement = document.getElementById('runningText');
-            if (runningTextElement) {
-                currentMessageIndex = (currentMessageIndex + 1) % runningMessages.length;
-                runningTextElement.textContent = runningMessages[currentMessageIndex] + " • ";
-            }
-        }
-
-        // Login functionality
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Check if admin login
-            if (email === 'admin' && password === 'admin123') {
-                currentUser = { type: 'admin', name: 'Admin User' };
-                showDashboard('admin');
-                return;
-            }
-            
-            // Find employee by email
-            const employee = findEmployeeByEmail(email);
-            
-            if (employee) {
-                // Check if password matches first name
-                const firstName = getFirstName(employee.name);
-                if (password.toLowerCase() === firstName) {
-                    currentUser = {
-                        type: 'user',
-                        name: employee.name,
-                        email: employee.email,
-                        division: employee.division,
-                        position: employee.position,
-                        role: employee.role
-                    };
-                    showDashboard('user');
-                } else {
-                    alert('Password salah! Gunakan nama depan Anda sebagai password.');
-                }
-            } else {
-                alert('Email tidak ditemukan dalam database karyawan!');
-            }
-        });
-
-        // Show dashboard based on user type
-        function showDashboard(type) {
-            document.getElementById('loginPage').classList.add('hidden');
-            
-            if (type === 'user') {
-                document.getElementById('userDashboard').classList.remove('hidden');
-                document.getElementById('userName').textContent = currentUser.name;
-                loadUserProfile(); // Load saved profile data
-                updateGreeting();
-                // Update greeting every minute
-                setInterval(updateGreeting, 60000);
-            } else if (type === 'admin') {
-                document.getElementById('adminDashboard').classList.remove('hidden');
-            }
-        }
-
-        // Attendance state
-        let attendanceData = {
-            clockInTime: null,
-            clockInData: null,
-            isClockInDone: false
-        };
-
-        // Attendance history storage
-        let attendanceHistory = JSON.parse(localStorage.getItem('attendanceHistory')) || [];
-
-        // Office coordinates for radius checking
-        const officeLocations = [
-            { lat: -6.267716, lng: 106.897317 }, // Office 1
-            { lat: -6.265146, lng: 106.885701 }  // Office 2
-        ];
-        const radiusLimit = 250; // meters
-
-        let currentCameraType = null;
-        let cameraStream = null;
-
-        // Show Clock In Modal
+        // Modal functions
         function showClockInModal() {
-            if (attendanceData.isClockInDone) {
-                alert('Anda sudah melakukan clock in hari ini!');
-                return;
-            }
-            
-            // Pre-fill form data
-            const now = new Date();
-            document.getElementById('clockInDate').value = now.toISOString().split('T')[0];
-            document.getElementById('clockInName').value = currentUser.name || 'John Doe';
-            document.getElementById('clockInEmail').value = currentUser.email || 'john.doe@transwisata.com';
-            document.getElementById('clockInDivision').value = currentUser.division || 'IT';
-            document.getElementById('clockInTime').value = now.toLocaleTimeString('id-ID', { hour12: false });
-            
-            // Auto-select position based on employee data
-            if (currentUser.position) {
-                document.getElementById('clockInPosition').value = currentUser.position;
-            }
-            
-            // Set status based on time
-            updateClockInStatus();
-            
             document.getElementById('clockInModal').classList.remove('hidden');
         }
 
         function closeClockInModal() {
             document.getElementById('clockInModal').classList.add('hidden');
-            resetClockInForm();
         }
 
-        // Show Clock Out Modal
         function showClockOutModal() {
-            if (!attendanceData.isClockInDone) {
-                alert('Anda harus melakukan clock in terlebih dahulu!');
+            if (!isClockInDone) {
+                alert('Anda harus clock in terlebih dahulu');
                 return;
             }
-            
-            const now = new Date();
-            document.getElementById('clockOutTime').value = now.toLocaleTimeString('id-ID', { hour12: false });
-            
-            // Calculate work time and status
-            updateClockOutStatus();
-            
             document.getElementById('clockOutModal').classList.remove('hidden');
         }
 
@@ -1130,93 +748,43 @@
             document.getElementById('clockOutModal').classList.add('hidden');
         }
 
-        // Update Clock In Status
-        function updateClockInStatus() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const currentTime = hour * 60 + minute; // Convert to minutes
-            const nineAM = 9 * 60; // 9:00 AM in minutes
+        function showProfile() {
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('profileName').value;
+            const email = document.getElementById('profileEmail').value;
             
-            const statusElement = document.getElementById('clockInStatus');
-            const lateReasonSection = document.getElementById('clockInLateReason');
-            
-            if (currentTime <= nineAM) {
-                statusElement.textContent = 'Terima Kasih Anda Telah Absen Tepat Waktu';
-                statusElement.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg bg-green-50 text-green-800 font-medium';
-                lateReasonSection.classList.add('hidden');
-            } else {
-                statusElement.textContent = 'Anda Terlambat Absen';
-                statusElement.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg bg-red-50 text-red-800 font-medium';
-                lateReasonSection.classList.remove('hidden');
+            if (name && email) {
+                currentUser.name = name;
+                updateUserInfo();
+                closeProfile();
+                showSuccessModal('Profil berhasil diperbarui');
             }
         }
 
-        // Update Clock Out Status
-        function updateClockOutStatus() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const currentTime = hour * 60 + minute; // Convert to minutes
-            
-            const fivePM = 17 * 60; // 5:00 PM
-            const fiveThirtyPM = 17 * 60 + 30; // 5:30 PM
-            
-            const statusElement = document.getElementById('clockOutStatus');
-            const overtimeSection = document.getElementById('clockOutOvertimeSection');
-            const overtimeElement = document.getElementById('clockOutOvertime');
-            const worktimeElement = document.getElementById('clockOutWorktime');
-            
-            // Calculate work time
-            if (attendanceData.clockInTime) {
-                const clockInTime = new Date(attendanceData.clockInTime);
-                const workDuration = now - clockInTime;
-                const hours = Math.floor(workDuration / (1000 * 60 * 60));
-                const minutes = Math.floor((workDuration % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((workDuration % (1000 * 60)) / 1000);
-                
-                worktimeElement.value = `${hours} jam ${minutes} menit ${seconds} detik`;
-            }
-            
-            // Set status and overtime
-            if (currentTime < fivePM) {
-                statusElement.textContent = 'Anda Pulang Sebelum Waktunya';
-                statusElement.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg bg-yellow-50 text-yellow-800 font-medium';
-                overtimeSection.classList.add('hidden');
-            } else if (currentTime <= fiveThirtyPM) {
-                statusElement.textContent = 'Anda Pulang Tepat Waktu';
-                statusElement.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg bg-green-50 text-green-800 font-medium';
-                overtimeSection.classList.add('hidden');
-            } else {
-                statusElement.textContent = 'Waktu Kerja Melebihi';
-                statusElement.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg bg-blue-50 text-blue-800 font-medium';
-                
-                // Calculate overtime from 17:31
-                const overtimeStart = 17 * 60 + 31; // 5:31 PM
-                const overtimeMinutes = currentTime - overtimeStart;
-                const overtimeHours = Math.floor(overtimeMinutes / 60);
-                const remainingMinutes = overtimeMinutes % 60;
-                
-                overtimeElement.value = `${overtimeHours} jam ${remainingMinutes} menit`;
-                overtimeSection.classList.remove('hidden');
-            }
-        }
-
-        // Camera Functions
-        function startCamera(type) {
+        // Camera functions
+        function openCamera(type) {
             currentCameraType = type;
             document.getElementById('cameraModal').classList.remove('hidden');
-            
+            startCamera();
+        }
+
+        function startCamera() {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function(stream) {
                     cameraStream = stream;
                     const video = document.getElementById('cameraVideo');
                     video.srcObject = stream;
                 })
-                .catch(function(error) {
-                    console.error('Error accessing camera:', error);
-                    alert('Tidak dapat mengakses kamera. Pastikan Anda memberikan izin kamera.');
-                    closeCameraModal();
+                .catch(function(err) {
+                    console.error('Error accessing camera:', err);
+                    alert('Tidak dapat mengakses kamera. Pastikan browser memiliki izin kamera.');
                 });
         }
 
@@ -1224,19 +792,19 @@
             const video = document.getElementById('cameraVideo');
             const canvas = document.getElementById('cameraCanvas');
             const context = canvas.getContext('2d');
-            
+
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0);
-            
-            const imageDataUrl = canvas.toDataURL('image/jpeg');
+
+            const dataURL = canvas.toDataURL('image/jpeg');
             
             if (currentCameraType === 'clockIn') {
-                document.getElementById('clockInPhotoImg').src = imageDataUrl;
+                document.getElementById('clockInPhotoImg').src = dataURL;
                 document.getElementById('clockInPhotoPreview').classList.remove('hidden');
                 document.getElementById('clockInPhotoPlaceholder').classList.add('hidden');
             }
-            
+
             closeCameraModal();
         }
 
@@ -1246,468 +814,117 @@
                 cameraStream = null;
             }
             document.getElementById('cameraModal').classList.add('hidden');
-            currentCameraType = null;
         }
 
-        // Location Functions
+        // Location functions
         function getCurrentLocation(type) {
-            if (!navigator.geolocation) {
-                alert('Geolocation tidak didukung oleh browser ini.');
-                return;
-            }
-            
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    
-                    if (type === 'clockIn') {
-                        document.getElementById('clockInLat').value = lat;
-                        document.getElementById('clockInLng').value = lng;
-                        updateLocationDisplay('clockIn', lat, lng);
-                        checkRadius('clockIn', lat, lng);
-                    } else if (type === 'clockOut') {
-                        document.getElementById('clockOutLat').value = lat;
-                        document.getElementById('clockOutLng').value = lng;
-                        updateLocationDisplay('clockOut', lat, lng);
-                        checkRadius('clockOut', lat, lng);
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        if (type === 'clockIn') {
+                            document.getElementById('clockInLat').value = lat;
+                            document.getElementById('clockInLng').value = lng;
+                            document.getElementById('clockInMap').innerHTML = `
+                                <div class="text-green-600">
+                                    <i class="fas fa-map-marker-alt text-2xl mb-2"></i>
+                                    <p class="text-sm">Lokasi berhasil didapat</p>
+                                    <p class="text-xs">${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
+                                </div>
+                            `;
+                        }
+                    },
+                    function(error) {
+                        console.error('Error getting location:', error);
+                        alert('Tidak dapat mendapatkan lokasi. Pastikan GPS aktif dan browser memiliki izin lokasi.');
                     }
-                },
-                function(error) {
-                    console.error('Error getting location:', error);
-                    alert('Tidak dapat mendapatkan lokasi. Pastikan Anda memberikan izin lokasi.');
-                }
-            );
-        }
-
-        function updateLocationDisplay(type, lat, lng) {
-            const mapElement = document.getElementById(type + 'Map');
-            mapElement.innerHTML = `
-                <div class="text-center">
-                    <i class="fas fa-map-marker-alt text-green-500 text-2xl mb-2"></i>
-                    <p class="text-sm text-gray-600">Lokasi berhasil didapatkan</p>
-                    <p class="text-xs text-gray-500">${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
-                </div>
-            `;
-        }
-
-        function checkRadius(type, userLat, userLng) {
-            let isWithinRadius = false;
-            let nearestDistance = Infinity;
-            
-            // Check distance to each office location
-            officeLocations.forEach(office => {
-                const distance = calculateDistance(userLat, userLng, office.lat, office.lng);
-                if (distance < nearestDistance) {
-                    nearestDistance = distance;
-                }
-                if (distance <= radiusLimit) {
-                    isWithinRadius = true;
-                }
-            });
-            
-            const statusElement = document.getElementById(type + 'RadiusStatus');
-            const iconElement = document.getElementById(type + 'RadiusIcon');
-            const textElement = document.getElementById(type + 'RadiusText');
-            const reasonSection = document.getElementById(type + 'OutsideReason');
-            
-            statusElement.classList.remove('hidden');
-            
-            if (isWithinRadius) {
-                statusElement.className = 'p-4 rounded-lg bg-green-50 border border-green-200';
-                iconElement.className = 'fas fa-check-circle text-green-500 text-xl mr-3';
-                textElement.textContent = 'Anda berada dalam radius kantor';
-                textElement.className = 'font-medium text-green-800';
-                reasonSection.classList.add('hidden');
+                );
             } else {
-                statusElement.className = 'p-4 rounded-lg bg-red-50 border border-red-200';
-                iconElement.className = 'fas fa-exclamation-circle text-red-500 text-xl mr-3';
-                textElement.textContent = `Anda berada di luar radius kantor (${Math.round(nearestDistance)}m dari kantor terdekat)`;
-                textElement.className = 'font-medium text-red-800';
-                reasonSection.classList.remove('hidden');
+                alert('Geolocation tidak didukung oleh browser ini.');
             }
         }
 
-        function calculateDistance(lat1, lng1, lat2, lng2) {
-            const R = 6371e3; // Earth's radius in meters
-            const φ1 = lat1 * Math.PI/180;
-            const φ2 = lat2 * Math.PI/180;
-            const Δφ = (lat2-lat1) * Math.PI/180;
-            const Δλ = (lng2-lng1) * Math.PI/180;
-            
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                      Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            
-            return R * c; // Distance in meters
-        }
-
-        // Preview work photo for clock out
-        function previewWorkPhoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    alert('Harap pilih file gambar yang valid!');
-                    return;
-                }
-                
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Ukuran file terlalu besar! Maksimal 5MB.');
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('clockOutPhotoImg').src = e.target.result;
-                    document.getElementById('clockOutPhotoPreview').classList.remove('hidden');
-                    document.getElementById('clockOutPhotoPlaceholder').classList.add('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Form submission handlers
-        document.getElementById('clockInForm').addEventListener('submit', function(e) {
+        // Attendance functions
+        function handleClockIn(e) {
             e.preventDefault();
             
-            // Validate required fields
-            const photo = document.getElementById('clockInPhotoImg').src;
+            const photoImg = document.getElementById('clockInPhotoImg');
             const lat = document.getElementById('clockInLat').value;
             const lng = document.getElementById('clockInLng').value;
-            const duty = document.getElementById('clockInDuty').value;
-            
-            if (!photo || photo === '') {
-                alert('Foto masuk wajib diambil!');
+
+            if (!photoImg.src || photoImg.src === '') {
+                alert('Mohon ambil foto terlebih dahulu');
                 return;
             }
-            
+
             if (!lat || !lng) {
-                alert('Lokasi masuk wajib diisi!');
+                alert('Mohon dapatkan lokasi terlebih dahulu');
                 return;
             }
-            
-            if (!duty) {
-                alert('Bertugas sebagai wajib dipilih!');
-                return;
-            }
-            
-            // Check if outside radius and reason is required
-            const reasonSection = document.getElementById('clockInOutsideReason');
-            if (!reasonSection.classList.contains('hidden')) {
-                const reason = document.getElementById('clockInReasonText').value.trim();
-                if (!reason) {
-                    alert('Alasan berada di luar radius wajib diisi!');
-                    return;
-                }
-            }
-            
-            // Check if late and reason is required
-            const lateReasonSection = document.getElementById('clockInLateReason');
-            if (!lateReasonSection.classList.contains('hidden')) {
-                const lateReason = document.getElementById('clockInLateReasonText').value.trim();
-                if (!lateReason) {
-                    alert('Alasan terlambat wajib diisi!');
-                    return;
-                }
-            }
-            
-            // Save clock in data
-            attendanceData.clockInTime = new Date();
-            attendanceData.clockInData = {
-                photo: photo,
+
+            // Create attendance record
+            const now = new Date();
+            const attendanceRecord = {
+                id: Date.now(),
+                date: now.toLocaleDateString('id-ID'),
+                clockIn: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                clockOut: null,
+                photo: photoImg.src,
                 location: { lat: parseFloat(lat), lng: parseFloat(lng) },
-                duty: duty,
-                position: document.getElementById('clockInPosition').value,
-                workType: document.getElementById('clockInWorkType').value,
-                time: attendanceData.clockInTime,
-                status: document.getElementById('clockInStatus').textContent,
-                outsideReason: reasonSection.classList.contains('hidden') ? null : document.getElementById('clockInReasonText').value,
-                lateReason: lateReasonSection.classList.contains('hidden') ? null : document.getElementById('clockInLateReasonText').value,
-                name: currentUser.name,
-                email: currentUser.email,
-                division: currentUser.division
+                status: 'Hadir'
             };
-            attendanceData.isClockInDone = true;
-            
+
+            attendanceData.push(attendanceRecord);
+            isClockInDone = true;
+
             // Enable clock out button
             const clockOutBtn = document.getElementById('clockOutBtn');
             clockOutBtn.disabled = false;
-            clockOutBtn.className = 'w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105';
-            
-            // Disable clock in button
-            const clockInBtn = document.getElementById('clockInBtn');
-            clockInBtn.disabled = true;
-            clockInBtn.className = 'w-full bg-gray-400 text-white py-3 rounded-lg font-medium cursor-not-allowed';
-            
-            closeClockInModal();
-            showSuccessModal('Clock In Berhasil!', 'Absen masuk telah tercatat. Anda dapat melakukan clock out nanti.');
-        });
+            clockOutBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            clockOutBtn.classList.add('bg-red-500', 'hover:bg-red-600');
 
-        document.getElementById('clockOutForm').addEventListener('submit', function(e) {
+            closeClockInModal();
+            showSuccessModal('Clock In berhasil dicatat');
+            updateAttendanceHistory();
+        }
+
+        function handleClockOut(e) {
             e.preventDefault();
             
-            // Validate required fields
-            const lat = document.getElementById('clockOutLat').value;
-            const lng = document.getElementById('clockOutLng').value;
             const workReport = document.getElementById('clockOutWorkReport').value.trim();
-            const workPhoto = document.getElementById('clockOutPhotoImg').src;
-            
-            if (!lat || !lng) {
-                alert('Lokasi pulang wajib diisi!');
-                return;
-            }
-            
+
             if (!workReport) {
-                alert('Remark pekerjaan hari ini wajib diisi!');
+                alert('Mohon isi remark pekerjaan hari ini');
                 return;
             }
-            
-            if (!workPhoto || workPhoto === '') {
-                alert('Foto pekerjaan hari ini wajib dipilih!');
-                return;
+
+            // Update latest attendance record
+            if (attendanceData.length > 0) {
+                const latestRecord = attendanceData[attendanceData.length - 1];
+                const now = new Date();
+                latestRecord.clockOut = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                latestRecord.workReport = workReport;
             }
-            
-            // Check if outside radius and reason is required
-            const reasonSection = document.getElementById('clockOutOutsideReason');
-            if (!reasonSection.classList.contains('hidden')) {
-                const reason = document.getElementById('clockOutReasonText').value.trim();
-                if (!reason) {
-                    alert('Alasan berada di luar radius wajib diisi!');
-                    return;
-                }
-            }
-            
-            // Save complete attendance record
-            const attendanceRecord = {
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                clockIn: attendanceData.clockInData,
-                clockOut: {
-                    location: { lat: parseFloat(lat), lng: parseFloat(lng) },
-                    workReport: workReport,
-                    workPhoto: workPhoto,
-                    time: new Date(),
-                    status: document.getElementById('clockOutStatus').textContent,
-                    overtime: document.getElementById('clockOutOvertime').value || null,
-                    worktime: document.getElementById('clockOutWorktime').value,
-                    outsideReason: reasonSection.classList.contains('hidden') ? null : document.getElementById('clockOutReasonText').value
-                },
-                name: currentUser.name,
-                email: currentUser.email,
-                division: currentUser.division
-            };
-            
-            // Add to history and save to localStorage
-            attendanceHistory.unshift(attendanceRecord);
-            localStorage.setItem('attendanceHistory', JSON.stringify(attendanceHistory));
-            
-            // Reset for next day
-            attendanceData.isClockInDone = false;
-            attendanceData.clockInTime = null;
-            attendanceData.clockInData = null;
-            
-            // Refresh attendance history display
-            loadAttendanceHistory();
-            
-            // Reset buttons
-            const clockInBtn = document.getElementById('clockInBtn');
-            clockInBtn.disabled = false;
-            clockInBtn.className = 'w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105';
-            
+
+            isClockInDone = false;
+
+            // Disable clock out button and enable clock in
             const clockOutBtn = document.getElementById('clockOutBtn');
             clockOutBtn.disabled = true;
-            clockOutBtn.className = 'w-full bg-gray-400 text-white py-3 rounded-lg font-medium cursor-not-allowed';
-            
+            clockOutBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+            clockOutBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+
             closeClockOutModal();
-            showSuccessModal('Clock Out Berhasil!', 'Absen pulang telah tercatat. Terima kasih atas kerja keras Anda hari ini!');
-        });
-
-        function resetClockInForm() {
-            // Reset photo
-            document.getElementById('clockInPhotoPreview').classList.add('hidden');
-            document.getElementById('clockInPhotoPlaceholder').classList.remove('hidden');
-            document.getElementById('clockInPhotoImg').src = '';
-            
-            // Reset location
-            document.getElementById('clockInMap').innerHTML = '<i class="fas fa-map-marker-alt text-gray-400 text-2xl"></i>';
-            document.getElementById('clockInLat').value = '';
-            document.getElementById('clockInLng').value = '';
-            document.getElementById('clockInRadiusStatus').classList.add('hidden');
-            document.getElementById('clockInOutsideReason').classList.add('hidden');
-            
-            // Reset form fields
-            document.getElementById('clockInDuty').value = '';
-            document.getElementById('clockInReasonText').value = '';
-            document.getElementById('clockInLateReasonText').value = '';
+            showSuccessModal('Clock Out berhasil dicatat');
+            updateAttendanceHistory();
         }
 
-        // Tab functionality
-        function showTab(tabName) {
-            // Hide all content
-            document.getElementById('historyContent').classList.add('hidden');
-            document.getElementById('newsContent').classList.add('hidden');
-            
-            // Reset all tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-blue-500', 'text-blue-600');
-                btn.classList.add('border-transparent', 'text-gray-500');
-            });
-            
-            // Show selected content and activate tab
-            if (tabName === 'history') {
-                document.getElementById('historyContent').classList.remove('hidden');
-                document.getElementById('historyTab').classList.add('border-blue-500', 'text-blue-600');
-                document.getElementById('historyTab').classList.remove('border-transparent', 'text-gray-500');
-            } else if (tabName === 'news') {
-                document.getElementById('newsContent').classList.remove('hidden');
-                document.getElementById('newsTab').classList.add('border-blue-500', 'text-blue-600');
-                document.getElementById('newsTab').classList.remove('border-transparent', 'text-gray-500');
-            }
-        }
-
-        // Show success modal
-        function showSuccessModal(title, message) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMessage').textContent = message;
-            document.getElementById('successModal').classList.remove('hidden');
-        }
-
-        // Close modal
-        function closeModal() {
-            document.getElementById('successModal').classList.add('hidden');
-        }
-
-        // Profile functionality
-        function showProfile() {
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
-
-        function closeProfile() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
-
-        function changeProfilePhoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                // Validate file type
-                if (!file.type.startsWith('image/')) {
-                    alert('Harap pilih file gambar yang valid!');
-                    return;
-                }
-                
-                // Validate file size (max 5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Ukuran file terlalu besar! Maksimal 5MB.');
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imageUrl = e.target.result;
-                    
-                    // Update profile image in modal
-                    document.getElementById('profileImg').src = imageUrl;
-                    
-                    // Update header profile image
-                    document.getElementById('headerProfileImg').src = imageUrl;
-                    
-                    // Store in localStorage for persistence
-                    localStorage.setItem('userProfilePhoto', imageUrl);
-                    
-                    showSuccessModal('Foto Profil Berhasil Diubah!', 'Foto profil Anda telah diperbarui.');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function saveProfile() {
-            const name = document.getElementById('profileName').value;
-            const department = document.getElementById('profileDepartment').value;
-            const email = document.getElementById('profileEmail').value;
-            const phone = document.getElementById('profilePhone').value;
-            
-            // Validate required fields
-            if (!name.trim()) {
-                alert('Nama lengkap harus diisi!');
-                return;
-            }
-            
-            if (!email.trim()) {
-                alert('Email harus diisi!');
-                return;
-            }
-            
-            // Simple email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Format email tidak valid!');
-                return;
-            }
-            
-            // Update current user data
-            currentUser.name = name;
-            currentUser.department = department;
-            currentUser.email = email;
-            currentUser.phone = phone;
-            
-            // Update display name in header
-            document.getElementById('userName').textContent = name;
-            
-            // Update greeting
-            updateGreeting();
-            
-            // Store in localStorage for persistence
-            localStorage.setItem('userProfile', JSON.stringify(currentUser));
-            
-            // Close modal and show success
-            closeProfile();
-            showSuccessModal('Profil Berhasil Disimpan!', 'Perubahan profil Anda telah tersimpan.');
-        }
-
-        function loadUserProfile() {
-            // Load profile photo from localStorage
-            const savedPhoto = localStorage.getItem('userProfilePhoto');
-            if (savedPhoto) {
-                document.getElementById('profileImg').src = savedPhoto;
-                document.getElementById('headerProfileImg').src = savedPhoto;
-            }
-            
-            // Use current user data from employee database or localStorage
-            if (currentUser) {
-                document.getElementById('profileName').value = currentUser.name || 'John Doe';
-                document.getElementById('profileDepartment').value = currentUser.division || 'IT';
-                document.getElementById('profileEmail').value = currentUser.email || 'john.doe@transwisata.com';
-                document.getElementById('profilePhone').value = currentUser.phone || '+62 812-3456-7890';
-            }
-            
-            // Load additional profile data from localStorage if exists
-            const savedProfile = localStorage.getItem('userProfile');
-            if (savedProfile) {
-                const profile = JSON.parse(savedProfile);
-                if (profile.phone) {
-                    document.getElementById('profilePhone').value = profile.phone;
-                    currentUser.phone = profile.phone;
-                }
-            }
-        }
-
-        // Load and display attendance history
-        function loadAttendanceHistory() {
+        function updateAttendanceHistory() {
             const historyList = document.getElementById('attendanceHistoryList');
-            const filter = document.getElementById('historyFilter')?.value || 'week';
             
-            if (!currentUser) return;
-            
-            // Filter attendance history by current user
-            const userHistory = attendanceHistory.filter(record => 
-                record.email === currentUser.email
-            );
-            
-            // Apply date filter
-            const filteredHistory = filterByDate(userHistory, filter);
-            
-            if (filteredHistory.length === 0) {
+            if (attendanceData.length === 0) {
                 historyList.innerHTML = `
                     <div class="text-center py-8 text-gray-500">
                         <i class="fas fa-calendar-times text-4xl mb-4"></i>
@@ -1717,270 +934,172 @@
                 `;
                 return;
             }
-            
-            historyList.innerHTML = filteredHistory.map(record => {
-                const date = new Date(record.date);
-                const clockInTime = record.clockIn ? new Date(record.clockIn.time).toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '-';
-                const clockOutTime = record.clockOut ? new Date(record.clockOut.time).toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '-';
-                
-                // Determine status
-                let status = 'Tidak Lengkap';
-                let statusClass = 'bg-gray-100 text-gray-800';
-                
-                if (record.clockIn && record.clockOut) {
-                    if (record.clockIn.status.includes('Tepat Waktu')) {
-                        status = 'Hadir';
-                        statusClass = 'bg-green-100 text-green-800';
-                    } else if (record.clockIn.status.includes('Terlambat')) {
-                        status = 'Terlambat';
-                        statusClass = 'bg-yellow-100 text-yellow-800';
-                    }
-                } else if (record.clockIn && !record.clockOut) {
-                    status = 'Belum Clock Out';
-                    statusClass = 'bg-blue-100 text-blue-800';
-                }
-                
-                return `
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors" onclick="showAttendanceDetail('${record.id}')">
+
+            historyList.innerHTML = attendanceData.map(record => `
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-3">
                         <div>
-                            <p class="font-medium text-gray-800">${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                            <p class="text-sm text-gray-600">Clock In: ${clockInTime} | Clock Out: ${clockOutTime}</p>
-                            ${record.clockOut && record.clockOut.worktime ? `<p class="text-xs text-gray-500">Total Kerja: ${record.clockOut.worktime}</p>` : ''}
+                            <h4 class="font-medium text-gray-800">${record.date}</h4>
+                            <p class="text-sm text-gray-600">Status: ${record.status}</p>
                         </div>
-                        <div class="text-right">
-                            <span class="${statusClass} px-3 py-1 rounded-full text-sm font-medium">${status}</span>
-                            <p class="text-xs text-gray-500 mt-1">Klik untuk detail</p>
-                        </div>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                            ${record.status}
+                        </span>
                     </div>
-                `;
-            }).join('');
-        }
-        
-        // Filter attendance by date range
-        function filterByDate(history, filter) {
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
-            switch (filter) {
-                case 'week':
-                    const weekStart = new Date(today);
-                    weekStart.setDate(today.getDate() - today.getDay());
-                    return history.filter(record => new Date(record.date) >= weekStart);
-                    
-                case 'month':
-                    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-                    return history.filter(record => new Date(record.date) >= monthStart);
-                    
-                case 'all':
-                default:
-                    return history;
-            }
-        }
-        
-        // Filter attendance history
-        function filterAttendanceHistory() {
-            loadAttendanceHistory();
-        }
-        
-        // Show attendance detail modal
-        function showAttendanceDetail(recordId) {
-            const record = attendanceHistory.find(r => r.id == recordId);
-            if (!record) return;
-            
-            const modal = document.getElementById('attendanceDetailModal');
-            const content = document.getElementById('attendanceDetailContent');
-            
-            const date = new Date(record.date);
-            const clockInTime = record.clockIn ? new Date(record.clockIn.time) : null;
-            const clockOutTime = record.clockOut ? new Date(record.clockOut.time) : null;
-            
-            content.innerHTML = `
-                <!-- Header Info -->
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white mb-6">
-                    <div class="flex items-center justify-between">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <h4 class="text-xl font-semibold">${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
-                            <p class="text-blue-100">${record.name} - ${record.division}</p>
+                            <p class="text-gray-600">Clock In:</p>
+                            <p class="font-medium">${record.clockIn}</p>
                         </div>
-                        <div class="text-right">
-                            <div class="text-sm opacity-90">Total Waktu Kerja</div>
-                            <div class="text-lg font-semibold">${record.clockOut ? record.clockOut.worktime : 'Belum selesai'}</div>
+                        <div>
+                            <p class="text-gray-600">Clock Out:</p>
+                            <p class="font-medium">${record.clockOut || '-'}</p>
                         </div>
                     </div>
+                    ${record.workReport ? `
+                        <div class="mt-3 pt-3 border-t border-gray-200">
+                            <p class="text-gray-600 text-sm">Remark Pekerjaan:</p>
+                            <p class="text-sm">${record.workReport}</p>
+                        </div>
+                    ` : ''}
                 </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Clock In Details -->
-                    <div class="bg-green-50 border border-green-200 rounded-xl p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                <i class="fas fa-sign-in-alt text-white text-xl"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-lg font-semibold text-green-800">Clock In</h5>
-                                <p class="text-green-600">${clockInTime ? clockInTime.toLocaleTimeString('id-ID', { hour12: false }) : 'Tidak ada data'}</p>
-                            </div>
-                        </div>
-                        
-                        ${record.clockIn ? `
-                            <!-- Status -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Status Masuk</label>
-                                <div class="p-3 bg-white rounded-lg border ${record.clockIn.status.includes('Tepat Waktu') ? 'border-green-300 text-green-800' : 'border-red-300 text-red-800'}">
-                                    ${record.clockIn.status}
-                                </div>
-                            </div>
-                            
-                            <!-- Photo -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Foto Masuk</label>
-                                <div class="bg-white rounded-lg border p-2">
-                                    <img src="${record.clockIn.photo}" alt="Foto Clock In" class="w-full h-32 object-cover rounded-lg">
-                                </div>
-                            </div>
-                            
-                            <!-- Location -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Masuk</label>
-                                <div class="p-3 bg-white rounded-lg border">
-                                    <i class="fas fa-map-marker-alt text-green-500 mr-2"></i>
-                                    ${record.clockIn.location.lat.toFixed(6)}, ${record.clockIn.location.lng.toFixed(6)}
-                                </div>
-                            </div>
-                            
-                            <!-- Work Details -->
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Posisi</label>
-                                    <div class="p-2 bg-white rounded border text-sm">${record.clockIn.position}</div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Bertugas Sebagai</label>
-                                    <div class="p-2 bg-white rounded border text-sm">${record.clockIn.duty}</div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Pekerjaan</label>
-                                    <div class="p-2 bg-white rounded border text-sm">${record.clockIn.workType}</div>
-                                </div>
-                            </div>
-                            
-                            ${record.clockIn.lateReason ? `
-                                <div class="mt-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Terlambat</label>
-                                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
-                                        ${record.clockIn.lateReason}
-                                    </div>
-                                </div>
-                            ` : ''}
-                            
-                            ${record.clockIn.outsideReason ? `
-                                <div class="mt-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan di Luar Radius</label>
-                                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                                        ${record.clockIn.outsideReason}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        ` : `
-                            <div class="text-center py-8 text-gray-500">
-                                <i class="fas fa-times-circle text-4xl mb-2"></i>
-                                <p>Tidak ada data clock in</p>
-                            </div>
-                        `}
-                    </div>
-                    
-                    <!-- Clock Out Details -->
-                    <div class="bg-red-50 border border-red-200 rounded-xl p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mr-4">
-                                <i class="fas fa-sign-out-alt text-white text-xl"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-lg font-semibold text-red-800">Clock Out</h5>
-                                <p class="text-red-600">${clockOutTime ? clockOutTime.toLocaleTimeString('id-ID', { hour12: false }) : 'Belum clock out'}</p>
-                            </div>
-                        </div>
-                        
-                        ${record.clockOut ? `
-                            <!-- Status -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Status Pulang</label>
-                                <div class="p-3 bg-white rounded-lg border">
-                                    ${record.clockOut.status}
-                                </div>
-                            </div>
-                            
-                            ${record.clockOut.overtime ? `
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Overtime</label>
-                                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 font-medium">
-                                        ${record.clockOut.overtime}
-                                    </div>
-                                </div>
-                            ` : ''}
-                            
-                            <!-- Work Photo -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan</label>
-                                <div class="bg-white rounded-lg border p-2">
-                                    <img src="${record.clockOut.workPhoto}" alt="Foto Pekerjaan" class="w-full h-32 object-cover rounded-lg">
-                                </div>
-                            </div>
-                            
-                            <!-- Location -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Pulang</label>
-                                <div class="p-3 bg-white rounded-lg border">
-                                    <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
-                                    ${record.clockOut.location.lat.toFixed(6)}, ${record.clockOut.location.lng.toFixed(6)}
-                                </div>
-                            </div>
-                            
-                            <!-- Work Report -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan</label>
-                                <div class="p-3 bg-white rounded-lg border text-sm max-h-32 overflow-y-auto">
-                                    ${record.clockOut.workReport}
-                                </div>
-                            </div>
-                            
-                            ${record.clockOut.outsideReason ? `
-                                <div class="mt-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan di Luar Radius</label>
-                                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                                        ${record.clockOut.outsideReason}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        ` : `
-                            <div class="text-center py-8 text-gray-500">
-                                <i class="fas fa-clock text-4xl mb-2"></i>
-                                <p>Belum melakukan clock out</p>
-                            </div>
-                        `}
-                    </div>
-                </div>
-            `;
-            
-            modal.classList.remove('hidden');
-        }
-        
-        // Close attendance detail modal
-        function closeAttendanceDetail() {
-            document.getElementById('attendanceDetailModal').classList.add('hidden');
+            `).join('');
         }
 
-        // Logout functionality
+        // Tab functions
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.getElementById('historyContent').classList.add('hidden');
+            document.getElementById('newsContent').classList.add('hidden');
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+
+            // Add active class to selected tab
+            const activeTab = document.getElementById(tabName + 'Tab');
+            activeTab.classList.add('border-blue-500', 'text-blue-600');
+            activeTab.classList.remove('border-transparent', 'text-gray-500');
+        }
+
+        // News functions
+        function showNewsDetail(newsId) {
+            const newsData = {
+                news1: {
+                    title: "Libur Tahun Baru 2024",
+                    date: "20 Des 2023",
+                    content: `
+                        <div class="mb-6">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%234f46e5'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E🎉 TAHUN BARU 2024 🎉%3C/text%3E%3C/svg%3E" alt="Tahun Baru 2024" class="w-full h-48 object-cover rounded-lg">
+                        </div>
+                        <p class="text-gray-700 mb-4">Dalam rangka menyambut tahun baru 2024, PT Transwisata mengumumkan bahwa kantor akan tutup pada tanggal 1 Januari 2024.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Detail Libur:</h4>
+                            <ul class="text-blue-700 text-sm space-y-1">
+                                <li>• Tanggal: 1 Januari 2024 (Senin)</li>
+                                <li>• Status: Libur Nasional</li>
+                                <li>• Kantor: Tutup</li>
+                                <li>• Operasional: Normal kembali 2 Januari 2024</li>
+                            </ul>
+                        </div>
+                        <p class="text-gray-700">Selamat tahun baru 2024! Semoga tahun ini membawa kesuksesan, kesehatan, dan kebahagiaan bagi seluruh keluarga besar PT Transwisata.</p>
+                    `
+                },
+                news2: {
+                    title: "Update Sistem Absensi",
+                    date: "18 Des 2023",
+                    content: `
+                        <div class="mb-6">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2310b981'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='20' font-weight='bold' text-anchor='middle' fill='white'%3E⚡ SISTEM UPDATE%3C/text%3E%3C/svg%3E" alt="Update Sistem" class="w-full h-48 object-cover rounded-lg">
+                        </div>
+                        <p class="text-gray-700 mb-4">Sistem absensi ECrew Transwisata telah diperbarui dengan berbagai fitur baru yang akan memudahkan proses absensi dan monitoring kehadiran karyawan.</p>
+                        <div class="bg-green-50 p-4 rounded-lg mb-4">
+                            <h4 class="font-semibold text-green-800 mb-2">Fitur Baru:</h4>
+                            <ul class="text-green-700 text-sm space-y-1">
+                                <li>• Foto Selfie: Verifikasi identitas dengan foto selfie</li>
+                                <li>• GPS Tracking: Lokasi real-time saat absen</li>
+                                <li>• Dashboard Analytics: Statistik kehadiran personal</li>
+                                <li>• Mobile Responsive: Akses mudah dari smartphone</li>
+                            </ul>
+                        </div>
+                        <p class="text-gray-700">Update ini bertujuan untuk meningkatkan efisiensi dan akurasi sistem absensi.</p>
+                    `
+                },
+                news3: {
+                    title: "Reminder: Meeting Bulanan",
+                    date: "15 Des 2023",
+                    content: `
+                        <div class="mb-6">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23f59e0b'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='18' font-weight='bold' text-anchor='middle' fill='white'%3E📅 MEETING BULANAN%3C/text%3E%3C/svg%3E" alt="Meeting Bulanan" class="w-full h-48 object-cover rounded-lg">
+                        </div>
+                        <p class="text-gray-700 mb-4">Reminder untuk seluruh karyawan bahwa meeting bulanan akan diadakan pada hari Jumat ini. Kehadiran semua departemen sangat diharapkan.</p>
+                        <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                            <h4 class="font-semibold text-yellow-800 mb-2">Detail Meeting:</h4>
+                            <ul class="text-yellow-700 text-sm space-y-1">
+                                <li>• Hari/Tanggal: Jumat, 22 Desember 2023</li>
+                                <li>• Waktu: 14:00 - 16:00 WIB</li>
+                                <li>• Tempat: Ruang Konferensi Utama</li>
+                                <li>• Peserta: Seluruh Karyawan</li>
+                            </ul>
+                        </div>
+                        <p class="text-gray-700">Meeting ini penting untuk evaluasi dan perencanaan tahun depan. Terima kasih atas partisipasi Anda!</p>
+                    `
+                }
+            };
+
+            const news = newsData[newsId];
+            if (news) {
+                document.getElementById('newsDetailContent').innerHTML = `
+                    <div class="mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">${news.title}</h2>
+                        <p class="text-gray-500 text-sm">${news.date}</p>
+                    </div>
+                    ${news.content}
+                `;
+                document.getElementById('newsDetailModal').classList.remove('hidden');
+            }
+        }
+
+        function closeNewsDetail() {
+            document.getElementById('newsDetailModal').classList.add('hidden');
+        }
+
+        // Utility functions
+        function showSuccessModal(message) {
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        function filterAttendanceHistory() {
+            // This function can be implemented to filter attendance history
+            // For now, it just updates the display
+            updateAttendanceHistory();
+        }
+
         function logout() {
             currentUser = null;
+            attendanceData = [];
+            isClockInDone = false;
+            
+            // Hide all dashboards
             document.getElementById('userDashboard').classList.add('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
+            
+            // Show login page
             document.getElementById('loginPage').classList.remove('hidden');
             
-            // Reset form
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+            // Reset forms
+            document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975fdf555373fd7c',t:'MTc1NjM0MjgzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975ff71fc42bf891',t:'MTc1NjM0MzgwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
