@@ -491,16 +491,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Foto Masuk *</label>
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                        <div class="border-2 border-dashed border-red-300 rounded-lg p-4 text-center bg-red-50">
                             <div id="clockInPhotoPreview" class="hidden">
                                 <img id="clockInPhotoImg" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg mb-2">
+                                <button type="button" onclick="retakePhoto('clockIn')" class="mt-2 bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-redo mr-1"></i>Ambil Ulang
+                                </button>
                             </div>
                             <div id="clockInPhotoPlaceholder">
-                                <i class="fas fa-camera text-gray-400 text-3xl mb-2"></i>
-                                <p class="text-gray-500 text-sm">Ambil foto dari kamera</p>
+                                <i class="fas fa-camera text-red-400 text-3xl mb-2"></i>
+                                <p class="text-red-600 text-sm font-medium">WAJIB: Ambil foto dari kamera</p>
+                                <p class="text-red-500 text-xs mt-1">Foto diperlukan untuk verifikasi identitas</p>
                             </div>
-                            <button type="button" onclick="openCamera('clockIn')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-camera mr-2"></i>Buka Kamera
+                            <button type="button" onclick="openCameraInstant('clockIn')" class="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                                <i class="fas fa-camera mr-2"></i>Ambil Foto Sekarang
                             </button>
                         </div>
                     </div>
@@ -679,6 +683,15 @@
             <div class="text-center">
                 <video id="cameraVideo" class="w-full h-64 bg-gray-200 rounded-lg mb-4" autoplay></video>
                 <canvas id="cameraCanvas" class="hidden"></canvas>
+                
+                <!-- Countdown Display -->
+                <div id="countdownDisplay" class="hidden mb-4">
+                    <div class="bg-red-100 border border-red-300 rounded-lg p-4">
+                        <p class="text-red-700 font-medium mb-2">Foto akan diambil dalam:</p>
+                        <div class="text-4xl font-bold text-red-600" id="countdownNumber">3</div>
+                        <p class="text-red-600 text-sm mt-2">Bersiaplah dan lihat ke kamera</p>
+                    </div>
+                </div>
                 
                 <div class="flex space-x-3">
                     <button onclick="capturePhoto()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition-all">
@@ -1218,6 +1231,12 @@
             startCamera();
         }
 
+        function openCameraInstant(type) {
+            currentCameraType = type;
+            document.getElementById('cameraModal').classList.remove('hidden');
+            startCameraInstant();
+        }
+
         function startCamera() {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function(stream) {
@@ -1229,6 +1248,59 @@
                     console.error('Error accessing camera:', err);
                     alert('Tidak dapat mengakses kamera. Pastikan browser memiliki izin kamera.');
                 });
+        }
+
+        function startCameraInstant() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    cameraStream = stream;
+                    const video = document.getElementById('cameraVideo');
+                    video.srcObject = stream;
+                    
+                    // Show countdown after video loads
+                    video.addEventListener('loadedmetadata', () => {
+                        startCountdown();
+                    });
+                })
+                .catch(function(err) {
+                    console.error('Error accessing camera:', err);
+                    alert('Tidak dapat mengakses kamera. Pastikan browser memiliki izin kamera.');
+                });
+        }
+
+        function startCountdown() {
+            const countdownDisplay = document.getElementById('countdownDisplay');
+            const countdownNumber = document.getElementById('countdownNumber');
+            
+            countdownDisplay.classList.remove('hidden');
+            
+            let count = 3;
+            countdownNumber.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownNumber.textContent = count;
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownDisplay.classList.add('hidden');
+                    
+                    // Capture photo
+                    if (cameraStream) {
+                        capturePhoto();
+                    }
+                }
+            }, 1000);
+        }
+
+        function retakePhoto(type) {
+            // Reset photo display
+            document.getElementById(type + 'PhotoPreview').classList.add('hidden');
+            document.getElementById(type + 'PhotoPlaceholder').classList.remove('hidden');
+            document.getElementById(type + 'PhotoImg').src = '';
+            
+            // Open camera again
+            openCameraInstant(type);
         }
 
         function capturePhoto() {
@@ -1256,6 +1328,11 @@
                 cameraStream.getTracks().forEach(track => track.stop());
                 cameraStream = null;
             }
+            
+            // Hide countdown display
+            document.getElementById('countdownDisplay').classList.add('hidden');
+            document.getElementById('countdownNumber').textContent = '3';
+            
             document.getElementById('cameraModal').classList.add('hidden');
         }
 
@@ -1376,8 +1453,8 @@
                 return;
             }
 
-            if (!photoImg.src || photoImg.src === '') {
-                alert('Mohon ambil foto terlebih dahulu');
+            if (!photoImg.src || photoImg.src === '' || photoImg.src.includes('data:image/svg+xml')) {
+                alert('WAJIB: Mohon ambil foto dari kamera terlebih dahulu untuk verifikasi identitas');
                 return;
             }
 
@@ -1896,5 +1973,5 @@
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97601559403e8208',t:'MTc1NjM0NTA0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97601cc1e4765f9c',t:'MTc1NjM0NTM0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
