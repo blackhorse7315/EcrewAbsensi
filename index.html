@@ -334,14 +334,52 @@
                 </div>
             </div>
 
+            <!-- Admin Filters -->
+            <div class="bg-white rounded-xl card-shadow mb-6">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Filter Data Absensi</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cari Nama</label>
+                            <input type="text" id="adminSearchName" placeholder="Masukkan nama karyawan..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onkeyup="filterAdminAttendance()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Filter Waktu</label>
+                            <select id="adminTimeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="filterAdminAttendance()">
+                                <option value="today">Hari Ini</option>
+                                <option value="week">Minggu Ini</option>
+                                <option value="month">Bulan Ini</option>
+                                <option value="custom">Rentang Waktu</option>
+                            </select>
+                        </div>
+                        <div id="customDateRange" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dari Tanggal</label>
+                            <input type="date" id="adminStartDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="filterAdminAttendance()">
+                        </div>
+                        <div id="customDateRangeTo" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sampai Tanggal</label>
+                            <input type="date" id="adminEndDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="filterAdminAttendance()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Employee List -->
             <div class="bg-white rounded-xl card-shadow">
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-800">Daftar Absensi Hari Ini</h3>
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all">
-                            <i class="fas fa-download mr-2"></i>Export Data
-                        </button>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Data Absensi Karyawan</h3>
+                            <p class="text-sm text-gray-600 mt-1">Total: <span id="totalRecords">0</span> record</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="refreshAdminData()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all">
+                                <i class="fas fa-sync-alt mr-2"></i>Refresh
+                            </button>
+                            <button onclick="exportAdminData()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all">
+                                <i class="fas fa-download mr-2"></i>Export Data
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
@@ -349,30 +387,20 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departemen</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clock In</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clock Out</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Kerja</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="bg-white divide-y divide-gray-200" id="adminAttendanceTable">
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <span class="text-blue-600 font-medium">JD</span>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">John Doe</div>
-                                            <div class="text-sm text-gray-500">EMP001</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">IT</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">08:00</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">17:00</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Hadir</span>
+                                <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                    <i class="fas fa-users text-4xl mb-4"></i>
+                                    <p>Belum ada data absensi</p>
+                                    <p class="text-sm">Data akan muncul setelah karyawan melakukan absensi</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -770,6 +798,171 @@
         </div>
     </div>
 
+    <!-- Admin Edit Modal -->
+    <div id="adminEditModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4">
+        <div class="bg-white rounded-xl p-4 sm:p-6 max-w-6xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">
+                    <i class="fas fa-edit mr-2 text-blue-600"></i>Edit Data Absensi
+                </h3>
+                <button onclick="closeAdminEditModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="adminEditForm" class="space-y-6">
+                <input type="hidden" id="editRecordId">
+                
+                <!-- Personal Information -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Informasi Personal</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                            <input type="text" id="editName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="editEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
+                            <input type="text" id="editDivision" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Posisi</label>
+                            <input type="text" id="editPosition" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Times (Editable) -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Waktu Absensi (Dapat Diedit)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
+                            <input type="date" id="editDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Clock In</label>
+                            <input type="time" id="editClockInTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Clock Out</label>
+                            <input type="time" id="editClockOutTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select id="editStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="Tepat Waktu">Tepat Waktu</option>
+                                <option value="Terlambat">Terlambat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work Details -->
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Detail Pekerjaan</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Bertugas Sebagai</label>
+                            <input type="text" id="editDutyAs" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Pekerjaan</label>
+                            <select id="editWorkType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="Office Hour">Office Hour</option>
+                                <option value="Standby Flight">Standby Flight</option>
+                                <option value="Standby on Call">Standby on Call</option>
+                                <option value="Pos One Gate">Pos One Gate</option>
+                                <option value="Day Off">Day Off</option>
+                                <option value="Flight Duty VIP">Flight Duty VIP</option>
+                                <option value="Ferry Flight">Ferry Flight</option>
+                                <option value="Over Time">Over Time</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reasons -->
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Keterangan</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Terlambat</label>
+                            <textarea id="editLateReason" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="2" placeholder="Kosongkan jika tidak terlambat"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Alasan di Luar Radius (Clock In)</label>
+                            <textarea id="editOutsideReason" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="2" placeholder="Kosongkan jika dalam radius"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Laporan Pekerjaan</label>
+                            <textarea id="editWorkReport" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Deskripsi pekerjaan yang dilakukan"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photos Display -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Dokumentasi Foto</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div id="editPhotoClockIn" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Foto Clock In</label>
+                            <img id="editPhotoClockInImg" src="" alt="Foto Clock In" class="w-full h-32 object-cover rounded-lg border cursor-pointer" onclick="showImageModal(this.src, 'Foto Clock In')">
+                        </div>
+                        <div id="editPhotoWork" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan</label>
+                            <img id="editPhotoWorkImg" src="" alt="Foto Pekerjaan" class="w-full h-32 object-cover rounded-lg border cursor-pointer" onclick="showImageModal(this.src, 'Foto Pekerjaan')">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Info -->
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Informasi Lokasi</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Clock In</label>
+                            <div class="bg-white p-3 rounded-lg border">
+                                <p class="text-sm" id="editLocationClockIn">-</p>
+                                <p class="text-xs text-gray-500 mt-1" id="editRadiusClockIn">-</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Clock Out</label>
+                            <div class="bg-white p-3 rounded-lg border">
+                                <p class="text-sm" id="editLocationClockOut">-</p>
+                                <p class="text-xs text-gray-500 mt-1" id="editRadiusClockOut">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Notes -->
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Catatan Admin</h4>
+                    <textarea id="editAdminNotes" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Tambahkan catatan admin jika diperlukan..."></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-3">
+                    <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105">
+                        <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                    </button>
+                    <button type="button" onclick="deleteAttendanceRecord()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-trash mr-2"></i>Hapus
+                    </button>
+                    <button type="button" onclick="closeAdminEditModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-times mr-2"></i>Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto py-4">
         <div class="bg-white rounded-xl p-4 sm:p-6 max-w-sm mx-2 sm:mx-4 animate-fade-in">
@@ -795,6 +988,8 @@
         let currentCameraType = null;
         let cameraStream = null;
         let clockInData = null;
+        let currentEditingRecord = null;
+        let filteredAttendanceData = [];
 
         // Employee database
         const employeeDatabase = [
@@ -897,12 +1092,42 @@
                 clockOutForm.addEventListener('submit', handleClockOut);
             }
 
+            // Set up admin edit form
+            const adminEditForm = document.getElementById('adminEditForm');
+            if (adminEditForm) {
+                adminEditForm.addEventListener('submit', handleAdminEdit);
+            }
+
+            // Set up admin time filter change
+            const adminTimeFilter = document.getElementById('adminTimeFilter');
+            if (adminTimeFilter) {
+                adminTimeFilter.addEventListener('change', function() {
+                    const customRange = document.getElementById('customDateRange');
+                    const customRangeTo = document.getElementById('customDateRangeTo');
+                    
+                    if (this.value === 'custom') {
+                        customRange.classList.remove('hidden');
+                        customRangeTo.classList.remove('hidden');
+                    } else {
+                        customRange.classList.add('hidden');
+                        customRangeTo.classList.add('hidden');
+                    }
+                });
+            }
+
             // Start clock
             updateClock();
             setInterval(updateClock, 1000);
 
             // Update date
             updateDate();
+
+            // Update admin dashboard every 30 seconds if admin is logged in
+            setInterval(() => {
+                if (currentUser && currentUser.role === 'ADMIN') {
+                    updateAdminDashboard();
+                }
+            }, 30000);
         }
 
         // Calculate distance between two coordinates
@@ -999,6 +1224,7 @@
             
             if (type === 'admin') {
                 document.getElementById('adminDashboard').classList.remove('hidden');
+                updateAdminDashboard();
             } else {
                 document.getElementById('userDashboard').classList.remove('hidden');
                 updateUserInfo();
@@ -1957,6 +2183,441 @@
             updateAttendanceHistory();
         }
 
+        // Admin Functions
+        function updateAdminDashboard() {
+            updateAdminStats();
+            filterAdminAttendance();
+        }
+
+        function updateAdminStats() {
+            const today = new Date().toLocaleDateString('id-ID');
+            const todayAttendance = attendanceData.filter(record => record.date === today);
+            
+            const totalEmployees = employeeDatabase.filter(emp => emp.role === 'USER').length;
+            const presentToday = todayAttendance.length;
+            const lateToday = todayAttendance.filter(record => record.status === 'Terlambat').length;
+            const absentToday = totalEmployees - presentToday;
+
+            // Update stats cards (these would be the actual numbers in a real system)
+            // For demo purposes, we'll use the calculated values
+        }
+
+        function filterAdminAttendance() {
+            const searchName = document.getElementById('adminSearchName')?.value.toLowerCase() || '';
+            const timeFilter = document.getElementById('adminTimeFilter')?.value || 'today';
+            const startDate = document.getElementById('adminStartDate')?.value || '';
+            const endDate = document.getElementById('adminEndDate')?.value || '';
+
+            let filtered = [...attendanceData];
+
+            // Filter by name
+            if (searchName) {
+                filtered = filtered.filter(record => 
+                    record.name.toLowerCase().includes(searchName)
+                );
+            }
+
+            // Filter by time
+            const today = new Date();
+            const todayStr = today.toLocaleDateString('id-ID');
+            
+            switch (timeFilter) {
+                case 'today':
+                    filtered = filtered.filter(record => record.date === todayStr);
+                    break;
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    filtered = filtered.filter(record => {
+                        const recordDate = new Date(record.clockInTime);
+                        return recordDate >= weekStart;
+                    });
+                    break;
+                case 'month':
+                    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                    filtered = filtered.filter(record => {
+                        const recordDate = new Date(record.clockInTime);
+                        return recordDate >= monthStart;
+                    });
+                    break;
+                case 'custom':
+                    if (startDate && endDate) {
+                        const start = new Date(startDate);
+                        const end = new Date(endDate);
+                        end.setHours(23, 59, 59); // Include the end date
+                        
+                        filtered = filtered.filter(record => {
+                            const recordDate = new Date(record.clockInTime);
+                            return recordDate >= start && recordDate <= end;
+                        });
+                    }
+                    break;
+            }
+
+            filteredAttendanceData = filtered;
+            updateAdminTable();
+        }
+
+        function updateAdminTable() {
+            const tableBody = document.getElementById('adminAttendanceTable');
+            const totalRecords = document.getElementById('totalRecords');
+            
+            if (!tableBody) return;
+
+            if (filteredAttendanceData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-users text-4xl mb-4"></i>
+                            <p>Tidak ada data absensi ditemukan</p>
+                            <p class="text-sm">Sesuaikan filter pencarian Anda</p>
+                        </td>
+                    </tr>
+                `;
+                if (totalRecords) totalRecords.textContent = '0';
+                return;
+            }
+
+            tableBody.innerHTML = filteredAttendanceData.map((record, index) => `
+                <tr class="hover:bg-gray-50 cursor-pointer" onclick="viewAttendanceDetail(${record.id})">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span class="text-blue-600 font-medium text-sm">${record.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${record.name}</div>
+                                <div class="text-sm text-gray-500">${record.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${record.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">${record.clockIn}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${record.clockOut ? 'text-red-600' : 'text-gray-400'} font-medium">
+                        ${record.clockOut || 'Belum Clock Out'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="bg-${record.status === 'Tepat Waktu' ? 'green' : 'red'}-100 text-${record.status === 'Tepat Waktu' ? 'green' : 'red'}-800 px-2 py-1 rounded-full text-xs font-medium">
+                            ${record.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">
+                        ${record.totalWorkTime || '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="event.stopPropagation(); editAttendanceRecord(${record.id})" class="text-blue-600 hover:text-blue-900 mr-3">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="event.stopPropagation(); viewAttendanceDetail(${record.id})" class="text-green-600 hover:text-green-900">
+                            <i class="fas fa-eye"></i> Detail
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (totalRecords) totalRecords.textContent = filteredAttendanceData.length;
+        }
+
+        function refreshAdminData() {
+            updateAdminDashboard();
+            showSuccessModal('Data berhasil direfresh');
+        }
+
+        function exportAdminData() {
+            if (filteredAttendanceData.length === 0) {
+                alert('Tidak ada data untuk diekspor');
+                return;
+            }
+
+            // Create CSV content
+            const headers = ['Nama', 'Email', 'Divisi', 'Posisi', 'Tanggal', 'Clock In', 'Clock Out', 'Status', 'Total Kerja', 'Jenis Pekerjaan'];
+            const csvContent = [
+                headers.join(','),
+                ...filteredAttendanceData.map(record => [
+                    `"${record.name}"`,
+                    `"${record.email}"`,
+                    `"${record.division}"`,
+                    `"${record.position}"`,
+                    `"${record.date}"`,
+                    `"${record.clockIn}"`,
+                    `"${record.clockOut || 'Belum Clock Out'}"`,
+                    `"${record.status}"`,
+                    `"${record.totalWorkTime || '-'}"`,
+                    `"${record.workType}"`
+                ].join(','))
+            ].join('\n');
+
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `absensi_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function viewAttendanceDetail(recordId) {
+            const record = attendanceData.find(r => r.id === recordId);
+            if (!record) return;
+
+            // Create detailed view modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-4xl mx-4 w-full max-h-screen overflow-y-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800">
+                            <i class="fas fa-user-clock mr-2 text-blue-600"></i>Detail Absensi - ${record.name}
+                        </h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Personal Info -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-3">Informasi Personal</h4>
+                            <div class="space-y-2 text-sm">
+                                <p><span class="font-medium">Nama:</span> ${record.name}</p>
+                                <p><span class="font-medium">Email:</span> ${record.email}</p>
+                                <p><span class="font-medium">Divisi:</span> ${record.division}</p>
+                                <p><span class="font-medium">Posisi:</span> ${record.position}</p>
+                                <p><span class="font-medium">Bertugas Sebagai:</span> ${record.dutyAs}</p>
+                                <p><span class="font-medium">Jenis Pekerjaan:</span> ${record.workType}</p>
+                            </div>
+                        </div>
+
+                        <!-- Attendance Info -->
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-3">Informasi Absensi</h4>
+                            <div class="space-y-2 text-sm">
+                                <p><span class="font-medium">Tanggal:</span> ${record.date}</p>
+                                <p><span class="font-medium">Clock In:</span> <span class="text-green-600">${record.clockIn}</span></p>
+                                <p><span class="font-medium">Clock Out:</span> <span class="text-red-600">${record.clockOut || 'Belum Clock Out'}</span></p>
+                                <p><span class="font-medium">Status:</span> <span class="text-${record.status === 'Tepat Waktu' ? 'green' : 'red'}-600">${record.status}</span></p>
+                                <p><span class="font-medium">Total Kerja:</span> ${record.totalWorkTime || '-'}</p>
+                                <p><span class="font-medium">Overtime:</span> ${record.overtime || '00:00:00'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Location Info -->
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-3">Informasi Lokasi</h4>
+                            <div class="space-y-2 text-sm">
+                                <p><span class="font-medium">Clock In:</span> ${record.withinRadius ? 'Dalam Radius' : 'Luar Radius'}</p>
+                                ${record.clockOutWithinRadius !== undefined ? `<p><span class="font-medium">Clock Out:</span> ${record.clockOutWithinRadius ? 'Dalam Radius' : 'Luar Radius'}</p>` : ''}
+                                <p><span class="font-medium">Koordinat In:</span> ${record.location ? `${record.location.lat.toFixed(6)}, ${record.location.lng.toFixed(6)}` : '-'}</p>
+                                ${record.clockOutLocation ? `<p><span class="font-medium">Koordinat Out:</span> ${record.clockOutLocation.lat.toFixed(6)}, ${record.clockOutLocation.lng.toFixed(6)}</p>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Reasons -->
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-3">Keterangan</h4>
+                            <div class="space-y-2 text-sm">
+                                ${record.lateReason ? `<p><span class="font-medium">Alasan Terlambat:</span> ${record.lateReason}</p>` : ''}
+                                ${record.outsideReason ? `<p><span class="font-medium">Alasan Luar Radius (In):</span> ${record.outsideReason}</p>` : ''}
+                                ${record.clockOutOutsideReason ? `<p><span class="font-medium">Alasan Luar Radius (Out):</span> ${record.clockOutOutsideReason}</p>` : ''}
+                                ${record.workReport ? `<p><span class="font-medium">Laporan Kerja:</span> ${record.workReport}</p>` : ''}
+                                ${record.adminNotes ? `<p><span class="font-medium">Catatan Admin:</span> ${record.adminNotes}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photos -->
+                    ${(record.photo || record.workPhoto) ? `
+                        <div class="mt-6 bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-3">Dokumentasi Foto</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                ${record.photo ? `
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-700 mb-2">Foto Clock In:</p>
+                                        <img src="${record.photo}" alt="Foto Clock In" class="w-full h-32 object-cover rounded-lg border cursor-pointer" onclick="showImageModal('${record.photo}', 'Foto Clock In')">
+                                    </div>
+                                ` : ''}
+                                ${record.workPhoto ? `
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan:</p>
+                                        <img src="${record.workPhoto}" alt="Foto Pekerjaan" class="w-full h-32 object-cover rounded-lg border cursor-pointer" onclick="showImageModal('${record.workPhoto}', 'Foto Pekerjaan')">
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button onclick="editAttendanceRecord(${record.id}); this.closest('.fixed').remove();" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-edit mr-2"></i>Edit Data
+                        </button>
+                        <button onclick="this.closest('.fixed').remove()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function editAttendanceRecord(recordId) {
+            const record = attendanceData.find(r => r.id === recordId);
+            if (!record) return;
+
+            currentEditingRecord = record;
+
+            // Fill the edit form
+            document.getElementById('editRecordId').value = record.id;
+            document.getElementById('editName').value = record.name;
+            document.getElementById('editEmail').value = record.email;
+            document.getElementById('editDivision').value = record.division;
+            document.getElementById('editPosition').value = record.position;
+            document.getElementById('editDutyAs').value = record.dutyAs || '';
+            document.getElementById('editWorkType').value = record.workType || '';
+            document.getElementById('editStatus').value = record.status;
+            document.getElementById('editLateReason').value = record.lateReason || '';
+            document.getElementById('editOutsideReason').value = record.outsideReason || '';
+            document.getElementById('editWorkReport').value = record.workReport || '';
+            document.getElementById('editAdminNotes').value = record.adminNotes || '';
+
+            // Set date and times
+            const recordDate = new Date(record.clockInTime);
+            document.getElementById('editDate').value = recordDate.toISOString().split('T')[0];
+            
+            // Convert time strings to HH:MM format
+            const clockInTime = record.clockIn.split(':').slice(0, 2).join(':');
+            document.getElementById('editClockInTime').value = clockInTime;
+            
+            if (record.clockOut) {
+                const clockOutTime = record.clockOut.split(':').slice(0, 2).join(':');
+                document.getElementById('editClockOutTime').value = clockOutTime;
+            }
+
+            // Handle photos
+            if (record.photo) {
+                document.getElementById('editPhotoClockIn').classList.remove('hidden');
+                document.getElementById('editPhotoClockInImg').src = record.photo;
+            } else {
+                document.getElementById('editPhotoClockIn').classList.add('hidden');
+            }
+
+            if (record.workPhoto) {
+                document.getElementById('editPhotoWork').classList.remove('hidden');
+                document.getElementById('editPhotoWorkImg').src = record.workPhoto;
+            } else {
+                document.getElementById('editPhotoWork').classList.add('hidden');
+            }
+
+            // Handle location info
+            if (record.location) {
+                document.getElementById('editLocationClockIn').textContent = 
+                    `${record.location.lat.toFixed(6)}, ${record.location.lng.toFixed(6)}`;
+                document.getElementById('editRadiusClockIn').textContent = 
+                    record.withinRadius ? 'Dalam radius kantor' : 'Di luar radius kantor';
+            }
+
+            if (record.clockOutLocation) {
+                document.getElementById('editLocationClockOut').textContent = 
+                    `${record.clockOutLocation.lat.toFixed(6)}, ${record.clockOutLocation.lng.toFixed(6)}`;
+                document.getElementById('editRadiusClockOut').textContent = 
+                    record.clockOutWithinRadius ? 'Dalam radius kantor' : 'Di luar radius kantor';
+            }
+
+            document.getElementById('adminEditModal').classList.remove('hidden');
+        }
+
+        function handleAdminEdit(e) {
+            e.preventDefault();
+            
+            if (!currentEditingRecord) return;
+
+            const recordId = parseInt(document.getElementById('editRecordId').value);
+            const recordIndex = attendanceData.findIndex(r => r.id === recordId);
+            
+            if (recordIndex === -1) return;
+
+            // Get updated values
+            const updatedRecord = {
+                ...attendanceData[recordIndex],
+                dutyAs: document.getElementById('editDutyAs').value,
+                workType: document.getElementById('editWorkType').value,
+                status: document.getElementById('editStatus').value,
+                lateReason: document.getElementById('editLateReason').value,
+                outsideReason: document.getElementById('editOutsideReason').value,
+                workReport: document.getElementById('editWorkReport').value,
+                adminNotes: document.getElementById('editAdminNotes').value
+            };
+
+            // Update times
+            const newDate = document.getElementById('editDate').value;
+            const newClockInTime = document.getElementById('editClockInTime').value;
+            const newClockOutTime = document.getElementById('editClockOutTime').value;
+
+            if (newDate && newClockInTime) {
+                const newClockInDateTime = new Date(`${newDate}T${newClockInTime}`);
+                updatedRecord.clockInTime = newClockInDateTime;
+                updatedRecord.date = newClockInDateTime.toLocaleDateString('id-ID');
+                updatedRecord.clockIn = newClockInDateTime.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+            }
+
+            if (newClockOutTime) {
+                const newClockOutDateTime = new Date(`${newDate}T${newClockOutTime}`);
+                updatedRecord.clockOutTime = newClockOutDateTime;
+                updatedRecord.clockOut = newClockOutDateTime.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+
+                // Recalculate total work time
+                if (updatedRecord.clockInTime) {
+                    const totalWorkMs = newClockOutDateTime - updatedRecord.clockInTime;
+                    const totalWorkHours = Math.floor(totalWorkMs / (1000 * 60 * 60));
+                    const totalWorkMinutes = Math.floor((totalWorkMs % (1000 * 60 * 60)) / (1000 * 60));
+                    const totalWorkSeconds = Math.floor((totalWorkMs % (1000 * 60)) / 1000);
+                    updatedRecord.totalWorkTime = `${totalWorkHours.toString().padStart(2, '0')}:${totalWorkMinutes.toString().padStart(2, '0')}:${totalWorkSeconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            // Update the record
+            attendanceData[recordIndex] = updatedRecord;
+            currentEditingRecord = null;
+
+            closeAdminEditModal();
+            updateAdminDashboard();
+            showSuccessModal('Data absensi berhasil diperbarui');
+        }
+
+        function deleteAttendanceRecord() {
+            if (!currentEditingRecord) return;
+
+            if (confirm('Apakah Anda yakin ingin menghapus data absensi ini?')) {
+                const recordId = currentEditingRecord.id;
+                const recordIndex = attendanceData.findIndex(r => r.id === recordId);
+                
+                if (recordIndex !== -1) {
+                    attendanceData.splice(recordIndex, 1);
+                    currentEditingRecord = null;
+                    
+                    closeAdminEditModal();
+                    updateAdminDashboard();
+                    showSuccessModal('Data absensi berhasil dihapus');
+                }
+            }
+        }
+
+        function closeAdminEditModal() {
+            document.getElementById('adminEditModal').classList.add('hidden');
+            currentEditingRecord = null;
+            document.getElementById('adminEditForm').reset();
+        }
+
         function logout() {
             currentUser = null;
             attendanceData = [];
@@ -1973,5 +2634,5 @@
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97601cc1e4765f9c',t:'MTc1NjM0NTM0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97602c19c13d243f',t:'MTc1NjM0NTk3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
