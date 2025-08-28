@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
@@ -478,7 +480,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-user mr-1"></i>Nama Karyawan
                         </label>
-                        <select id="filterNama" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                        <select id="filterNama" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                             <option value="">Semua Karyawan</option>
                         </select>
                     </div>
@@ -486,7 +488,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-building mr-1"></i>Divisi
                         </label>
-                        <select id="filterDivisi" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                        <select id="filterDivisi" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                             <option value="">Semua Divisi</option>
                             <option value="Operation">Operation</option>
                             <option value="Maintenance">Maintenance</option>
@@ -509,7 +511,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-info-circle mr-1"></i>Status
                         </label>
-                        <select id="filterStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                        <select id="filterStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                             <option value="">Semua Status</option>
                             <option value="Tepat Waktu">Tepat Waktu</option>
                             <option value="Terlambat">Terlambat</option>
@@ -526,13 +528,13 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calendar-alt mr-1"></i>Tanggal Mulai
                         </label>
-                        <input type="date" id="filterTanggalMulai" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                        <input type="date" id="filterTanggalMulai" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calendar-alt mr-1"></i>Tanggal Akhir
                         </label>
-                        <input type="date" id="filterTanggalAkhir" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" onchange="applyFilters()">
+                        <input type="date" id="filterTanggalAkhir" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                     </div>
                 </div>
 
@@ -543,7 +545,7 @@
                     </label>
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" id="globalSearch" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Cari nama, email, divisi, atau keterangan..." oninput="applyFilters()">
+                        <input type="text" id="globalSearch" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Cari nama, email, divisi, atau keterangan...">
                     </div>
                 </div>
 
@@ -557,6 +559,9 @@
                     </button>
                     <button onclick="exportData()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition duration-200 flex items-center">
                         <i class="fas fa-download mr-2"></i>Export Excel
+                    </button>
+                     <button onclick="exportPDF()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-200 flex items-center">
+                        <i class="fas fa-file-pdf mr-2"></i>Export PDF
                     </button>
                     <button onclick="addNewRecord()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
@@ -2002,7 +2007,7 @@
                 <div class="col-span-2 text-gray-800 bg-gray-50 p-2 rounded-md">${record.keterangan || 'Tidak ada keterangan.'}</div>
             </div>
         `;
-
+        document.querySelector('#userAttendanceDetailModal h3').textContent = 'Detail Riwayat Absensi';
         document.getElementById('userAttendanceDetailModal').classList.remove('hidden');
     }
 
@@ -2085,6 +2090,59 @@
     function deleteRecord() { if(currentEditingRecord) deleteRecordConfirm(currentEditingRecord.id); closeDetailModal(); }
     function viewAllNews() { alert('Fitur ini belum tersedia.'); }
     function viewAllAttendance() { alert('Fitur ini belum tersedia.'); }
+    
+    function exportPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('landscape');
+
+        // Title
+        doc.setFontSize(18);
+        doc.text('REKAP ABSENSI BULANAN KARYAWAN TRANSWISATA PRIMA AVIATION', doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+
+        // Sub-header
+        const namaKaryawan = document.getElementById('filterNama').value || 'Semua Karyawan';
+        const startDate = document.getElementById('filterTanggalMulai').value;
+        const endDate = document.getElementById('filterTanggalAkhir').value;
+        
+        function formatDateForPDF(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        doc.setFontSize(10);
+        doc.text(`Nama Karyawan: ${namaKaryawan}`, 14, 25);
+        doc.text(`Periode: ${formatDateForPDF(startDate)} - ${formatDateForPDF(endDate)}`, 14, 30);
+
+        // Table
+        const head = [['DATE', 'NAME', 'DIVISION', 'POSITION', 'DUTY AS', 'TYPE OF WORK', 'STATUS ABSEN', 'ABSEN MASUK', 'ABSEN PULANG', 'TOTAL TIME', 'REMARKS']];
+        const body = filteredData.map(record => [
+            formatDate(record.tanggal),
+            record.nama,
+            record.divisi,
+            record.posisi,
+            record.dutyas,
+            record.typeOfWork,
+            record.statusAbsen,
+            record.jamMasuk || '-',
+            record.jamPulang || '-',
+            record.totalKerja,
+            record.keterangan || '-'
+        ]);
+
+        doc.autoTable({
+            head: head,
+            body: body,
+            startY: 35,
+            theme: 'grid',
+            headStyles: { fillColor: [79, 70, 229] }, // Indigo color
+            styles: { fontSize: 8 },
+        });
+
+        // Save
+        doc.save(`rekap-absensi-${startDate}-to-${endDate}.pdf`);
+    }
     
     </script>
 </body>
