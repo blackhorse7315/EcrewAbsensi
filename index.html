@@ -72,8 +72,9 @@
             
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-600">Demo Login:</p>
-                <p class="text-xs text-gray-500">Username: admin | Password: admin (untuk admin)</p>
-                <p class="text-xs text-gray-500">Username: user | Password: user (untuk user)</p>
+                <p class="text-xs text-gray-500">Admin: admin | admin</p>
+                <p class="text-xs text-gray-500">Karyawan: [email] | [nama depan]</p>
+                <p class="text-xs text-gray-500">Contoh: managementtranswisata@gmail.com | rustam</p>
             </div>
         </div>
     </div>
@@ -403,9 +404,10 @@
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h4 class="font-semibold text-gray-800 mb-4">Informasi Personal</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                        <div class="relative">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap *</label>
-                            <input type="text" id="clockInName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan nama lengkap" required>
+                            <input type="text" id="clockInName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan nama lengkap" required oninput="handleNameInput(this.value)">
+                            <div id="nameDropdown" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-40 overflow-y-auto shadow-lg"></div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
@@ -415,12 +417,11 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Divisi *</label>
                             <select id="clockInDivision" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
                                 <option value="">Pilih Divisi</option>
-                                <option value="IT">IT</option>
-                                <option value="HR">HR</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Operations">Operations</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Sales">Sales</option>
+                                <option value="Staf">Staf</option>
+                                <option value="Operation">Operation</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Safety">Safety</option>
+                                <option value="HRD">HRD</option>
                             </select>
                         </div>
                         <div>
@@ -787,6 +788,69 @@
         let cameraStream = null;
         let clockInData = null;
 
+        // Employee database
+        const employeeDatabase = [
+            { name: "Rustam Suhanda", email: "managementtranswisata@gmail.com", division: "Staf", position: "President Director", role: "USER" },
+            { name: "Selfy Warauw", email: "warauw_1@yahoo.com", division: "Staf", position: "Director", role: "USER" },
+            { name: "Muhamad Ramdani Masri", email: "crunkbolcow@gmail.com", division: "Operation", position: "Chief Pilot Rotary Wing", role: "USER" },
+            { name: "Sulaksono Teddy Prabowo", email: "fly5103@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Marcelino Bhaharoenawanto", email: "marcelino412ep@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Muhamad Sofwan", email: "sofwanm819@gmail.com", division: "Operation", position: "Chief Pilot Fixed Wing", role: "USER" },
+            { name: "Sofian M. L. Tobing", email: "sofiantobing692@gmail.com", division: "Operation", position: "General Manager", role: "USER" },
+            { name: "Rico Febdiandana", email: "ricofebdi@gmail.com", division: "Operation", position: "Chief Flight Support", role: "USER" },
+            { name: "Alfajri", email: "alfajri_koto@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Eli Setya", email: "tioxpilot@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Susetyo Harijanto", email: "harijantosusetyo@gmail.com", division: "Operation", position: "Operation Manager", role: "USER" },
+            { name: "Purwoko", email: "purwoko.mulyono@yahoo.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Riza Hanindita", email: "icul2122@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Henaldy Arifia Sudrajat", email: "henaldy.ts204@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Kadek Amelia Nadya Berliana", email: "amelberliana@yahoo.co.id", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Qorry Maulidya Natawijaya", email: "qnatawijaya@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
+            { name: "Shentira Anggia Putri", email: "anggiashentira@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
+            { name: "Tiffani Pricilia Hasan", email: "tiffanipriciliaaaa@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
+            { name: "Agustin Zulfani Prihatini", email: "agustinzulfani74@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
+            { name: "Nadya Casey Ivanka", email: "ivankacasey99@gmail.com", division: "Operation", position: "Cabin Service", role: "USER" },
+            { name: "Yanu Prihatno", email: "prihatnoyanu@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Bayu Nugroho", email: "bayu.avicena@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Wahyudi Suseno", email: "nawawahyudisuseno090@gmail.com", division: "Maintenance", position: "Avionic", role: "USER" },
+            { name: "Sigit Hardadi", email: "sigithardadi88@yahoo.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Hadi Sutrisno", email: "hadikamilatun@gmail.com", division: "Maintenance", position: "Maintenance Manager", role: "USER" },
+            { name: "Suhairi", email: "suhairitwa@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Suyanto", email: "yanto.umardin@gmail.com", division: "Maintenance", position: "Avionic", role: "USER" },
+            { name: "Lazarus Rio Raymond", email: "rioraymond89@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Febie Aguti Effendi", email: "mpiipie@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Diki Hariyanto", email: "dikiatnu7@gmail.com", division: "Maintenance", position: "Chief Engineer", role: "USER" },
+            { name: "Prayit Susonggo", email: "prayitsusonggo@yahoo.com", division: "Maintenance", position: "Avionic", role: "USER" },
+            { name: "Iskandar Akbar Hakim", email: "iskandarakbarhakim@gmail.com", division: "Maintenance", position: "Chief Inspector", role: "USER" },
+            { name: "Arif Vrybadi Halim", email: "GlexXRSvpcgo@outlook.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Alfiza Eka Putra", email: "alfizaekap@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Dedi Prasetyo", email: "deditren99@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
+            { name: "Media H Marbun", email: "mediamarbun@gmail.com", division: "Staf", position: "Human Resource Development", role: "USER" },
+            { name: "Fatmawati", email: "ulieumeda@gmail.com", division: "Staf", position: "Finance", role: "USER" },
+            { name: "Dede Rahman Arafiq", email: "d2rahman@yahoo.co.id", division: "Staf", position: "Finance", role: "USER" },
+            { name: "Leo Fitzgerald Sinay", email: "leosinay@gmail.com", division: "Maintenance", position: "Chief Engineering", role: "USER" },
+            { name: "Khairul Zaman Pohan", email: "pohan16zaman@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
+            { name: "Sentot Basuki", email: "sentotbasuki@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
+            { name: "Bobby Feisal Mahardhika", email: "bobby.feisal22@gmail.com", division: "Staf", position: "Engineering", role: "USER" },
+            { name: "Tri Widayat", email: "tri3wiwid@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
+            { name: "Isdarminto", email: "is.darminto35@gmail.com", division: "Staf", position: "Logistic", role: "USER" },
+            { name: "Sulaichan Noor Ali", email: "sulaichann@gmail.com", division: "Staf", position: "Logistic", role: "USER" },
+            { name: "Sri Muljono Bayu Putro", email: "sbayuputro@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
+            { name: "Asri Gatot Yulianto", email: "Asrigatot.67@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
+            { name: "Nanang Chabibi", email: "nanangchabibi3@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
+            { name: "Hariyanto", email: "katellisna423@gmail.com", division: "Safety", position: "Aviation Security", role: "USER" },
+            { name: "Supriyono", email: "fardhan0509@gmail.com", division: "Staf", position: "Kurir", role: "USER" },
+            { name: "Kasna", email: "kasna.pjln799@gmail.com", division: "Staf", position: "Driver", role: "USER" },
+            { name: "Rizal Setiawan", email: "rizalsetiawan020812@gmail.com", division: "Staf", position: "Driver", role: "USER" },
+            { name: "Ardi Rizki", email: "ardi.rizk91@gmail.com", division: "Maintenance", position: "Engineer", role: "USER" },
+            { name: "Wawan Setiawan", email: "setiawanwawan7312@gmail.com", division: "Operation", position: "Line Pilot", role: "USER" },
+            { name: "Tommy Saputra", email: "tommysaputra473@gmail.com", division: "Staf", position: "Chief Finance, Accounting & Tax", role: "USER" },
+            { name: "Mochamad Riza", email: "mch_riza@yahoo.com", division: "Safety", position: "Quality, Safety, Security Manager", role: "USER" },
+            { name: "Alexander Anggarda Yunan Devata", email: "alexanderdevata@yahoo.co.id", division: "Operation", position: "Flight Support", role: "USER" },
+            { name: "Sukyono", email: "sskkyy020@gmail.com", division: "Operation", position: "Flight Support", role: "USER" },
+            { name: "Admin-TWA", email: "admin@twa.com", division: "HRD", position: "Admin", role: "ADMIN" }
+        ];
+
         // Office coordinates for radius checking
         const officeLocations = [
             { lat: -6.267716, lng: 106.897317 },
@@ -797,6 +861,13 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#clockInName') && !e.target.closest('#nameDropdown')) {
+                    document.getElementById('nameDropdown').classList.add('hidden');
+                }
+            });
         });
 
         function initializeApp() {
@@ -885,20 +956,33 @@
                 return;
             }
 
-            // Simple login validation
+            // Admin login
             if (username === 'admin' && password === 'admin') {
                 currentUser = { name: 'Admin User', role: 'ADMIN' };
                 showDashboard('admin');
-            } else if (username === 'user' && password === 'user') {
-                currentUser = { name: 'John Doe', role: 'USER' };
-                showDashboard('user');
-            } else {
-                alert('Username atau password salah');
+                document.getElementById('loginForm').reset();
                 return;
             }
 
-            // Clear form
-            document.getElementById('loginForm').reset();
+            // Employee login - check by email and first name as password
+            const employee = employeeDatabase.find(emp => emp.email === username);
+            if (employee) {
+                const firstName = employee.name.split(' ')[0].toLowerCase();
+                if (password.toLowerCase() === firstName) {
+                    currentUser = { 
+                        name: employee.name, 
+                        email: employee.email,
+                        division: employee.division,
+                        position: employee.position,
+                        role: employee.role 
+                    };
+                    showDashboard('user');
+                    document.getElementById('loginForm').reset();
+                    return;
+                }
+            }
+
+            alert('Email atau password salah');
         }
 
         function showDashboard(type) {
@@ -917,6 +1001,42 @@
                 document.getElementById('userName').textContent = currentUser.name;
                 updateGreeting();
             }
+        }
+
+        // Name autocomplete functionality
+        function handleNameInput(value) {
+            const dropdown = document.getElementById('nameDropdown');
+            
+            if (value.length < 2) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            const filteredEmployees = employeeDatabase.filter(emp => 
+                emp.name.toLowerCase().includes(value.toLowerCase())
+            );
+
+            if (filteredEmployees.length === 0) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            dropdown.innerHTML = filteredEmployees.map(emp => `
+                <div class="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0" onclick="selectEmployee('${emp.name}', '${emp.email}', '${emp.division}', '${emp.position}')">
+                    <div class="font-medium text-gray-800">${emp.name}</div>
+                    <div class="text-sm text-gray-600">${emp.email} • ${emp.division} - ${emp.position}</div>
+                </div>
+            `).join('');
+
+            dropdown.classList.remove('hidden');
+        }
+
+        function selectEmployee(name, email, division, position) {
+            document.getElementById('clockInName').value = name;
+            document.getElementById('clockInEmail').value = email;
+            document.getElementById('clockInDivision').value = division;
+            document.getElementById('clockInPosition').value = position;
+            document.getElementById('nameDropdown').classList.add('hidden');
         }
 
         function updateGreeting() {
@@ -977,6 +1097,14 @@
         // Modal functions
         function showClockInModal() {
             document.getElementById('clockInModal').classList.remove('hidden');
+            
+            // Auto-fill user data if logged in
+            if (currentUser && currentUser.email) {
+                document.getElementById('clockInName').value = currentUser.name;
+                document.getElementById('clockInEmail').value = currentUser.email;
+                document.getElementById('clockInDivision').value = currentUser.division;
+                document.getElementById('clockInPosition').value = currentUser.position;
+            }
             
             // Set current date and time
             const now = new Date();
@@ -1666,5 +1794,5 @@
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9760013085c4f891',t:'MTc1NjM0NDIyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97600805f1a4f891',t:'MTc1NjM0NDUwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
