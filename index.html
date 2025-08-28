@@ -292,11 +292,6 @@
                 <div class="space-y-4" id="companyNews">
                     <!-- News items will be populated by JavaScript -->
                 </div>
-                <div class="mt-6 text-center">
-                    <button onclick="viewAllNews()" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                        Lihat Semua Berita <i class="fas fa-arrow-right ml-1"></i>
-                    </button>
-                </div>
             </div>
 
             <!-- Today's Status -->
@@ -1178,11 +1173,7 @@
     let todayClockInRecord = null;
     let newsPhotoData = null;
 
-    const companyNews = [
-        { id: 1, title: "Peningkatan Protokol Keselamatan Penerbangan", content: "Mulai bulan ini, Transwisata Prima Operations menerapkan protokol keselamatan baru...", date: "2024-07-15", category: "Safety", priority: "high", author: "Safety Dept" },
-        { id: 2, title: "Update Sistem Absensi Digital", content: "Sistem ECrew Absensi telah diperbarui dengan fitur foto real-time dan tracking GPS...", date: "2024-07-12", category: "Technology", priority: "medium", author: "IT Dept" },
-        { id: 3, title: "Program Pelatihan Pilot Berkelanjutan", content: "Transwisata meluncurkan program pelatihan berkelanjutan untuk semua pilot...", date: "2024-07-10", category: "Training", priority: "medium", author: "Training Dept" }
-    ];
+    let companyNews = [];
 
     const employeeData = {
         "Rustam Suhanda": { email: "managementtranswisata@gmail.com", division: "Staf", position: "President Director", password: "rustam", role: "USER" },
@@ -1406,17 +1397,36 @@
 
     function renderCompanyNews() {
         const newsContainer = document.getElementById('companyNews');
+        if (companyNews.length === 0) {
+            newsContainer.innerHTML = `<div class="text-center text-gray-500 py-8">Tidak ada berita saat ini.</div>`;
+            return;
+        }
         newsContainer.innerHTML = companyNews.map(news => `
             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition cursor-pointer" onclick="viewNewsDetail(${news.id})">
                 ${news.photo ? `<img src="${news.photo}" alt="News Image" class="w-full h-40 object-cover rounded-md mb-4">` : ''}
                 <h3 class="font-semibold text-gray-800">${news.title}</h3>
-                <p class="text-gray-600 text-sm mt-2 news-content">${news.content}</p>
+                <p class="text-gray-600 text-sm mt-2 news-content truncate">${news.content}</p>
+                <span class="text-sm text-indigo-600 font-semibold mt-2 inline-block">Baca Selengkapnya...</span>
             </div>`).join('');
     }
 
     function viewNewsDetail(newsId) {
         const news = companyNews.find(n => n.id === newsId);
-        if (news) alert(`📰 ${news.title}\n\n${news.content}`);
+        if (!news) return;
+
+        const detailContent = document.getElementById('userAttendanceDetailContent'); // Re-using this modal structure
+        detailContent.innerHTML = `
+            ${news.photo ? `<img src="${news.photo}" alt="News Image" class="w-full h-64 object-cover rounded-lg mb-4">` : ''}
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">${news.title}</h3>
+            <div class="flex items-center text-sm text-gray-500 mb-4 space-x-4">
+                <span><i class="fas fa-calendar-alt mr-2"></i>${formatDate(news.date)}</span>
+                <span><i class="fas fa-user mr-2"></i>${news.author}</span>
+                <span><i class="fas fa-tag mr-2"></i>${news.category}</span>
+            </div>
+            <p class="text-gray-700 leading-relaxed news-content">${news.content}</p>
+        `;
+        document.querySelector('#userAttendanceDetailModal h3').textContent = 'Detail Berita';
+        document.getElementById('userAttendanceDetailModal').classList.remove('hidden');
     }
 
     function updateUserStatistics() {
