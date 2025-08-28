@@ -70,12 +70,7 @@
                 </button>
             </form>
             
-            <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600">Demo Login:</p>
-                <p class="text-xs text-gray-500">Admin: admin | admin</p>
-                <p class="text-xs text-gray-500">Karyawan: [email] | [nama depan]</p>
-                <p class="text-xs text-gray-500">Contoh: managementtranswisata@gmail.com | rustam</p>
-            </div>
+
         </div>
     </div>
 
@@ -957,7 +952,8 @@
             }
 
             // Admin login
-            if (username === 'admin' && password === 'admin') {
+            if ((username === 'admin' && password === 'admin') || 
+                (username === 'admin@twa.com' && password === 'admintwa021')) {
                 currentUser = { name: 'Admin User', role: 'ADMIN' };
                 showDashboard('admin');
                 document.getElementById('loginForm').reset();
@@ -1794,5 +1790,5 @@
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97600805f1a4f891',t:'MTc1NjM0NDUwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97600aa0a6f2f891',t:'MTc1NjM0NDYwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
