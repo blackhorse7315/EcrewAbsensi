@@ -1153,7 +1153,10 @@
         "Sukyono": { email: "sskkyy020@gmail.com", division: "Operation", position: "Flight Support", password: "sukyono", role: "USER" }
     };
 
-    const officeCoordinates = [{ lat: -6.267716, lng: 106.897317 }];
+    const officeCoordinates = [
+        { lat: -6.267716, lng: 106.897317 },
+        { lat: -6.265146, lng: 106.885701 }
+    ];
     const radiusLimit = 250; // meters
 
     // =================================================================
@@ -1557,6 +1560,7 @@
         document.getElementById('photoResult').classList.add('hidden');
         document.getElementById('clockInRadiusStatus').classList.add('hidden');
         document.getElementById('clockInOutsideReason').classList.add('hidden');
+        document.getElementById('clockInReasonText').required = false; 
     }
 
     function resetClockOutForm() {
@@ -1566,6 +1570,7 @@
         document.getElementById('workPhotoResult').classList.add('hidden');
         document.getElementById('clockOutRadiusStatus').classList.add('hidden');
         document.getElementById('clockOutOutsideReason').classList.add('hidden');
+        document.getElementById('clockOutReasonText').required = false;
     }
 
     function updateClockInStatus(now) {
@@ -1667,15 +1672,46 @@
     }
 
     function checkRadius(type, userLat, userLng) {
-        const distance = calculateDistance(userLat, userLng, officeCoordinates[0].lat, officeCoordinates[0].lng);
-        const isWithin = distance <= radiusLimit;
+        let isWithinRadius = false;
+        let minDistance = Infinity;
+        let nearestOffice = null;
+
+        officeCoordinates.forEach((office, index) => {
+            const distance = calculateDistance(userLat, userLng, office.lat, office.lng);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestOffice = index + 1;
+            }
+            if (distance <= radiusLimit) {
+                isWithinRadius = true;
+            }
+        });
+
         const statusEl = document.getElementById(`${type}RadiusStatus`);
+        const titleEl = document.getElementById(`${type}RadiusTitle`);
+        const messageEl = document.getElementById(`${type}RadiusMessage`);
+        const reasonContainerEl = document.getElementById(`${type}OutsideReason`);
+        const reasonTextEl = document.getElementById(`${type}ReasonText`);
+
+        if (!statusEl || !titleEl || !messageEl || !reasonContainerEl || !reasonTextEl) {
+            console.error("One or more modal elements not found for type:", type);
+            return;
+        }
+
         statusEl.classList.remove('hidden');
-        statusEl.className = `p-4 rounded-lg ${isWithin ? 'bg-green-50' : 'bg-red-50'}`;
-        document.getElementById(`${type}RadiusTitle`).textContent = isWithin ? 'Dalam Radius Kantor' : 'Di Luar Radius Kantor';
-        document.getElementById(`${type}RadiusMessage`).textContent = `Jarak Anda ${Math.round(distance)}m dari kantor.`;
-        document.getElementById(`${type}OutsideReason`).classList.toggle('hidden', !isWithin);
-        document.getElementById(`${type}ReasonText`).required = !isWithin;
+        messageEl.textContent = `Jarak Anda ${Math.round(minDistance)}m dari kantor terdekat.`;
+
+        if (isWithinRadius) {
+            statusEl.className = 'p-4 rounded-lg bg-green-50 border-green-200';
+            titleEl.textContent = 'Dalam Radius Kantor';
+            reasonContainerEl.classList.add('hidden');
+            reasonTextEl.required = false;
+        } else {
+            statusEl.className = 'p-4 rounded-lg bg-red-50 border-red-200';
+            titleEl.textContent = 'Di Luar Radius Kantor';
+            reasonContainerEl.classList.remove('hidden');
+            reasonTextEl.required = true;
+        }
     }
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
