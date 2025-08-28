@@ -2663,7 +2663,44 @@ Meeting ini penting untuk evaluasi dan perencanaan tahun depan. Terima kasih ata
             document.getElementById('newsId').value = news.id;
             document.getElementById('newsTitle').value = news.title;
             document.getElementById('newsCategory').value = news.category;
-            document.getElementById('newsDate').value = new Date(news.date).toISOString().split('T')[0];
+            
+            // Handle date conversion safely
+            try {
+                // Try to parse the date string and convert to ISO format
+                const dateStr = news.date;
+                let isoDate;
+                
+                if (dateStr.includes('/')) {
+                    // Handle DD/MM/YYYY format
+                    const parts = dateStr.split('/');
+                    if (parts.length === 3) {
+                        isoDate = new Date(parts[2], parts[1] - 1, parts[0]).toISOString().split('T')[0];
+                    }
+                } else if (dateStr.includes(' ')) {
+                    // Handle "20 Des 2023" format
+                    const months = {
+                        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                        'Mei': '05', 'Jun': '06', 'Jul': '07', 'Agu': '08',
+                        'Sep': '09', 'Okt': '10', 'Nov': '11', 'Des': '12'
+                    };
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parts[0].padStart(2, '0');
+                        const month = months[parts[1]] || '01';
+                        const year = parts[2];
+                        isoDate = `${year}-${month}-${day}`;
+                    }
+                } else {
+                    // Default to today's date if parsing fails
+                    isoDate = new Date().toISOString().split('T')[0];
+                }
+                
+                document.getElementById('newsDate').value = isoDate;
+            } catch (error) {
+                console.error('Date parsing error:', error);
+                document.getElementById('newsDate').value = new Date().toISOString().split('T')[0];
+            }
+            
             document.getElementById('newsContent').value = news.content;
             document.getElementById('newsActive').checked = news.isActive;
             
@@ -2687,46 +2724,140 @@ Meeting ini penting untuk evaluasi dan perencanaan tahun depan. Terima kasih ata
         function handleNewsSubmit(e) {
             e.preventDefault();
             
-            const newsId = document.getElementById('newsId').value;
-            const title = document.getElementById('newsTitle').value.trim();
-            const category = document.getElementById('newsCategory').value;
-            const date = document.getElementById('newsDate').value;
-            const content = document.getElementById('newsContent').value.trim();
-            const isActive = document.getElementById('newsActive').checked;
-            const image = document.getElementById('newsImageImg').src;
-            
-            if (!title || !category || !date || !content) {
-                alert('Mohon lengkapi semua field yang wajib diisi');
-                return;
-            }
-            
-            const newsData = {
-                id: newsId || 'news_' + Date.now(),
-                title: title,
-                category: category,
-                date: new Date(date).toLocaleDateString('id-ID'),
-                content: content,
-                isActive: isActive,
-                author: 'Admin',
-                image: image && !image.includes('data:image/svg+xml') ? image : null
-            };
-            
-            if (newsId) {
-                // Update existing news
-                const index = newsDatabase.findIndex(n => n.id === newsId);
-                if (index !== -1) {
-                    newsDatabase[index] = newsData;
-                    showSuccessModal('Berita berhasil diperbarui');
+            try {
+                // Get form elements with better error handling
+                const newsIdElement = document.getElementById('newsId');
+                const titleElement = document.getElementById('newsTitle');
+                const categoryElement = document.getElementById('newsCategory');
+                const dateElement = document.getElementById('newsDate');
+                const contentElement = document.getElementById('newsContent');
+                const activeElement = document.getElementById('newsActive');
+                const imageElement = document.getElementById('newsImageImg');
+                
+                // Check if elements exist
+                if (!titleElement || !categoryElement || !dateElement || !contentElement || !activeElement) {
+                    console.error('Form elements not found');
+                    alert('Error: Form elements tidak ditemukan. Silakan refresh halaman.');
+                    return;
                 }
-            } else {
-                // Add new news
-                newsDatabase.unshift(newsData); // Add to beginning of array
-                showSuccessModal('Berita berhasil ditambahkan');
+                
+                // Get values with validation and null checks
+                const newsId = newsIdElement ? (newsIdElement.value || '').trim() : '';
+                const title = (titleElement.value || '').trim();
+                const category = (categoryElement.value || '').trim();
+                const date = (dateElement.value || '').trim();
+                const content = (contentElement.value || '').trim();
+                const isActive = activeElement.checked;
+                
+                console.log('Form data:', { newsId, title, category, date, content, isActive });
+                
+                // Step-by-step validation with specific error messages
+                if (!title) {
+                    alert('Mohon isi judul berita');
+                    titleElement.focus();
+                    return;
+                }
+                
+                if (!category) {
+                    alert('Mohon pilih kategori berita');
+                    categoryElement.focus();
+                    return;
+                }
+                
+                if (!date) {
+                    alert('Mohon pilih tanggal publikasi');
+                    dateElement.focus();
+                    return;
+                }
+                
+                if (!content) {
+                    alert('Mohon isi konten berita');
+                    contentElement.focus();
+                    return;
+                }
+                
+                // Handle image safely
+                let image = null;
+                if (imageElement && imageElement.src && !imageElement.src.includes('data:image/svg+xml')) {
+                    image = imageElement.src;
+                }
+                
+                // Format date properly
+                let formattedDate;
+                try {
+                    formattedDate = new Date(date).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                } catch (dateError) {
+                    console.error('Date formatting error:', dateError);
+                    formattedDate = date; // Fallback to original date
+                }
+                
+                // Create news data object
+                const newsData = {
+                    id: newsId || 'news_' + Date.now(),
+                    title: title,
+                    category: category,
+                    date: formattedDate,
+                    content: content,
+                    isActive: isActive,
+                    author: 'Admin',
+                    image: image
+                };
+                
+                console.log('News data to save:', newsData);
+                
+                // Check if newsDatabase exists
+                if (!Array.isArray(newsDatabase)) {
+                    console.error('newsDatabase is not an array');
+                    alert('Error: Database tidak tersedia. Silakan refresh halaman.');
+                    return;
+                }
+                
+                // Save or update news
+                if (newsId) {
+                    // Update existing news
+                    const index = newsDatabase.findIndex(n => n.id === newsId);
+                    if (index !== -1) {
+                        newsDatabase[index] = newsData;
+                        console.log('News updated successfully');
+                        showSuccessModal('Berita berhasil diperbarui');
+                    } else {
+                        console.error('News not found for update:', newsId);
+                        alert('Berita tidak ditemukan untuk diupdate');
+                        return;
+                    }
+                } else {
+                    // Add new news
+                    newsDatabase.unshift(newsData); // Add to beginning of array
+                    console.log('News added successfully');
+                    showSuccessModal('Berita berhasil ditambahkan');
+                }
+                
+                console.log('Current newsDatabase:', newsDatabase);
+                
+                // Close modal and refresh data
+                closeNewsModal();
+                
+                // Update displays
+                if (typeof updateNewsManagementTable === 'function') {
+                    updateNewsManagementTable();
+                } else {
+                    console.error('updateNewsManagementTable function not found');
+                }
+                
+                if (typeof updateUserNewsList === 'function') {
+                    updateUserNewsList();
+                } else {
+                    console.error('updateUserNewsList function not found');
+                }
+                
+            } catch (error) {
+                console.error('Error in handleNewsSubmit:', error);
+                alert('Terjadi kesalahan saat menyimpan berita: ' + error.message);
             }
-            
-            closeNewsModal();
-            updateNewsManagementTable();
-            updateUserNewsList(); // Update user news list immediately
         }
 
         function toggleNewsStatus(newsId) {
@@ -2790,11 +2921,18 @@ Meeting ini penting untuk evaluasi dan perencanaan tahun depan. Terima kasih ata
         }
 
         function generateNewsPreview() {
-            const title = document.getElementById('newsTitle').value.trim();
-            const category = document.getElementById('newsCategory').value;
-            const date = document.getElementById('newsDate').value;
-            const content = document.getElementById('newsContent').value.trim();
-            const image = document.getElementById('newsImageImg').src;
+            const titleElement = document.getElementById('newsTitle');
+            const categoryElement = document.getElementById('newsCategory');
+            const dateElement = document.getElementById('newsDate');
+            const contentElement = document.getElementById('newsContent');
+            const imageElement = document.getElementById('newsImageImg');
+            
+            // Check if elements exist and get values safely
+            const title = titleElement ? (titleElement.value || '').trim() : '';
+            const category = categoryElement ? (categoryElement.value || '').trim() : '';
+            const date = dateElement ? (dateElement.value || '').trim() : '';
+            const content = contentElement ? (contentElement.value || '').trim() : '';
+            const image = imageElement ? imageElement.src : '';
             
             if (!title || !content) {
                 alert('Mohon isi judul dan konten untuk melihat preview');
@@ -3324,5 +3462,5 @@ Meeting ini penting untuk evaluasi dan perencanaan tahun depan. Terima kasih ata
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97604eac01666bb1',t:'MTc1NjM0NzM5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9760622b96766bb1',t:'MTc1NjM0ODE5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
