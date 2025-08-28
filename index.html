@@ -213,43 +213,8 @@
                 <!-- News Tab -->
                 <div id="newsContent" class="p-6 hidden">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Berita & Pengumuman</h3>
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-blue-500 pl-4 py-2 hover:bg-blue-50 cursor-pointer transition-colors rounded-r-lg" onclick="showNewsDetail('news1')">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-800">Libur Tahun Baru 2024</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Kantor akan tutup pada tanggal 1 Januari 2024. Selamat tahun baru!</p>
-                                    <p class="text-xs text-gray-500 mt-2">20 Des 2023</p>
-                                </div>
-                                <div class="ml-4 text-blue-500">
-                                    <i class="fas fa-chevron-right"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border-l-4 border-green-500 pl-4 py-2 hover:bg-green-50 cursor-pointer transition-colors rounded-r-lg" onclick="showNewsDetail('news2')">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-800">Update Sistem Absensi</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Sistem absensi telah diperbarui dengan fitur-fitur baru untuk kemudahan Anda.</p>
-                                    <p class="text-xs text-gray-500 mt-2">18 Des 2023</p>
-                                </div>
-                                <div class="ml-4 text-green-500">
-                                    <i class="fas fa-chevron-right"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border-l-4 border-yellow-500 pl-4 py-2 hover:bg-yellow-50 cursor-pointer transition-colors rounded-r-lg" onclick="showNewsDetail('news3')">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-800">Reminder: Meeting Bulanan</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Jangan lupa meeting bulanan hari Jumat pukul 14:00 di ruang konferensi.</p>
-                                    <p class="text-xs text-gray-500 mt-2">15 Des 2023</p>
-                                </div>
-                                <div class="ml-4 text-yellow-500">
-                                    <i class="fas fa-chevron-right"></i>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="newsListUser" class="space-y-4">
+                        <!-- News will be populated dynamically -->
                     </div>
                 </div>
             </div>
@@ -334,8 +299,24 @@
                 </div>
             </div>
 
-            <!-- Admin Filters -->
+            <!-- Admin Navigation Tabs -->
             <div class="bg-white rounded-xl card-shadow mb-6">
+                <div class="border-b border-gray-200">
+                    <nav class="flex space-x-8 px-6">
+                        <button onclick="showAdminTab('attendance')" class="admin-tab-btn py-4 px-2 border-b-2 border-blue-500 text-blue-600 font-medium" id="attendanceAdminTab">
+                            <i class="fas fa-users mr-2"></i>Data Absensi
+                        </button>
+                        <button onclick="showAdminTab('news')" class="admin-tab-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium" id="newsAdminTab">
+                            <i class="fas fa-newspaper mr-2"></i>Kelola Berita
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Attendance Management Tab -->
+            <div id="attendanceAdminContent">
+                <!-- Admin Filters -->
+                <div class="bg-white rounded-xl card-shadow mb-6">
                 <div class="p-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Filter Data Absensi</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -412,6 +393,53 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            </div>
+
+            <!-- News Management Tab -->
+            <div id="newsAdminContent" class="hidden">
+                <!-- News Management Header -->
+                <div class="bg-white rounded-xl card-shadow mb-6">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">Kelola Berita & Pengumuman</h3>
+                                <p class="text-sm text-gray-600 mt-1">Total: <span id="totalNews">0</span> berita</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="showAddNewsModal()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-all">
+                                    <i class="fas fa-plus mr-2"></i>Tambah Berita
+                                </button>
+                                <button onclick="refreshNewsData()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-all">
+                                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News List -->
+                <div class="bg-white rounded-xl card-shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">Daftar Berita</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Berita</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="newsManagementTable">
+                                <!-- News items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
@@ -982,6 +1010,127 @@
         </div>
     </div>
 
+    <!-- Add/Edit News Modal -->
+    <div id="newsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4">
+        <div class="bg-white rounded-xl p-4 sm:p-6 max-w-4xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-800" id="newsModalTitle">
+                    <i class="fas fa-newspaper mr-2 text-green-600"></i>Tambah Berita Baru
+                </h3>
+                <button onclick="closeNewsModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="newsForm" class="space-y-6">
+                <input type="hidden" id="newsId">
+                
+                <!-- Basic Information -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Informasi Dasar</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Judul Berita *</label>
+                            <input type="text" id="newsTitle" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan judul berita" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kategori *</label>
+                            <select id="newsCategory" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <option value="">Pilih Kategori</option>
+                                <option value="Pengumuman">Pengumuman</option>
+                                <option value="Teknologi">Teknologi</option>
+                                <option value="Meeting">Meeting</option>
+                                <option value="Kebijakan">Kebijakan</option>
+                                <option value="Event">Event</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Publikasi *</label>
+                            <input type="date" id="newsDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Image -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Gambar Berita</h4>
+                    <div class="border-2 border-dashed border-blue-300 rounded-lg p-4 text-center">
+                        <div id="newsImagePreview" class="hidden">
+                            <img id="newsImageImg" src="" alt="Preview" class="w-full h-48 object-cover rounded-lg mb-2">
+                            <button type="button" onclick="removeNewsImage()" class="mt-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-trash mr-1"></i>Hapus Gambar
+                            </button>
+                        </div>
+                        <div id="newsImagePlaceholder">
+                            <i class="fas fa-image text-blue-400 text-3xl mb-2"></i>
+                            <p class="text-blue-600 text-sm font-medium">Upload gambar berita (opsional)</p>
+                            <p class="text-blue-500 text-xs mt-1">Format: JPG, PNG, GIF. Maksimal 5MB</p>
+                        </div>
+                        <input type="file" id="newsImageInput" accept="image/*" class="hidden" onchange="handleNewsImageUpload()">
+                        <button type="button" onclick="document.getElementById('newsImageInput').click()" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                            <i class="fas fa-upload mr-2"></i>Pilih Gambar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- News Content -->
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Konten Berita *</h4>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Isi Berita</label>
+                        <textarea id="newsContent" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="12" placeholder="Tulis konten berita di sini...
+
+Tips:
+- Tekan Enter untuk membuat paragraf baru
+- Gunakan bullet point dengan tanda • untuk daftar
+- Format akan otomatis mengikuti tata letak yang Anda buat" required></textarea>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-green-200">
+                        <p class="text-sm text-green-700 mb-2"><i class="fas fa-info-circle mr-1"></i> <strong>Format Otomatis:</strong></p>
+                        <ul class="text-xs text-green-600 space-y-1">
+                            <li>• Enter = Paragraf baru</li>
+                            <li>• Bullet point dengan tanda •</li>
+                            <li>• Format akan sama persis dengan yang Anda ketik</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- News Settings -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Pengaturan</h4>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="newsActive" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                        <label for="newsActive" class="ml-2 text-sm font-medium text-gray-700">Aktifkan berita (tampilkan di halaman user)</label>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Preview</h4>
+                    <div class="bg-white p-4 rounded-lg border border-yellow-200">
+                        <div id="newsPreview" class="text-sm text-gray-600">
+                            <p>Preview akan muncul setelah Anda mengisi form...</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="generateNewsPreview()" class="mt-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-eye mr-2"></i>Generate Preview
+                    </button>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex space-x-3">
+                    <button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-105">
+                        <i class="fas fa-save mr-2"></i><span id="newsSubmitText">Simpan Berita</span>
+                    </button>
+                    <button type="button" onclick="closeNewsModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-lg font-medium transition-all">
+                        <i class="fas fa-times mr-2"></i>Batal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto py-4">
         <div class="bg-white rounded-xl p-4 sm:p-6 max-w-sm mx-2 sm:mx-4 animate-fade-in">
@@ -1009,6 +1158,64 @@
         let clockInData = null;
         let currentEditingRecord = null;
         let filteredAttendanceData = [];
+
+        // News database
+        let newsDatabase = [
+            {
+                id: 'news1',
+                title: 'Libur Tahun Baru 2024',
+                date: '20 Des 2023',
+                category: 'Pengumuman',
+                author: 'Admin',
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%234f46e5'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E🎉 TAHUN BARU 2024 🎉%3C/text%3E%3C/svg%3E",
+                content: `Dalam rangka menyambut tahun baru 2024, PT Transwisata mengumumkan bahwa kantor akan tutup pada tanggal 1 Januari 2024.
+
+Detail Libur:
+• Tanggal: 1 Januari 2024 (Senin)
+• Status: Libur Nasional
+• Kantor: Tutup
+• Operasional: Normal kembali 2 Januari 2024
+
+Selamat tahun baru 2024! Semoga tahun ini membawa kesuksesan, kesehatan, dan kebahagiaan bagi seluruh keluarga besar PT Transwisata.`,
+                isActive: true
+            },
+            {
+                id: 'news2',
+                title: 'Update Sistem Absensi',
+                date: '18 Des 2023',
+                category: 'Teknologi',
+                author: 'Admin',
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2310b981'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='20' font-weight='bold' text-anchor='middle' fill='white'%3E⚡ SISTEM UPDATE%3C/text%3E%3C/svg%3E",
+                content: `Sistem absensi ECrew Transwisata telah diperbarui dengan berbagai fitur baru yang akan memudahkan proses absensi dan monitoring kehadiran karyawan.
+
+Fitur Baru:
+• Foto Selfie: Verifikasi identitas dengan foto selfie
+• GPS Tracking: Lokasi real-time saat absen
+• Dashboard Analytics: Statistik kehadiran personal
+• Mobile Responsive: Akses mudah dari smartphone
+
+Update ini bertujuan untuk meningkatkan efisiensi dan akurasi sistem absensi.`,
+                isActive: true
+            },
+            {
+                id: 'news3',
+                title: 'Reminder: Meeting Bulanan',
+                date: '15 Des 2023',
+                category: 'Meeting',
+                author: 'Admin',
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23f59e0b'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='18' font-weight='bold' text-anchor='middle' fill='white'%3E📅 MEETING BULANAN%3C/text%3E%3C/svg%3E",
+                content: `Reminder untuk seluruh karyawan bahwa meeting bulanan akan diadakan pada hari Jumat ini. Kehadiran semua departemen sangat diharapkan.
+
+Detail Meeting:
+• Hari/Tanggal: Jumat, 22 Desember 2023
+• Waktu: 14:00 - 16:00 WIB
+• Tempat: Ruang Konferensi Utama
+• Peserta: Seluruh Karyawan
+
+Meeting ini penting untuk evaluasi dan perencanaan tahun depan. Terima kasih atas partisipasi Anda!`,
+                isActive: true
+            }
+        ];
 
         // Employee database
         const employeeDatabase = [
@@ -1115,6 +1322,12 @@
             const adminEditForm = document.getElementById('adminEditForm');
             if (adminEditForm) {
                 adminEditForm.addEventListener('submit', handleAdminEdit);
+            }
+
+            // Set up news form
+            const newsForm = document.getElementById('newsForm');
+            if (newsForm) {
+                newsForm.addEventListener('submit', handleNewsSubmit);
             }
 
             // Set up admin time filter change
@@ -1247,6 +1460,7 @@
             } else {
                 document.getElementById('userDashboard').classList.remove('hidden');
                 updateUserInfo();
+                updateUserNewsList(); // Load news for user
             }
         }
 
@@ -2195,81 +2409,422 @@
         }
 
         // News functions
-        function showNewsDetail(newsId) {
-            const newsData = {
-                news1: {
-                    title: "Libur Tahun Baru 2024",
-                    date: "20 Des 2023",
-                    content: `
-                        <div class="mb-6">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%234f46e5'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E🎉 TAHUN BARU 2024 🎉%3C/text%3E%3C/svg%3E" alt="Tahun Baru 2024" class="w-full h-48 object-cover rounded-lg">
-                        </div>
-                        <p class="text-gray-700 mb-4">Dalam rangka menyambut tahun baru 2024, PT Transwisata mengumumkan bahwa kantor akan tutup pada tanggal 1 Januari 2024.</p>
-                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
-                            <h4 class="font-semibold text-blue-800 mb-2">Detail Libur:</h4>
-                            <ul class="text-blue-700 text-sm space-y-1">
-                                <li>• Tanggal: 1 Januari 2024 (Senin)</li>
-                                <li>• Status: Libur Nasional</li>
-                                <li>• Kantor: Tutup</li>
-                                <li>• Operasional: Normal kembali 2 Januari 2024</li>
-                            </ul>
-                        </div>
-                        <p class="text-gray-700">Selamat tahun baru 2024! Semoga tahun ini membawa kesuksesan, kesehatan, dan kebahagiaan bagi seluruh keluarga besar PT Transwisata.</p>
-                    `
-                },
-                news2: {
-                    title: "Update Sistem Absensi",
-                    date: "18 Des 2023",
-                    content: `
-                        <div class="mb-6">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2310b981'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='20' font-weight='bold' text-anchor='middle' fill='white'%3E⚡ SISTEM UPDATE%3C/text%3E%3C/svg%3E" alt="Update Sistem" class="w-full h-48 object-cover rounded-lg">
-                        </div>
-                        <p class="text-gray-700 mb-4">Sistem absensi ECrew Transwisata telah diperbarui dengan berbagai fitur baru yang akan memudahkan proses absensi dan monitoring kehadiran karyawan.</p>
-                        <div class="bg-green-50 p-4 rounded-lg mb-4">
-                            <h4 class="font-semibold text-green-800 mb-2">Fitur Baru:</h4>
-                            <ul class="text-green-700 text-sm space-y-1">
-                                <li>• Foto Selfie: Verifikasi identitas dengan foto selfie</li>
-                                <li>• GPS Tracking: Lokasi real-time saat absen</li>
-                                <li>• Dashboard Analytics: Statistik kehadiran personal</li>
-                                <li>• Mobile Responsive: Akses mudah dari smartphone</li>
-                            </ul>
-                        </div>
-                        <p class="text-gray-700">Update ini bertujuan untuk meningkatkan efisiensi dan akurasi sistem absensi.</p>
-                    `
-                },
-                news3: {
-                    title: "Reminder: Meeting Bulanan",
-                    date: "15 Des 2023",
-                    content: `
-                        <div class="mb-6">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23f59e0b'/%3E%3Ctext x='200' y='100' font-family='Arial' font-size='18' font-weight='bold' text-anchor='middle' fill='white'%3E📅 MEETING BULANAN%3C/text%3E%3C/svg%3E" alt="Meeting Bulanan" class="w-full h-48 object-cover rounded-lg">
-                        </div>
-                        <p class="text-gray-700 mb-4">Reminder untuk seluruh karyawan bahwa meeting bulanan akan diadakan pada hari Jumat ini. Kehadiran semua departemen sangat diharapkan.</p>
-                        <div class="bg-yellow-50 p-4 rounded-lg mb-4">
-                            <h4 class="font-semibold text-yellow-800 mb-2">Detail Meeting:</h4>
-                            <ul class="text-yellow-700 text-sm space-y-1">
-                                <li>• Hari/Tanggal: Jumat, 22 Desember 2023</li>
-                                <li>• Waktu: 14:00 - 16:00 WIB</li>
-                                <li>• Tempat: Ruang Konferensi Utama</li>
-                                <li>• Peserta: Seluruh Karyawan</li>
-                            </ul>
-                        </div>
-                        <p class="text-gray-700">Meeting ini penting untuk evaluasi dan perencanaan tahun depan. Terima kasih atas partisipasi Anda!</p>
-                    `
-                }
-            };
+        function updateUserNewsList() {
+            const newsListUser = document.getElementById('newsListUser');
+            if (!newsListUser) return;
 
-            const news = newsData[newsId];
-            if (news) {
-                document.getElementById('newsDetailContent').innerHTML = `
-                    <div class="mb-4">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2">${news.title}</h2>
-                        <p class="text-gray-500 text-sm">${news.date}</p>
+            const activeNews = newsDatabase.filter(news => news.isActive);
+            
+            if (activeNews.length === 0) {
+                newsListUser.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-newspaper text-4xl mb-4"></i>
+                        <p>Belum ada berita tersedia</p>
+                        <p class="text-sm">Berita akan muncul di sini setelah admin menambahkannya</p>
                     </div>
-                    ${news.content}
                 `;
-                document.getElementById('newsDetailModal').classList.remove('hidden');
+                return;
             }
+
+            const colors = ['blue', 'green', 'yellow', 'purple', 'red', 'indigo'];
+            
+            newsListUser.innerHTML = activeNews.map((news, index) => {
+                const color = colors[index % colors.length];
+                return `
+                    <div class="border-l-4 border-${color}-500 pl-4 py-2 hover:bg-${color}-50 cursor-pointer transition-colors rounded-r-lg" onclick="showNewsDetail('${news.id}')">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="font-medium text-gray-800">${news.title}</h4>
+                                    <span class="bg-${color}-100 text-${color}-800 px-2 py-1 rounded-full text-xs font-medium">${news.category}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">${news.content.substring(0, 100)}...</p>
+                                <div class="flex items-center gap-4 mt-2">
+                                    <p class="text-xs text-gray-500">${news.date}</p>
+                                    <p class="text-xs text-gray-500">oleh ${news.author}</p>
+                                </div>
+                            </div>
+                            <div class="ml-4 text-${color}-500">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showNewsDetail(newsId) {
+            const news = newsDatabase.find(n => n.id === newsId);
+            if (!news) return;
+
+            // Format content with proper line breaks and structure
+            const formattedContent = formatNewsContent(news.content, news.image);
+
+            document.getElementById('newsDetailContent').innerHTML = `
+                <div class="mb-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <h2 class="text-2xl font-bold text-gray-800">${news.title}</h2>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${news.category}</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-gray-500 text-sm">
+                        <p><i class="fas fa-calendar mr-1"></i>${news.date}</p>
+                        <p><i class="fas fa-user mr-1"></i>oleh ${news.author}</p>
+                    </div>
+                </div>
+                ${formattedContent}
+            `;
+            document.getElementById('newsDetailModal').classList.remove('hidden');
+        }
+
+        function formatNewsContent(content, image = null) {
+            let formattedContent = '';
+            
+            // Add image if exists
+            if (image) {
+                formattedContent += `
+                    <div class="mb-6">
+                        <img src="${image}" alt="Gambar Berita" class="w-full h-64 object-cover rounded-lg shadow-md">
+                    </div>
+                `;
+            }
+            
+            // Split content by double line breaks (paragraphs)
+            const paragraphs = content.split('\n\n');
+            
+            paragraphs.forEach(paragraph => {
+                const trimmedParagraph = paragraph.trim();
+                if (!trimmedParagraph) return;
+                
+                // Check if paragraph contains bullet points
+                if (trimmedParagraph.includes('•')) {
+                    const lines = trimmedParagraph.split('\n');
+                    let listItems = [];
+                    let currentSection = '';
+                    
+                    lines.forEach(line => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine.startsWith('•')) {
+                            listItems.push(trimmedLine.substring(1).trim());
+                        } else if (trimmedLine && !trimmedLine.startsWith('•')) {
+                            if (listItems.length > 0) {
+                                // Close previous list and add section header
+                                if (currentSection) {
+                                    formattedContent += `<h4 class="font-semibold text-gray-800 mb-2">${currentSection}</h4>`;
+                                }
+                                formattedContent += `<ul class="text-gray-700 text-sm space-y-1 mb-4">`;
+                                listItems.forEach(item => {
+                                    formattedContent += `<li class="flex items-start"><span class="text-blue-500 mr-2">•</span><span>${item}</span></li>`;
+                                });
+                                formattedContent += `</ul>`;
+                                listItems = [];
+                            }
+                            currentSection = trimmedLine;
+                        }
+                    });
+                    
+                    // Handle remaining list items
+                    if (listItems.length > 0) {
+                        if (currentSection) {
+                            formattedContent += `<h4 class="font-semibold text-gray-800 mb-2">${currentSection}</h4>`;
+                        }
+                        formattedContent += `<ul class="text-gray-700 text-sm space-y-1 mb-4">`;
+                        listItems.forEach(item => {
+                            formattedContent += `<li class="flex items-start"><span class="text-blue-500 mr-2">•</span><span>${item}</span></li>`;
+                        });
+                        formattedContent += `</ul>`;
+                    }
+                } else {
+                    // Regular paragraph
+                    formattedContent += `<p class="text-gray-700 mb-4 leading-relaxed">${trimmedParagraph.replace(/\n/g, '<br>')}</p>`;
+                }
+            });
+            
+            return formattedContent;
+        }
+
+        // Admin News Management Functions
+        function showAdminTab(tabName) {
+            // Hide all admin tab contents
+            document.getElementById('attendanceAdminContent').classList.add('hidden');
+            document.getElementById('newsAdminContent').classList.add('hidden');
+
+            // Remove active class from all admin tabs
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // Show selected admin tab content
+            document.getElementById(tabName + 'AdminContent').classList.remove('hidden');
+
+            // Add active class to selected admin tab
+            const activeTab = document.getElementById(tabName + 'AdminTab');
+            activeTab.classList.add('border-blue-500', 'text-blue-600');
+            activeTab.classList.remove('border-transparent', 'text-gray-500');
+
+            // Load specific content
+            if (tabName === 'news') {
+                updateNewsManagementTable();
+            }
+        }
+
+        function updateNewsManagementTable() {
+            const tableBody = document.getElementById('newsManagementTable');
+            const totalNews = document.getElementById('totalNews');
+            
+            if (!tableBody) return;
+
+            if (newsDatabase.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-newspaper text-4xl mb-4"></i>
+                            <p>Belum ada berita</p>
+                            <p class="text-sm">Klik "Tambah Berita" untuk membuat berita pertama</p>
+                        </td>
+                    </tr>
+                `;
+                if (totalNews) totalNews.textContent = '0';
+                return;
+            }
+
+            tableBody.innerHTML = newsDatabase.map((news, index) => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            ${news.image ? `
+                                <div class="w-12 h-12 rounded-lg overflow-hidden mr-4 flex-shrink-0">
+                                    <img src="${news.image}" alt="Thumbnail" class="w-full h-full object-cover">
+                                </div>
+                            ` : `
+                                <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fas fa-newspaper text-gray-400"></i>
+                                </div>
+                            `}
+                            <div class="min-w-0 flex-1">
+                                <div class="text-sm font-medium text-gray-900 truncate">${news.title}</div>
+                                <div class="text-sm text-gray-500 truncate">oleh ${news.author}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">${news.category}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${news.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="bg-${news.isActive ? 'green' : 'red'}-100 text-${news.isActive ? 'green' : 'red'}-800 px-2 py-1 rounded-full text-xs font-medium">
+                            ${news.isActive ? 'Aktif' : 'Nonaktif'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editNews('${news.id}')" class="text-blue-600 hover:text-blue-900 mr-3">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="toggleNewsStatus('${news.id}')" class="text-${news.isActive ? 'red' : 'green'}-600 hover:text-${news.isActive ? 'red' : 'green'}-900 mr-3">
+                            <i class="fas fa-${news.isActive ? 'eye-slash' : 'eye'}"></i> ${news.isActive ? 'Nonaktifkan' : 'Aktifkan'}
+                        </button>
+                        <button onclick="deleteNews('${news.id}')" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (totalNews) totalNews.textContent = newsDatabase.length;
+        }
+
+        function showAddNewsModal() {
+            // Reset form
+            document.getElementById('newsForm').reset();
+            document.getElementById('newsId').value = '';
+            document.getElementById('newsModalTitle').innerHTML = '<i class="fas fa-newspaper mr-2 text-green-600"></i>Tambah Berita Baru';
+            document.getElementById('newsSubmitText').textContent = 'Simpan Berita';
+            
+            // Set default date to today
+            document.getElementById('newsDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('newsActive').checked = true;
+            
+            // Reset image
+            document.getElementById('newsImagePreview').classList.add('hidden');
+            document.getElementById('newsImagePlaceholder').classList.remove('hidden');
+            document.getElementById('newsImageImg').src = '';
+            
+            // Reset preview
+            document.getElementById('newsPreview').innerHTML = '<p>Preview akan muncul setelah Anda mengisi form...</p>';
+            
+            document.getElementById('newsModal').classList.remove('hidden');
+        }
+
+        function editNews(newsId) {
+            const news = newsDatabase.find(n => n.id === newsId);
+            if (!news) return;
+
+            // Fill form with news data
+            document.getElementById('newsId').value = news.id;
+            document.getElementById('newsTitle').value = news.title;
+            document.getElementById('newsCategory').value = news.category;
+            document.getElementById('newsDate').value = new Date(news.date).toISOString().split('T')[0];
+            document.getElementById('newsContent').value = news.content;
+            document.getElementById('newsActive').checked = news.isActive;
+            
+            // Handle image
+            if (news.image) {
+                document.getElementById('newsImageImg').src = news.image;
+                document.getElementById('newsImagePreview').classList.remove('hidden');
+                document.getElementById('newsImagePlaceholder').classList.add('hidden');
+            } else {
+                document.getElementById('newsImagePreview').classList.add('hidden');
+                document.getElementById('newsImagePlaceholder').classList.remove('hidden');
+            }
+            
+            // Update modal title
+            document.getElementById('newsModalTitle').innerHTML = '<i class="fas fa-edit mr-2 text-blue-600"></i>Edit Berita';
+            document.getElementById('newsSubmitText').textContent = 'Update Berita';
+            
+            document.getElementById('newsModal').classList.remove('hidden');
+        }
+
+        function handleNewsSubmit(e) {
+            e.preventDefault();
+            
+            const newsId = document.getElementById('newsId').value;
+            const title = document.getElementById('newsTitle').value.trim();
+            const category = document.getElementById('newsCategory').value;
+            const date = document.getElementById('newsDate').value;
+            const content = document.getElementById('newsContent').value.trim();
+            const isActive = document.getElementById('newsActive').checked;
+            const image = document.getElementById('newsImageImg').src;
+            
+            if (!title || !category || !date || !content) {
+                alert('Mohon lengkapi semua field yang wajib diisi');
+                return;
+            }
+            
+            const newsData = {
+                id: newsId || 'news_' + Date.now(),
+                title: title,
+                category: category,
+                date: new Date(date).toLocaleDateString('id-ID'),
+                content: content,
+                isActive: isActive,
+                author: 'Admin',
+                image: image && !image.includes('data:image/svg+xml') ? image : null
+            };
+            
+            if (newsId) {
+                // Update existing news
+                const index = newsDatabase.findIndex(n => n.id === newsId);
+                if (index !== -1) {
+                    newsDatabase[index] = newsData;
+                    showSuccessModal('Berita berhasil diperbarui');
+                }
+            } else {
+                // Add new news
+                newsDatabase.unshift(newsData); // Add to beginning of array
+                showSuccessModal('Berita berhasil ditambahkan');
+            }
+            
+            closeNewsModal();
+            updateNewsManagementTable();
+            updateUserNewsList(); // Update user news list immediately
+        }
+
+        function toggleNewsStatus(newsId) {
+            const news = newsDatabase.find(n => n.id === newsId);
+            if (!news) return;
+            
+            news.isActive = !news.isActive;
+            updateNewsManagementTable();
+            updateUserNewsList(); // Update user news list immediately
+            showSuccessModal(`Berita berhasil ${news.isActive ? 'diaktifkan' : 'dinonaktifkan'}`);
+        }
+
+        function deleteNews(newsId) {
+            if (!confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
+            
+            const index = newsDatabase.findIndex(n => n.id === newsId);
+            if (index !== -1) {
+                newsDatabase.splice(index, 1);
+                updateNewsManagementTable();
+                updateUserNewsList(); // Update user news list immediately
+                showSuccessModal('Berita berhasil dihapus');
+            }
+        }
+
+        function closeNewsModal() {
+            document.getElementById('newsModal').classList.add('hidden');
+        }
+
+        function handleNewsImageUpload() {
+            const input = document.getElementById('newsImageInput');
+            const file = input.files[0];
+            
+            if (file) {
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ukuran file terlalu besar. Maksimal 5MB.');
+                    return;
+                }
+
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    alert('File harus berupa gambar.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('newsImageImg').src = e.target.result;
+                    document.getElementById('newsImagePreview').classList.remove('hidden');
+                    document.getElementById('newsImagePlaceholder').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeNewsImage() {
+            document.getElementById('newsImageImg').src = '';
+            document.getElementById('newsImagePreview').classList.add('hidden');
+            document.getElementById('newsImagePlaceholder').classList.remove('hidden');
+            document.getElementById('newsImageInput').value = '';
+        }
+
+        function generateNewsPreview() {
+            const title = document.getElementById('newsTitle').value.trim();
+            const category = document.getElementById('newsCategory').value;
+            const date = document.getElementById('newsDate').value;
+            const content = document.getElementById('newsContent').value.trim();
+            const image = document.getElementById('newsImageImg').src;
+            
+            if (!title || !content) {
+                alert('Mohon isi judul dan konten untuk melihat preview');
+                return;
+            }
+            
+            const formattedDate = date ? new Date(date).toLocaleDateString('id-ID') : 'Tanggal tidak diset';
+            const formattedContent = formatNewsContent(content, image && !image.includes('data:image/svg+xml') ? image : null);
+            
+            document.getElementById('newsPreview').innerHTML = `
+                <div class="border rounded-lg p-4 bg-gray-50">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <h3 class="text-lg font-bold text-gray-800">${title}</h3>
+                            ${category ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">${category}</span>` : ''}
+                        </div>
+                        <div class="flex items-center gap-4 text-gray-500 text-sm">
+                            <p><i class="fas fa-calendar mr-1"></i>${formattedDate}</p>
+                            <p><i class="fas fa-user mr-1"></i>oleh Admin</p>
+                        </div>
+                    </div>
+                    ${formattedContent}
+                </div>
+            `;
+        }
+
+        function refreshNewsData() {
+            updateNewsManagementTable();
+            updateUserNewsList();
+            showSuccessModal('Data berita berhasil direfresh');
         }
 
         function closeNewsDetail() {
@@ -2769,5 +3324,5 @@
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9760414616a94da3',t:'MTc1NjM0Njg0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97604eac01666bb1',t:'MTc1NjM0NzM5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
