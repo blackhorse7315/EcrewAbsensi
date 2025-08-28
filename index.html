@@ -1898,7 +1898,8 @@
             typeOfWork: document.getElementById('clockInTypeOfWork').value,
             keterangan: document.getElementById('clockInLateReasonText').value || document.getElementById('clockInReasonText').value || '',
             createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
-            statusAbsen: 'On Working'
+            statusAbsen: 'On Working',
+            photoMasuk: clockInPhotoData
         };
         allAttendanceData.unshift(newRecord);
         updateUserUI();
@@ -1921,6 +1922,7 @@
         todayClockInRecord.overtime = calculateOvertime(timeStr);
         todayClockInRecord.statusAbsen = 'Pulang';
         todayClockInRecord.remarkPekerjaan = document.getElementById('clockOutWorkRemark').value;
+        todayClockInRecord.photoPulang = workPhotoData;
         todayClockInRecord.updatedAt = new Date().toISOString();
         
         updateUserUI();
@@ -1952,45 +1954,82 @@
     
     function viewDetail(recordId) {
         const isNew = recordId.startsWith('new-');
-        const record = isNew ? { id: recordId, nama: '', email: '', divisi: '', posisi: '', tanggal: new Date().toISOString().split('T')[0], jamMasuk: '', jamPulang: '' } : allAttendanceData.find(r => r.id === recordId);
+        const record = isNew ? { id: recordId, nama: '', email: '', divisi: '', posisi: '', tanggal: new Date().toISOString().split('T')[0], jamMasuk: '', jamPulang: '', dutyas: '', typeOfWork: '', keterangan: '', remarkPekerjaan: '' } : allAttendanceData.find(r => r.id === recordId);
 
         if (!record) return;
         currentEditingRecord = { ...record };
         const detailContent = document.getElementById('detailContent');
+        
         detailContent.innerHTML = `
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Section 1: Personal Info -->
+                <div class="lg:col-span-3"><h4 class="font-semibold text-gray-700 border-b pb-2">Informasi Karyawan</h4></div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
                     <select class="editable-field w-full" onchange="autoFillEmployeeData(this.value)">
                         <option value="">Pilih Karyawan</option>
                         ${Object.keys(employeeData).sort().map(name => `<option value="${name}" ${record.nama === name ? 'selected' : ''}>${name}</option>`).join('')}
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" class="editable-field w-full" value="${record.email || ''}" onchange="updateField('email', this.value)">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" class="editable-field w-full" value="${record.email || ''}" oninput="updateField('email', this.value)">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
-                    <input type="text" class="editable-field w-full" value="${record.divisi || ''}" onchange="updateField('divisi', this.value)">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Divisi</label>
+                    <input type="text" class="editable-field w-full" value="${record.divisi || ''}" oninput="updateField('divisi', this.value)">
                 </div>
                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Posisi</label>
-                    <input type="text" class="editable-field w-full" value="${record.posisi || ''}" onchange="updateField('posisi', this.value)">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Posisi</label>
+                    <input type="text" class="editable-field w-full" value="${record.posisi || ''}" oninput="updateField('posisi', this.value)">
                 </div>
+
+                <!-- Section 2: Attendance Time -->
+                <div class="lg:col-span-3 mt-4"><h4 class="font-semibold text-gray-700 border-b pb-2">Waktu Absensi</h4></div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
                     <input type="date" class="editable-field w-full" value="${record.tanggal}" onchange="updateField('tanggal', this.value)">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Jam Masuk</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jam Masuk</label>
                     <input type="time" class="editable-field w-full" value="${record.jamMasuk || ''}" onchange="updateField('jamMasuk', this.value)">
                 </div>
                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Jam Pulang</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jam Pulang</label>
                     <input type="time" class="editable-field w-full" value="${record.jamPulang || ''}" onchange="updateField('jamPulang', this.value)">
                 </div>
-            </div>`;
+
+                <!-- Section 3: Work Details -->
+                <div class="lg:col-span-3 mt-4"><h4 class="font-semibold text-gray-700 border-b pb-2">Detail Pekerjaan</h4></div>
+                <div class="lg:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bertugas Sebagai</label>
+                    <input type="text" class="editable-field w-full" value="${record.dutyas || ''}" oninput="updateField('dutyas', this.value)">
+                </div>
+                <div class="lg:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Pekerjaan</label>
+                    <input type="text" class="editable-field w-full" value="${record.typeOfWork || ''}" oninput="updateField('typeOfWork', this.value)">
+                </div>
+                <div class="lg:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Keterangan (Clock-In)</label>
+                    <textarea class="editable-field w-full" rows="2" oninput="updateField('keterangan', this.value)">${record.keterangan || ''}</textarea>
+                </div>
+                <div class="lg:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Remark Pekerjaan (Clock-Out)</label>
+                    <textarea class="editable-field w-full" rows="2" oninput="updateField('remarkPekerjaan', this.value)">${record.remarkPekerjaan || ''}</textarea>
+                </div>
+                 <div class="lg:col-span-3 mt-4"><h4 class="font-semibold text-gray-700 border-b pb-2">Foto</h4></div>
+                 <div class="lg:col-span-3 grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-700 mb-2">Foto Masuk</p>
+                        <img src="${record.photoMasuk || 'https://placehold.co/300x200/e2e8f0/94a3b8?text=No+Photo'}" class="w-full rounded-lg object-cover">
+                    </div>
+                     <div>
+                        <p class="text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan</p>
+                        <img src="${record.photoPulang || 'https://placehold.co/300x200/e2e8f0/94a3b8?text=No+Photo'}" class="w-full rounded-lg object-cover">
+                    </div>
+                 </div>
+            </div>
+        `;
         document.getElementById('detailModal').classList.remove('hidden');
     }
 
