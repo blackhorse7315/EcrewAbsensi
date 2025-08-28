@@ -388,7 +388,7 @@
 
     <!-- Clock In Modal -->
     <div id="clockInModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4">
-        <div class="bg-white rounded-xl p-4 sm:p-6 max-w-2xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
+        <div class="bg-white rounded-xl p-4 sm:p-6 max-w-4xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-semibold text-gray-800">
                     <i class="fas fa-clock mr-2 text-green-600"></i>Clock In - Absen Masuk
@@ -399,7 +399,99 @@
             </div>
             
             <form id="clockInForm" class="space-y-6">
-                <!-- Photo Section -->
+                <!-- Personal Information -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Informasi Personal</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap *</label>
+                            <input type="text" id="clockInName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan nama lengkap" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input type="email" id="clockInEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="nama@transwisata.com" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Divisi *</label>
+                            <select id="clockInDivision" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <option value="">Pilih Divisi</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Operations">Operations</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Posisi *</label>
+                            <input type="text" id="clockInPosition" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan posisi" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Bertugas Sebagai *</label>
+                            <select id="clockInDutyAs" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <option value="">Pilih Tugas</option>
+                                <option value="Director">Director</option>
+                                <option value="Safety, Quality & Security Manager">Safety, Quality & Security Manager</option>
+                                <option value="Operation Manager">Operation Manager</option>
+                                <option value="Maintenance Manager">Maintenance Manager</option>
+                                <option value="Chief Pilot Fixed Wing">Chief Pilot Fixed Wing</option>
+                                <option value="Chief Pilot Rotary Wing">Chief Pilot Rotary Wing</option>
+                                <option value="Chief Flight Support">Chief Flight Support</option>
+                                <option value="Chief Inspector">Chief Inspector</option>
+                                <option value="Chief Engineer">Chief Engineer</option>
+                                <option value="Chief Finance, Accounting & Staf">Chief Finance, Accounting & Staf</option>
+                                <option value="Chief Engineering">Chief Engineering</option>
+                                <option value="Pilot in Command">Pilot in Command</option>
+                                <option value="Second in Command">Second in Command</option>
+                                <option value="Ground Instructor">Ground Instructor</option>
+                                <option value="Flight Instructor">Flight Instructor</option>
+                                <option value="Company Check Pilot">Company Check Pilot</option>
+                                <option value="Engineer">Engineer</option>
+                                <option value="Line Pilot">Line Pilot</option>
+                                <option value="Cabin Service">Cabin Service</option>
+                                <option value="Student">Student</option>
+                                <option value="Flight Support">Flight Support</option>
+                                <option value="Ground Support">Ground Support</option>
+                                <option value="Technical Representative">Technical Representative</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Staff">Staff</option>
+                                <option value="Logistic">Logistic</option>
+                                <option value="Aviation Security">Aviation Security</option>
+                                <option value="Driver">Driver</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Pekerjaan *</label>
+                            <select id="clockInWorkType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <option value="">Pilih Jenis Pekerjaan</option>
+                                <option value="Office Hour">Office Hour</option>
+                                <option value="Standby Flight">Standby Flight</option>
+                                <option value="Standby on Call">Standby on Call</option>
+                                <option value="Pos One Gate">Pos One Gate</option>
+                                <option value="Day Off">Day Off</option>
+                                <option value="Day Off 7 Consecutive Days for Pilot">Day Off 7 Consecutive Days for Pilot</option>
+                                <option value="Flight Duty VIP">Flight Duty VIP</option>
+                                <option value="Ferry Flight">Ferry Flight</option>
+                                <option value="PPC Simulator">PPC Simulator</option>
+                                <option value="PPC Aircraft">PPC Aircraft</option>
+                                <option value="Test Flight">Test Flight</option>
+                                <option value="Ground Run">Ground Run</option>
+                                <option value="Recurrent Training">Recurrent Training</option>
+                                <option value="Recency Flight">Recency Flight</option>
+                                <option value="Meeting Out of Office">Meeting Out of Office</option>
+                                <option value="Medical Examination">Medical Examination</option>
+                                <option value="Annual Leave">Annual Leave</option>
+                                <option value="Sick">Sick</option>
+                                <option value="Technical Representative">Technical Representative</option>
+                                <option value="Aviation Security">Aviation Security</option>
+                                <option value="Over Time">Over Time</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photo and Location Section -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Foto Masuk *</label>
@@ -424,12 +516,46 @@
                             <div id="clockInMap" class="w-full h-32 bg-gray-200 rounded-lg mb-2 flex items-center justify-center">
                                 <i class="fas fa-map-marker-alt text-gray-400 text-2xl"></i>
                             </div>
-                            <button type="button" onclick="getCurrentLocation('clockIn')" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
+                            <button type="button" onclick="getCurrentLocation('clockIn')" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm mb-2">
                                 <i class="fas fa-location-arrow mr-2"></i>Dapatkan Lokasi
                             </button>
                             <input type="hidden" id="clockInLat" name="latitude">
                             <input type="hidden" id="clockInLng" name="longitude">
+                            
+                            <!-- Radius Status -->
+                            <div id="clockInRadiusStatus" class="hidden mt-2 p-3 rounded-lg text-sm"></div>
+                            
+                            <!-- Outside Radius Reason -->
+                            <div id="clockInOutsideReason" class="hidden mt-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Berada di Luar Radius *</label>
+                                <textarea id="clockInReasonText" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Jelaskan alasan Anda berada di luar radius kantor..."></textarea>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Date and Time Info -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-3">Informasi Absensi</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Masuk</label>
+                            <input type="text" id="clockInDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Absen Masuk</label>
+                            <input type="text" id="clockInTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status Absen</label>
+                            <input type="text" id="clockInStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                    </div>
+                    
+                    <!-- Late Reason -->
+                    <div id="clockInLateReason" class="hidden mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Terlambat *</label>
+                        <textarea id="clockInLateReasonText" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Jelaskan alasan keterlambatan Anda..."></textarea>
                     </div>
                 </div>
 
@@ -448,7 +574,7 @@
 
     <!-- Clock Out Modal -->
     <div id="clockOutModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4">
-        <div class="bg-white rounded-xl p-4 sm:p-6 max-w-2xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
+        <div class="bg-white rounded-xl p-4 sm:p-6 max-w-4xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-semibold text-gray-800">
                     <i class="fas fa-clock mr-2 text-red-600"></i>Clock Out - Absen Pulang
@@ -459,10 +585,76 @@
             </div>
             
             <form id="clockOutForm" class="space-y-6">
-                <!-- Work Report -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan Hari Ini *</label>
-                    <textarea id="clockOutWorkReport" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" rows="4" placeholder="Jelaskan pekerjaan yang telah Anda selesaikan hari ini..."></textarea>
+                <!-- Location Section -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-4">Lokasi Pulang</h4>
+                    <div class="border border-gray-300 rounded-lg p-4">
+                        <div id="clockOutMap" class="w-full h-32 bg-gray-200 rounded-lg mb-2 flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-gray-400 text-2xl"></i>
+                        </div>
+                        <button type="button" onclick="getCurrentLocation('clockOut')" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm mb-2">
+                            <i class="fas fa-location-arrow mr-2"></i>Dapatkan Lokasi Pulang
+                        </button>
+                        <input type="hidden" id="clockOutLat" name="latitude">
+                        <input type="hidden" id="clockOutLng" name="longitude">
+                        
+                        <!-- Radius Status -->
+                        <div id="clockOutRadiusStatus" class="hidden mt-2 p-3 rounded-lg text-sm"></div>
+                        
+                        <!-- Outside Radius Reason -->
+                        <div id="clockOutOutsideReason" class="hidden mt-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Berada di Luar Radius *</label>
+                            <textarea id="clockOutReasonText" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Jelaskan alasan Anda berada di luar radius kantor..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work Report and Photo -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan Hari Ini *</label>
+                        <textarea id="clockOutWorkReport" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" rows="6" placeholder="Jelaskan pekerjaan yang telah Anda selesaikan hari ini..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan Hari Ini *</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div id="clockOutPhotoPreview" class="hidden">
+                                <img id="clockOutPhotoImg" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg mb-2">
+                            </div>
+                            <div id="clockOutPhotoPlaceholder">
+                                <i class="fas fa-image text-gray-400 text-3xl mb-2"></i>
+                                <p class="text-gray-500 text-sm">Pilih foto dari galeri</p>
+                            </div>
+                            <input type="file" id="clockOutPhotoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload('clockOut')">
+                            <button type="button" onclick="document.getElementById('clockOutPhotoInput').click()" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-image mr-2"></i>Pilih dari Galeri
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clock Out Information -->
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-3">Informasi Absen Pulang</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Absen Pulang</label>
+                            <input type="text" id="clockOutTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status Pulang</label>
+                            <input type="text" id="clockOutStatus" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Total Overtime</label>
+                            <input type="text" id="clockOutOvertime" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Total Waktu Kerja</label>
+                            <input type="text" id="clockOutTotalWork" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -593,6 +785,14 @@
         let isClockInDone = false;
         let currentCameraType = null;
         let cameraStream = null;
+        let clockInData = null;
+
+        // Office coordinates for radius checking
+        const officeLocations = [
+            { lat: -6.267716, lng: 106.897317 },
+            { lat: -6.265146, lng: 106.885701 }
+        ];
+        const radiusLimit = 250; // meters
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
@@ -624,6 +824,53 @@
 
             // Update date
             updateDate();
+        }
+
+        // Calculate distance between two coordinates
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lng2-lng1) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c; // Distance in meters
+        }
+
+        // Check if location is within office radius
+        function checkRadius(lat, lng) {
+            for (let office of officeLocations) {
+                const distance = calculateDistance(lat, lng, office.lat, office.lng);
+                if (distance <= radiusLimit) {
+                    return { withinRadius: true, distance: distance };
+                }
+            }
+            return { withinRadius: false, distance: null };
+        }
+
+        // Handle photo upload from gallery
+        function handlePhotoUpload(type) {
+            const input = document.getElementById(type + 'PhotoInput');
+            const file = input.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(type + 'PhotoImg');
+                    const preview = document.getElementById(type + 'PhotoPreview');
+                    const placeholder = document.getElementById(type + 'PhotoPlaceholder');
+                    
+                    img.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         // Login functionality
@@ -730,10 +977,39 @@
         // Modal functions
         function showClockInModal() {
             document.getElementById('clockInModal').classList.remove('hidden');
+            
+            // Set current date and time
+            const now = new Date();
+            document.getElementById('clockInDate').value = now.toLocaleDateString('id-ID');
+            document.getElementById('clockInTime').value = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            // Check if late and set status
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const isLate = hour > 9 || (hour === 9 && minute > 0);
+            
+            const statusElement = document.getElementById('clockInStatus');
+            const lateReasonDiv = document.getElementById('clockInLateReason');
+            
+            if (isLate) {
+                statusElement.value = "Anda Terlambat Absen";
+                statusElement.classList.add('text-red-600');
+                lateReasonDiv.classList.remove('hidden');
+            } else {
+                statusElement.value = "Terima Kasih Anda Telah Absen Tepat Waktu";
+                statusElement.classList.add('text-green-600');
+                lateReasonDiv.classList.add('hidden');
+            }
         }
 
         function closeClockInModal() {
             document.getElementById('clockInModal').classList.add('hidden');
+            // Reset form
+            document.getElementById('clockInForm').reset();
+            // Hide dynamic elements
+            document.getElementById('clockInRadiusStatus').classList.add('hidden');
+            document.getElementById('clockInOutsideReason').classList.add('hidden');
+            document.getElementById('clockInLateReason').classList.add('hidden');
         }
 
         function showClockOutModal() {
@@ -742,10 +1018,53 @@
                 return;
             }
             document.getElementById('clockOutModal').classList.remove('hidden');
+            
+            // Set current time and calculate status
+            const now = new Date();
+            document.getElementById('clockOutTime').value = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            // Calculate clock out status
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            let status = "";
+            let overtime = "00:00:00";
+            
+            if (hour < 17) {
+                status = "Anda Pulang Sebelum Waktunya";
+            } else if (hour === 17 && minute <= 30) {
+                status = "Anda Pulang Tepat Waktu";
+            } else {
+                status = "Waktu Kerja Melebihi";
+                // Calculate overtime
+                const overtimeMinutes = (hour - 17) * 60 + (minute - 30);
+                const overtimeHours = Math.floor(overtimeMinutes / 60);
+                const remainingMinutes = overtimeMinutes % 60;
+                overtime = `${overtimeHours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:00`;
+            }
+            
+            document.getElementById('clockOutStatus').value = status;
+            document.getElementById('clockOutOvertime').value = overtime;
+            
+            // Calculate total work time
+            if (clockInData && clockInData.clockInTime) {
+                const clockInTime = new Date(clockInData.clockInTime);
+                const totalWorkMs = now - clockInTime;
+                const totalWorkHours = Math.floor(totalWorkMs / (1000 * 60 * 60));
+                const totalWorkMinutes = Math.floor((totalWorkMs % (1000 * 60 * 60)) / (1000 * 60));
+                const totalWorkSeconds = Math.floor((totalWorkMs % (1000 * 60)) / 1000);
+                
+                document.getElementById('clockOutTotalWork').value = 
+                    `${totalWorkHours.toString().padStart(2, '0')}:${totalWorkMinutes.toString().padStart(2, '0')}:${totalWorkSeconds.toString().padStart(2, '0')}`;
+            }
         }
 
         function closeClockOutModal() {
             document.getElementById('clockOutModal').classList.add('hidden');
+            // Reset form
+            document.getElementById('clockOutForm').reset();
+            // Hide dynamic elements
+            document.getElementById('clockOutRadiusStatus').classList.add('hidden');
+            document.getElementById('clockOutOutsideReason').classList.add('hidden');
         }
 
         function showProfile() {
@@ -824,6 +1143,9 @@
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
                         
+                        // Check radius
+                        const radiusCheck = checkRadius(lat, lng);
+                        
                         if (type === 'clockIn') {
                             document.getElementById('clockInLat').value = lat;
                             document.getElementById('clockInLng').value = lng;
@@ -834,6 +1156,70 @@
                                     <p class="text-xs">${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
                                 </div>
                             `;
+                            
+                            // Show radius status
+                            const radiusStatusDiv = document.getElementById('clockInRadiusStatus');
+                            const outsideReasonDiv = document.getElementById('clockInOutsideReason');
+                            
+                            if (radiusCheck.withinRadius) {
+                                radiusStatusDiv.innerHTML = `
+                                    <div class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                        <span class="text-green-700">Anda berada dalam radius kantor (${Math.round(radiusCheck.distance)}m)</span>
+                                    </div>
+                                `;
+                                radiusStatusDiv.classList.remove('hidden', 'bg-red-100');
+                                radiusStatusDiv.classList.add('bg-green-100');
+                                outsideReasonDiv.classList.add('hidden');
+                            } else {
+                                radiusStatusDiv.innerHTML = `
+                                    <div class="flex items-center">
+                                        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+                                        <span class="text-red-700">Anda berada di luar radius kantor</span>
+                                    </div>
+                                `;
+                                radiusStatusDiv.classList.remove('hidden', 'bg-green-100');
+                                radiusStatusDiv.classList.add('bg-red-100');
+                                outsideReasonDiv.classList.remove('hidden');
+                            }
+                            radiusStatusDiv.classList.remove('hidden');
+                        } else if (type === 'clockOut') {
+                            document.getElementById('clockOutLat').value = lat;
+                            document.getElementById('clockOutLng').value = lng;
+                            document.getElementById('clockOutMap').innerHTML = `
+                                <div class="text-green-600">
+                                    <i class="fas fa-map-marker-alt text-2xl mb-2"></i>
+                                    <p class="text-sm">Lokasi berhasil didapat</p>
+                                    <p class="text-xs">${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
+                                </div>
+                            `;
+                            
+                            // Show radius status
+                            const radiusStatusDiv = document.getElementById('clockOutRadiusStatus');
+                            const outsideReasonDiv = document.getElementById('clockOutOutsideReason');
+                            
+                            if (radiusCheck.withinRadius) {
+                                radiusStatusDiv.innerHTML = `
+                                    <div class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                        <span class="text-green-700">Anda berada dalam radius kantor (${Math.round(radiusCheck.distance)}m)</span>
+                                    </div>
+                                `;
+                                radiusStatusDiv.classList.remove('hidden', 'bg-red-100');
+                                radiusStatusDiv.classList.add('bg-green-100');
+                                outsideReasonDiv.classList.add('hidden');
+                            } else {
+                                radiusStatusDiv.innerHTML = `
+                                    <div class="flex items-center">
+                                        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+                                        <span class="text-red-700">Anda berada di luar radius kantor</span>
+                                    </div>
+                                `;
+                                radiusStatusDiv.classList.remove('hidden', 'bg-green-100');
+                                radiusStatusDiv.classList.add('bg-red-100');
+                                outsideReasonDiv.classList.remove('hidden');
+                            }
+                            radiusStatusDiv.classList.remove('hidden');
                         }
                     },
                     function(error) {
@@ -850,9 +1236,21 @@
         function handleClockIn(e) {
             e.preventDefault();
             
+            // Validate required fields
+            const name = document.getElementById('clockInName').value.trim();
+            const email = document.getElementById('clockInEmail').value.trim();
+            const division = document.getElementById('clockInDivision').value;
+            const position = document.getElementById('clockInPosition').value.trim();
+            const dutyAs = document.getElementById('clockInDutyAs').value.trim();
+            const workType = document.getElementById('clockInWorkType').value;
             const photoImg = document.getElementById('clockInPhotoImg');
             const lat = document.getElementById('clockInLat').value;
             const lng = document.getElementById('clockInLng').value;
+
+            if (!name || !email || !division || !position || !dutyAs || !workType) {
+                alert('Mohon lengkapi semua informasi personal');
+                return;
+            }
 
             if (!photoImg.src || photoImg.src === '') {
                 alert('Mohon ambil foto terlebih dahulu');
@@ -864,19 +1262,51 @@
                 return;
             }
 
-            // Create attendance record
+            // Check if outside radius and reason is required
+            const radiusCheck = checkRadius(parseFloat(lat), parseFloat(lng));
+            const outsideReason = document.getElementById('clockInReasonText').value.trim();
+            
+            if (!radiusCheck.withinRadius && !outsideReason) {
+                alert('Mohon isi alasan berada di luar radius kantor');
+                return;
+            }
+
+            // Check if late and reason is required
             const now = new Date();
-            const attendanceRecord = {
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const isLate = hour > 9 || (hour === 9 && minute > 0);
+            const lateReason = document.getElementById('clockInLateReasonText').value.trim();
+            
+            if (isLate && !lateReason) {
+                alert('Mohon isi alasan keterlambatan');
+                return;
+            }
+
+            // Create comprehensive attendance record
+            clockInData = {
                 id: Date.now(),
+                name: name,
+                email: email,
+                division: division,
+                position: position,
+                dutyAs: dutyAs,
+                workType: workType,
                 date: now.toLocaleDateString('id-ID'),
-                clockIn: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                clockInTime: now,
+                clockIn: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                 clockOut: null,
                 photo: photoImg.src,
                 location: { lat: parseFloat(lat), lng: parseFloat(lng) },
-                status: 'Hadir'
+                withinRadius: radiusCheck.withinRadius,
+                outsideReason: outsideReason,
+                status: isLate ? 'Terlambat' : 'Tepat Waktu',
+                attendanceStatus: isLate ? 'Anda Terlambat Absen' : 'Terima Kasih Anda Telah Absen Tepat Waktu',
+                lateReason: lateReason,
+                workStatus: 'on working'
             };
 
-            attendanceData.push(attendanceRecord);
+            attendanceData.push(clockInData);
             isClockInDone = true;
 
             // Enable clock out button
@@ -894,18 +1324,70 @@
             e.preventDefault();
             
             const workReport = document.getElementById('clockOutWorkReport').value.trim();
+            const photoImg = document.getElementById('clockOutPhotoImg');
+            const lat = document.getElementById('clockOutLat').value;
+            const lng = document.getElementById('clockOutLng').value;
 
             if (!workReport) {
                 alert('Mohon isi remark pekerjaan hari ini');
                 return;
             }
 
+            if (!photoImg.src || photoImg.src === '') {
+                alert('Mohon pilih foto pekerjaan dari galeri');
+                return;
+            }
+
+            if (!lat || !lng) {
+                alert('Mohon dapatkan lokasi pulang terlebih dahulu');
+                return;
+            }
+
+            // Check if outside radius and reason is required
+            const radiusCheck = checkRadius(parseFloat(lat), parseFloat(lng));
+            const outsideReason = document.getElementById('clockOutReasonText').value.trim();
+            
+            if (!radiusCheck.withinRadius && !outsideReason) {
+                alert('Mohon isi alasan berada di luar radius kantor');
+                return;
+            }
+
             // Update latest attendance record
-            if (attendanceData.length > 0) {
-                const latestRecord = attendanceData[attendanceData.length - 1];
+            if (clockInData) {
                 const now = new Date();
-                latestRecord.clockOut = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                latestRecord.workReport = workReport;
+                clockInData.clockOut = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                clockInData.clockOutTime = now;
+                clockInData.workReport = workReport;
+                clockInData.workPhoto = photoImg.src;
+                clockInData.clockOutLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+                clockInData.clockOutWithinRadius = radiusCheck.withinRadius;
+                clockInData.clockOutOutsideReason = outsideReason;
+                clockInData.workStatus = 'pulang';
+                
+                // Calculate status and overtime
+                const hour = now.getHours();
+                const minute = now.getMinutes();
+                
+                if (hour < 17) {
+                    clockInData.clockOutStatus = "Anda Pulang Sebelum Waktunya";
+                    clockInData.overtime = "00:00:00";
+                } else if (hour === 17 && minute <= 30) {
+                    clockInData.clockOutStatus = "Anda Pulang Tepat Waktu";
+                    clockInData.overtime = "00:00:00";
+                } else {
+                    clockInData.clockOutStatus = "Waktu Kerja Melebihi";
+                    const overtimeMinutes = (hour - 17) * 60 + (minute - 30);
+                    const overtimeHours = Math.floor(overtimeMinutes / 60);
+                    const remainingMinutes = overtimeMinutes % 60;
+                    clockInData.overtime = `${overtimeHours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:00`;
+                }
+                
+                // Calculate total work time
+                const totalWorkMs = now - clockInData.clockInTime;
+                const totalWorkHours = Math.floor(totalWorkMs / (1000 * 60 * 60));
+                const totalWorkMinutes = Math.floor((totalWorkMs % (1000 * 60 * 60)) / (1000 * 60));
+                const totalWorkSeconds = Math.floor((totalWorkMs % (1000 * 60)) / 1000);
+                clockInData.totalWorkTime = `${totalWorkHours.toString().padStart(2, '0')}:${totalWorkMinutes.toString().padStart(2, '0')}:${totalWorkSeconds.toString().padStart(2, '0')}`;
             }
 
             isClockInDone = false;
@@ -936,32 +1418,115 @@
             }
 
             historyList.innerHTML = attendanceData.map(record => `
-                <div class="bg-white border border-gray-200 rounded-lg p-4">
-                    <div class="flex justify-between items-start mb-3">
+                <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <!-- Header -->
+                    <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h4 class="font-medium text-gray-800">${record.date}</h4>
-                            <p class="text-sm text-gray-600">Status: ${record.status}</p>
+                            <h4 class="font-semibold text-gray-800 text-lg">${record.name}</h4>
+                            <p class="text-sm text-gray-600">${record.email}</p>
+                            <p class="text-sm text-gray-600">${record.division} - ${record.position}</p>
                         </div>
-                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                            ${record.status}
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="text-gray-600">Clock In:</p>
-                            <p class="font-medium">${record.clockIn}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">Clock Out:</p>
-                            <p class="font-medium">${record.clockOut || '-'}</p>
+                        <div class="text-right">
+                            <span class="bg-${record.status === 'Tepat Waktu' ? 'green' : 'red'}-100 text-${record.status === 'Tepat Waktu' ? 'green' : 'red'}-800 px-3 py-1 rounded-full text-xs font-medium">
+                                ${record.status}
+                            </span>
+                            <p class="text-sm text-gray-500 mt-1">${record.date}</p>
                         </div>
                     </div>
-                    ${record.workReport ? `
-                        <div class="mt-3 pt-3 border-t border-gray-200">
-                            <p class="text-gray-600 text-sm">Remark Pekerjaan:</p>
-                            <p class="text-sm">${record.workReport}</p>
+
+                    <!-- Work Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-xs text-gray-600 mb-1">Bertugas Sebagai</p>
+                            <p class="font-medium">${record.dutyAs}</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-xs text-gray-600 mb-1">Jenis Pekerjaan</p>
+                            <p class="font-medium">${record.workType}</p>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Times -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">Clock In</p>
+                            <p class="font-medium text-green-600">${record.clockIn}</p>
+                            <p class="text-xs ${record.withinRadius ? 'text-green-600' : 'text-red-600'}">${record.withinRadius ? 'Dalam Radius' : 'Luar Radius'}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">Clock Out</p>
+                            <p class="font-medium text-red-600">${record.clockOut || '-'}</p>
+                            ${record.clockOutWithinRadius !== undefined ? `<p class="text-xs ${record.clockOutWithinRadius ? 'text-green-600' : 'text-red-600'}">${record.clockOutWithinRadius ? 'Dalam Radius' : 'Luar Radius'}</p>` : ''}
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">Total Kerja</p>
+                            <p class="font-medium text-blue-600">${record.totalWorkTime || '-'}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">Overtime</p>
+                            <p class="font-medium text-purple-600">${record.overtime || '-'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Status Messages -->
+                    <div class="space-y-2 mb-4">
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-sm font-medium text-blue-800">Status Masuk:</p>
+                            <p class="text-sm text-blue-700">${record.attendanceStatus}</p>
+                        </div>
+                        ${record.clockOutStatus ? `
+                            <div class="bg-purple-50 p-3 rounded-lg">
+                                <p class="text-sm font-medium text-purple-800">Status Pulang:</p>
+                                <p class="text-sm text-purple-700">${record.clockOutStatus}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Reasons -->
+                    ${record.lateReason ? `
+                        <div class="bg-yellow-50 p-3 rounded-lg mb-3">
+                            <p class="text-sm font-medium text-yellow-800">Alasan Terlambat:</p>
+                            <p class="text-sm text-yellow-700">${record.lateReason}</p>
                         </div>
                     ` : ''}
+                    
+                    ${record.outsideReason ? `
+                        <div class="bg-red-50 p-3 rounded-lg mb-3">
+                            <p class="text-sm font-medium text-red-800">Alasan di Luar Radius (Masuk):</p>
+                            <p class="text-sm text-red-700">${record.outsideReason}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${record.clockOutOutsideReason ? `
+                        <div class="bg-red-50 p-3 rounded-lg mb-3">
+                            <p class="text-sm font-medium text-red-800">Alasan di Luar Radius (Pulang):</p>
+                            <p class="text-sm text-red-700">${record.clockOutOutsideReason}</p>
+                        </div>
+                    ` : ''}
+
+                    <!-- Work Report -->
+                    ${record.workReport ? `
+                        <div class="bg-green-50 p-3 rounded-lg mb-3">
+                            <p class="text-sm font-medium text-green-800">Remark Pekerjaan:</p>
+                            <p class="text-sm text-green-700">${record.workReport}</p>
+                        </div>
+                    ` : ''}
+
+                    <!-- Photos -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${record.photo ? `
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-2">Foto Masuk:</p>
+                                <img src="${record.photo}" alt="Foto Masuk" class="w-full h-32 object-cover rounded-lg border">
+                            </div>
+                        ` : ''}
+                        ${record.workPhoto ? `
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan:</p>
+                                <img src="${record.workPhoto}" alt="Foto Pekerjaan" class="w-full h-32 object-cover rounded-lg border">
+                            </div>
+                        ` : ''}
+                    </div>
                 </div>
             `).join('');
         }
@@ -1101,5 +1666,5 @@
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975ff71fc42bf891',t:'MTc1NjM0MzgwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9760013085c4f891',t:'MTc1NjM0NDIyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
