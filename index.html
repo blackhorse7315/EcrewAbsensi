@@ -1920,6 +1920,7 @@
         todayClockInRecord.status = getAttendanceStatus(todayClockInRecord.jamMasuk, timeStr);
         todayClockInRecord.overtime = calculateOvertime(timeStr);
         todayClockInRecord.statusAbsen = 'Pulang';
+        todayClockInRecord.remarkPekerjaan = document.getElementById('clockOutWorkRemark').value;
         todayClockInRecord.updatedAt = new Date().toISOString();
         
         updateUserUI();
@@ -2026,8 +2027,11 @@
                 <div class="font-semibold text-gray-500">Jenis Pekerjaan</div>
                 <div class="text-gray-800">${record.typeOfWork}</div>
 
-                <div class="col-span-2 font-semibold text-gray-500 mt-2">Keterangan</div>
-                <div class="col-span-2 text-gray-800 bg-gray-50 p-2 rounded-md">${record.keterangan || 'Tidak ada keterangan.'}</div>
+                <div class="col-span-2 font-semibold text-gray-500 mt-2">Keterangan (Saat Clock-In)</div>
+                <div class="col-span-2 text-gray-800 bg-gray-50 p-2 rounded-md">${record.keterangan || 'Tidak ada.'}</div>
+                
+                <div class="col-span-2 font-semibold text-gray-500 mt-2">Remark Pekerjaan (Saat Clock-Out)</div>
+                <div class="col-span-2 text-gray-800 bg-gray-50 p-2 rounded-md">${record.remarkPekerjaan || 'Belum diisi.'}</div>
             </div>
         `;
         document.querySelector('#userAttendanceDetailModal h3').textContent = 'Detail Riwayat Absensi';
@@ -2231,7 +2235,7 @@
         doc.text(`Periode: ${formatDateForPDF(startDate)} - ${formatDateForPDF(endDate)}`, 14, 30);
 
         // Table
-        const head = [['DATE', 'NAME', 'DIVISION', 'POSITION', 'DUTY AS', 'TYPE OF WORK', 'STATUS ABSEN', 'ABSEN MASUK', 'ABSEN PULANG', 'TOTAL TIME', 'REMARK PEKERJAAN']];
+        const head = [['DATE', 'NAME', 'DIVISION', 'POSITION', 'DUTY AS', 'TYPE OF WORK', 'STATUS', 'ABSEN MASUK', 'ABSEN PULANG', 'TOTAL TIME', 'REMARKS']];
         const body = filteredData.map(record => [
             formatDate(record.tanggal),
             record.nama,
@@ -2239,7 +2243,7 @@
             record.posisi,
             record.dutyas,
             record.typeOfWork,
-            record.statusAbsen,
+            record.status,
             record.jamMasuk || '-',
             record.jamPulang || '-',
             record.totalKerja,
