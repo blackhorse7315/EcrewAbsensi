@@ -191,28 +191,21 @@
 
                 <!-- History Tab -->
                 <div id="historyContent" class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Riwayat Absensi Minggu Ini</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-800">Senin, 18 Des 2023</p>
-                                <p class="text-sm text-gray-600">Clock In: 08:00 | Clock Out: 17:00</p>
-                            </div>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Hadir</span>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Riwayat Absensi</h3>
+                        <div class="flex space-x-2">
+                            <select id="historyFilter" onchange="filterAttendanceHistory()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="week">Minggu Ini</option>
+                                <option value="month">Bulan Ini</option>
+                                <option value="all">Semua</option>
+                            </select>
                         </div>
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-800">Selasa, 19 Des 2023</p>
-                                <p class="text-sm text-gray-600">Clock In: 08:15 | Clock Out: 17:05</p>
-                            </div>
-                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">Terlambat</span>
-                        </div>
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-800">Rabu, 20 Des 2023</p>
-                                <p class="text-sm text-gray-600">Clock In: 07:55 | Clock Out: 17:00</p>
-                            </div>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Hadir</span>
+                    </div>
+                    <div id="attendanceHistoryList" class="space-y-4">
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-calendar-times text-4xl mb-4"></i>
+                            <p>Belum ada data absensi</p>
+                            <p class="text-sm">Lakukan clock in untuk mulai mencatat absensi</p>
                         </div>
                     </div>
                 </div>
@@ -824,6 +817,24 @@
         </div>
     </div>
 
+    <!-- Attendance Detail Modal -->
+    <div id="attendanceDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4">
+        <div class="bg-white rounded-xl p-4 sm:p-6 max-w-4xl mx-2 sm:mx-4 animate-fade-in w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">
+                    <i class="fas fa-calendar-check mr-2 text-blue-600"></i>Detail Absensi
+                </h3>
+                <button onclick="closeAttendanceDetail()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="attendanceDetailContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto py-4">
         <div class="bg-white rounded-xl p-4 sm:p-6 max-w-sm mx-2 sm:mx-4 animate-fade-in">
@@ -920,6 +931,8 @@
             setInterval(updateClock, 1000);
             // Change running text every 15 seconds
             setInterval(changeRunningMessage, 15000);
+            // Load attendance history when page loads
+            loadAttendanceHistory();
         });
 
         // Update clock display
@@ -1052,6 +1065,9 @@
             clockInData: null,
             isClockInDone: false
         };
+
+        // Attendance history storage
+        let attendanceHistory = JSON.parse(localStorage.getItem('attendanceHistory')) || [];
 
         // Office coordinates for radius checking
         const officeLocations = [
@@ -1405,7 +1421,12 @@
                 position: document.getElementById('clockInPosition').value,
                 workType: document.getElementById('clockInWorkType').value,
                 time: attendanceData.clockInTime,
-                status: document.getElementById('clockInStatus').textContent
+                status: document.getElementById('clockInStatus').textContent,
+                outsideReason: reasonSection.classList.contains('hidden') ? null : document.getElementById('clockInReasonText').value,
+                lateReason: lateReasonSection.classList.contains('hidden') ? null : document.getElementById('clockInLateReasonText').value,
+                name: currentUser.name,
+                email: currentUser.email,
+                division: currentUser.division
             };
             attendanceData.isClockInDone = true;
             
@@ -1457,10 +1478,37 @@
                 }
             }
             
+            // Save complete attendance record
+            const attendanceRecord = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                clockIn: attendanceData.clockInData,
+                clockOut: {
+                    location: { lat: parseFloat(lat), lng: parseFloat(lng) },
+                    workReport: workReport,
+                    workPhoto: workPhoto,
+                    time: new Date(),
+                    status: document.getElementById('clockOutStatus').textContent,
+                    overtime: document.getElementById('clockOutOvertime').value || null,
+                    worktime: document.getElementById('clockOutWorktime').value,
+                    outsideReason: reasonSection.classList.contains('hidden') ? null : document.getElementById('clockOutReasonText').value
+                },
+                name: currentUser.name,
+                email: currentUser.email,
+                division: currentUser.division
+            };
+            
+            // Add to history and save to localStorage
+            attendanceHistory.unshift(attendanceRecord);
+            localStorage.setItem('attendanceHistory', JSON.stringify(attendanceHistory));
+            
             // Reset for next day
             attendanceData.isClockInDone = false;
             attendanceData.clockInTime = null;
             attendanceData.clockInData = null;
+            
+            // Refresh attendance history display
+            loadAttendanceHistory();
             
             // Reset buttons
             const clockInBtn = document.getElementById('clockInBtn');
@@ -1644,6 +1692,284 @@
             }
         }
 
+        // Load and display attendance history
+        function loadAttendanceHistory() {
+            const historyList = document.getElementById('attendanceHistoryList');
+            const filter = document.getElementById('historyFilter')?.value || 'week';
+            
+            if (!currentUser) return;
+            
+            // Filter attendance history by current user
+            const userHistory = attendanceHistory.filter(record => 
+                record.email === currentUser.email
+            );
+            
+            // Apply date filter
+            const filteredHistory = filterByDate(userHistory, filter);
+            
+            if (filteredHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-calendar-times text-4xl mb-4"></i>
+                        <p>Belum ada data absensi</p>
+                        <p class="text-sm">Lakukan clock in untuk mulai mencatat absensi</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            historyList.innerHTML = filteredHistory.map(record => {
+                const date = new Date(record.date);
+                const clockInTime = record.clockIn ? new Date(record.clockIn.time).toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '-';
+                const clockOutTime = record.clockOut ? new Date(record.clockOut.time).toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '-';
+                
+                // Determine status
+                let status = 'Tidak Lengkap';
+                let statusClass = 'bg-gray-100 text-gray-800';
+                
+                if (record.clockIn && record.clockOut) {
+                    if (record.clockIn.status.includes('Tepat Waktu')) {
+                        status = 'Hadir';
+                        statusClass = 'bg-green-100 text-green-800';
+                    } else if (record.clockIn.status.includes('Terlambat')) {
+                        status = 'Terlambat';
+                        statusClass = 'bg-yellow-100 text-yellow-800';
+                    }
+                } else if (record.clockIn && !record.clockOut) {
+                    status = 'Belum Clock Out';
+                    statusClass = 'bg-blue-100 text-blue-800';
+                }
+                
+                return `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors" onclick="showAttendanceDetail('${record.id}')">
+                        <div>
+                            <p class="font-medium text-gray-800">${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                            <p class="text-sm text-gray-600">Clock In: ${clockInTime} | Clock Out: ${clockOutTime}</p>
+                            ${record.clockOut && record.clockOut.worktime ? `<p class="text-xs text-gray-500">Total Kerja: ${record.clockOut.worktime}</p>` : ''}
+                        </div>
+                        <div class="text-right">
+                            <span class="${statusClass} px-3 py-1 rounded-full text-sm font-medium">${status}</span>
+                            <p class="text-xs text-gray-500 mt-1">Klik untuk detail</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Filter attendance by date range
+        function filterByDate(history, filter) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            switch (filter) {
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    return history.filter(record => new Date(record.date) >= weekStart);
+                    
+                case 'month':
+                    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                    return history.filter(record => new Date(record.date) >= monthStart);
+                    
+                case 'all':
+                default:
+                    return history;
+            }
+        }
+        
+        // Filter attendance history
+        function filterAttendanceHistory() {
+            loadAttendanceHistory();
+        }
+        
+        // Show attendance detail modal
+        function showAttendanceDetail(recordId) {
+            const record = attendanceHistory.find(r => r.id == recordId);
+            if (!record) return;
+            
+            const modal = document.getElementById('attendanceDetailModal');
+            const content = document.getElementById('attendanceDetailContent');
+            
+            const date = new Date(record.date);
+            const clockInTime = record.clockIn ? new Date(record.clockIn.time) : null;
+            const clockOutTime = record.clockOut ? new Date(record.clockOut.time) : null;
+            
+            content.innerHTML = `
+                <!-- Header Info -->
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white mb-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-xl font-semibold">${date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
+                            <p class="text-blue-100">${record.name} - ${record.division}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Total Waktu Kerja</div>
+                            <div class="text-lg font-semibold">${record.clockOut ? record.clockOut.worktime : 'Belum selesai'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Clock In Details -->
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-sign-in-alt text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-semibold text-green-800">Clock In</h5>
+                                <p class="text-green-600">${clockInTime ? clockInTime.toLocaleTimeString('id-ID', { hour12: false }) : 'Tidak ada data'}</p>
+                            </div>
+                        </div>
+                        
+                        ${record.clockIn ? `
+                            <!-- Status -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Status Masuk</label>
+                                <div class="p-3 bg-white rounded-lg border ${record.clockIn.status.includes('Tepat Waktu') ? 'border-green-300 text-green-800' : 'border-red-300 text-red-800'}">
+                                    ${record.clockIn.status}
+                                </div>
+                            </div>
+                            
+                            <!-- Photo -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Foto Masuk</label>
+                                <div class="bg-white rounded-lg border p-2">
+                                    <img src="${record.clockIn.photo}" alt="Foto Clock In" class="w-full h-32 object-cover rounded-lg">
+                                </div>
+                            </div>
+                            
+                            <!-- Location -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Masuk</label>
+                                <div class="p-3 bg-white rounded-lg border">
+                                    <i class="fas fa-map-marker-alt text-green-500 mr-2"></i>
+                                    ${record.clockIn.location.lat.toFixed(6)}, ${record.clockIn.location.lng.toFixed(6)}
+                                </div>
+                            </div>
+                            
+                            <!-- Work Details -->
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Posisi</label>
+                                    <div class="p-2 bg-white rounded border text-sm">${record.clockIn.position}</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Bertugas Sebagai</label>
+                                    <div class="p-2 bg-white rounded border text-sm">${record.clockIn.duty}</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Pekerjaan</label>
+                                    <div class="p-2 bg-white rounded border text-sm">${record.clockIn.workType}</div>
+                                </div>
+                            </div>
+                            
+                            ${record.clockIn.lateReason ? `
+                                <div class="mt-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Terlambat</label>
+                                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+                                        ${record.clockIn.lateReason}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${record.clockIn.outsideReason ? `
+                                <div class="mt-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan di Luar Radius</label>
+                                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+                                        ${record.clockIn.outsideReason}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        ` : `
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-times-circle text-4xl mb-2"></i>
+                                <p>Tidak ada data clock in</p>
+                            </div>
+                        `}
+                    </div>
+                    
+                    <!-- Clock Out Details -->
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-sign-out-alt text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-semibold text-red-800">Clock Out</h5>
+                                <p class="text-red-600">${clockOutTime ? clockOutTime.toLocaleTimeString('id-ID', { hour12: false }) : 'Belum clock out'}</p>
+                            </div>
+                        </div>
+                        
+                        ${record.clockOut ? `
+                            <!-- Status -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Status Pulang</label>
+                                <div class="p-3 bg-white rounded-lg border">
+                                    ${record.clockOut.status}
+                                </div>
+                            </div>
+                            
+                            ${record.clockOut.overtime ? `
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Overtime</label>
+                                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 font-medium">
+                                        ${record.clockOut.overtime}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Work Photo -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Foto Pekerjaan</label>
+                                <div class="bg-white rounded-lg border p-2">
+                                    <img src="${record.clockOut.workPhoto}" alt="Foto Pekerjaan" class="w-full h-32 object-cover rounded-lg">
+                                </div>
+                            </div>
+                            
+                            <!-- Location -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Pulang</label>
+                                <div class="p-3 bg-white rounded-lg border">
+                                    <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                    ${record.clockOut.location.lat.toFixed(6)}, ${record.clockOut.location.lng.toFixed(6)}
+                                </div>
+                            </div>
+                            
+                            <!-- Work Report -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Remark Pekerjaan</label>
+                                <div class="p-3 bg-white rounded-lg border text-sm max-h-32 overflow-y-auto">
+                                    ${record.clockOut.workReport}
+                                </div>
+                            </div>
+                            
+                            ${record.clockOut.outsideReason ? `
+                                <div class="mt-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alasan di Luar Radius</label>
+                                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+                                        ${record.clockOut.outsideReason}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        ` : `
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-clock text-4xl mb-2"></i>
+                                <p>Belum melakukan clock out</p>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        // Close attendance detail modal
+        function closeAttendanceDetail() {
+            document.getElementById('attendanceDetailModal').classList.add('hidden');
+        }
+
         // Logout functionality
         function logout() {
             currentUser = null;
@@ -1656,5 +1982,5 @@
             document.getElementById('password').value = '';
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975fd9abe1ccfd7c',t:'MTc1NjM0MjYwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975fdf555373fd7c',t:'MTc1NjM0MjgzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
