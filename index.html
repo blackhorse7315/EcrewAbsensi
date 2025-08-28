@@ -751,8 +751,20 @@
                     <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-200 mx-auto mb-4">
                         <img id="profileImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23e5e7eb'/%3E%3Ccircle cx='50' cy='35' r='15' fill='%236b7280'/%3E%3Cpath d='M20 80 Q20 65 35 65 h30 Q80 65 80 80' fill='%236b7280'/%3E%3C/svg%3E" alt="Profile" class="w-full h-full object-cover">
                     </div>
+                    <button onclick="uploadProfilePhoto()" class="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                        <i class="fas fa-camera text-sm"></i>
+                    </button>
                 </div>
-                <p class="text-sm text-gray-600">Foto Profil</p>
+                <p class="text-sm text-gray-600 mb-2">Foto Profil</p>
+                <input type="file" id="profilePhotoInput" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload()">
+                <div class="flex justify-center space-x-2">
+                    <button onclick="document.getElementById('profilePhotoInput').click()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-upload mr-1"></i>Upload
+                    </button>
+                    <button onclick="openProfileCamera()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-camera mr-1"></i>Kamera
+                    </button>
+                </div>
             </div>
             
             <!-- Profile Info -->
@@ -1234,6 +1246,12 @@
         function updateUserInfo() {
             if (currentUser) {
                 document.getElementById('userName').textContent = currentUser.name;
+                
+                // Update profile photo if exists
+                if (currentUser.profilePhoto) {
+                    document.getElementById('headerProfileImg').src = currentUser.profilePhoto;
+                }
+                
                 updateGreeting();
             }
         }
@@ -1431,6 +1449,19 @@
         }
 
         function showProfile() {
+            // Pre-fill profile data
+            if (currentUser) {
+                document.getElementById('profileName').value = currentUser.name || '';
+                document.getElementById('profileEmail').value = currentUser.email || '';
+                
+                // Set profile photo
+                if (currentUser.profilePhoto) {
+                    document.getElementById('profileImg').src = currentUser.profilePhoto;
+                } else {
+                    document.getElementById('profileImg').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23e5e7eb'/%3E%3Ccircle cx='50' cy='35' r='15' fill='%236b7280'/%3E%3Cpath d='M20 80 Q20 65 35 65 h30 Q80 65 80 80' fill='%236b7280'/%3E%3C/svg%3E";
+                }
+            }
+            
             document.getElementById('profileModal').classList.remove('hidden');
         }
 
@@ -1444,10 +1475,58 @@
             
             if (name && email) {
                 currentUser.name = name;
+                currentUser.email = email;
                 updateUserInfo();
                 closeProfile();
                 showSuccessModal('Profil berhasil diperbarui');
             }
+        }
+
+        // Profile photo functions
+        function uploadProfilePhoto() {
+            document.getElementById('profilePhotoInput').click();
+        }
+
+        function handleProfilePhotoUpload() {
+            const input = document.getElementById('profilePhotoInput');
+            const file = input.files[0];
+            
+            if (file) {
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ukuran file terlalu besar. Maksimal 5MB.');
+                    return;
+                }
+
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    alert('File harus berupa gambar.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profileImg = document.getElementById('profileImg');
+                    const headerProfileImg = document.getElementById('headerProfileImg');
+                    
+                    profileImg.src = e.target.result;
+                    headerProfileImg.src = e.target.result;
+                    
+                    // Save to user data
+                    if (currentUser) {
+                        currentUser.profilePhoto = e.target.result;
+                    }
+                    
+                    showSuccessModal('Foto profil berhasil diperbarui');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openProfileCamera() {
+            currentCameraType = 'profile';
+            document.getElementById('cameraModal').classList.remove('hidden');
+            startCamera();
         }
 
         // Camera functions
@@ -1544,6 +1623,19 @@
                 document.getElementById('clockInPhotoImg').src = dataURL;
                 document.getElementById('clockInPhotoPreview').classList.remove('hidden');
                 document.getElementById('clockInPhotoPlaceholder').classList.add('hidden');
+            } else if (currentCameraType === 'profile') {
+                const profileImg = document.getElementById('profileImg');
+                const headerProfileImg = document.getElementById('headerProfileImg');
+                
+                profileImg.src = dataURL;
+                headerProfileImg.src = dataURL;
+                
+                // Save to user data
+                if (currentUser) {
+                    currentUser.profilePhoto = dataURL;
+                }
+                
+                showSuccessModal('Foto profil berhasil diperbarui');
             }
 
             closeCameraModal();
@@ -2634,5 +2726,5 @@
             document.getElementById('loginForm').reset();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97602c19c13d243f',t:'MTc1NjM0NTk3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97603a3de66e4da3',t:'MTc1NjM0NjU1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
