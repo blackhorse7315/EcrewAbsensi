@@ -566,8 +566,8 @@
                     <button onclick="addNewRecord()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
                     </button>
-                    <button onclick="openAddNewsModal()" class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition duration-200 flex items-center">
-                        <i class="fas fa-newspaper mr-2"></i>Tambah Berita
+                    <button onclick="openManageNewsModal()" class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition duration-200 flex items-center">
+                        <i class="fas fa-newspaper mr-2"></i>Kelola Berita
                     </button>
                     <button onclick="bulkActions()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-200 flex items-center">
                         <i class="fas fa-tasks mr-2"></i>Bulk Actions
@@ -1106,11 +1106,11 @@
         </div>
     </div>
     
-    <!-- Add News Modal -->
+    <!-- Add/Edit News Modal -->
     <div id="addNewsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xl font-semibold text-gray-800">
+                <h3 id="newsModalTitle" class="text-xl font-semibold text-gray-800">
                     <i class="fas fa-newspaper mr-2 text-teal-600"></i>
                     Tambah Berita Baru
                 </h3>
@@ -1119,6 +1119,7 @@
                 </button>
             </div>
             <form id="addNewsForm" class="space-y-4">
+                <input type="hidden" id="newsId">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Judul Berita</label>
                     <input type="text" id="newsTitle" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
@@ -1148,10 +1149,31 @@
                 </div>
                 <div class="flex justify-end pt-4 border-t">
                     <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition">
-                        <i class="fas fa-plus mr-2"></i>Tambah Berita
+                        <i class="fas fa-save mr-2"></i>Simpan
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Manage News Modal -->
+    <div id="manageNewsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">
+                    <i class="fas fa-newspaper mr-2 text-teal-600"></i>
+                    Kelola Berita
+                </h3>
+                <button onclick="closeManageNewsModal()" class="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <button onclick="openAddNewsModal(true)" class="mb-4 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition">
+                <i class="fas fa-plus mr-2"></i>Tambah Berita Baru
+            </button>
+            <div id="manageNewsList" class="space-y-2">
+                <!-- News list will be populated here -->
+            </div>
         </div>
     </div>
 
@@ -1177,6 +1199,7 @@
     let workPhotoData = null;
     let todayClockInRecord = null;
     let newsPhotoData = null;
+    let currentEditingNewsId = null;
 
     let companyNews = [];
 
@@ -1402,11 +1425,12 @@
 
     function renderCompanyNews() {
         const newsContainer = document.getElementById('companyNews');
-        if (companyNews.length === 0) {
+        const activeNews = companyNews.filter(news => news.status === 'active');
+        if (activeNews.length === 0) {
             newsContainer.innerHTML = `<div class="text-center text-gray-500 py-8">Tidak ada berita saat ini.</div>`;
             return;
         }
-        newsContainer.innerHTML = companyNews.map(news => `
+        newsContainer.innerHTML = activeNews.map(news => `
             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition cursor-pointer" onclick="viewNewsDetail(${news.id})">
                 ${news.photo ? `<img src="${news.photo}" alt="News Image" class="w-full h-40 object-cover rounded-md mb-4">` : ''}
                 <h3 class="font-semibold text-gray-800">${news.title}</h3>
@@ -1489,7 +1513,6 @@
 
     function handlePeriodeChange() {
         document.getElementById('customDateRange').classList.toggle('hidden', document.getElementById('filterPeriode').value !== 'custom');
-        applyFilters();
     }
 
     function updateStatistics() {
@@ -2033,15 +2056,21 @@
         }
     }
     
-    function openAddNewsModal() {
+    function openAddNewsModal(isNew = true) {
+        document.getElementById('addNewsForm').reset();
+        document.getElementById('newsImagePreview').classList.add('hidden');
+        newsPhotoData = null;
+        currentEditingNewsId = null;
+        
+        if (isNew) {
+             document.getElementById('newsModalTitle').innerHTML = `<i class="fas fa-newspaper mr-2 text-teal-600"></i> Tambah Berita Baru`;
+             document.getElementById('newsId').value = '';
+        }
         document.getElementById('addNewsModal').classList.remove('hidden');
     }
 
     function closeAddNewsModal() {
         document.getElementById('addNewsModal').classList.add('hidden');
-        document.getElementById('addNewsForm').reset();
-        document.getElementById('newsImagePreview').classList.add('hidden');
-        newsPhotoData = null;
     }
 
     function previewNewsImage(event) {
@@ -2060,25 +2089,111 @@
 
     function handleAddNews(e) {
         e.preventDefault();
-        const newNews = {
-            id: Date.now(),
-            title: document.getElementById('newsTitle').value,
-            content: document.getElementById('newsContent').value,
-            date: new Date().toISOString().split('T')[0],
-            category: document.getElementById('newsCategory').value,
-            priority: document.getElementById('newsPriority').value,
-            author: currentUser.name,
-            photo: newsPhotoData
-        };
-        companyNews.unshift(newNews);
+        const newsId = document.getElementById('newsId').value;
+        
+        if (newsId) { // Editing existing news
+            const index = companyNews.findIndex(news => news.id == newsId);
+            if (index !== -1) {
+                companyNews[index].title = document.getElementById('newsTitle').value;
+                companyNews[index].content = document.getElementById('newsContent').value;
+                companyNews[index].category = document.getElementById('newsCategory').value;
+                companyNews[index].priority = document.getElementById('newsPriority').value;
+                if (newsPhotoData) {
+                    companyNews[index].photo = newsPhotoData;
+                }
+            }
+        } else { // Adding new news
+            const newNews = {
+                id: Date.now(),
+                title: document.getElementById('newsTitle').value,
+                content: document.getElementById('newsContent').value,
+                date: new Date().toISOString().split('T')[0],
+                category: document.getElementById('newsCategory').value,
+                priority: document.getElementById('newsPriority').value,
+                author: currentUser.name,
+                photo: newsPhotoData,
+                status: 'active' // active by default
+            };
+            companyNews.unshift(newNews);
+        }
+        
         refreshUserDashboardNews();
+        renderNewsManagementList();
         closeAddNewsModal();
-        alert('✅ Berita berhasil ditambahkan!');
+        alert('✅ Berita berhasil disimpan!');
     }
     
     function refreshUserDashboardNews() {
+        // This function can be called to specifically update the news on user dashboards
+        // For simplicity in this single-page app context, we call the main render function
         if (userType === 'user' && !document.getElementById('userDashboard').classList.contains('hidden')) {
              renderCompanyNews();
+        }
+    }
+    
+    function openManageNewsModal() {
+        renderNewsManagementList();
+        document.getElementById('manageNewsModal').classList.remove('hidden');
+    }
+
+    function closeManageNewsModal() {
+        document.getElementById('manageNewsModal').classList.add('hidden');
+    }
+
+    function renderNewsManagementList() {
+        const listContainer = document.getElementById('manageNewsList');
+        if (companyNews.length === 0) {
+            listContainer.innerHTML = `<div class="text-center text-gray-500 py-4">Belum ada berita.</div>`;
+            return;
+        }
+        listContainer.innerHTML = companyNews.map(news => `
+            <div class="flex items-center justify-between p-2 border rounded-lg">
+                <div>
+                    <p class="font-semibold">${news.title}</p>
+                    <p class="text-xs text-gray-500">${news.category} - ${formatDate(news.date)}</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="editNews(${news.id})" class="text-blue-500 hover:text-blue-700 p-1"><i class="fas fa-edit"></i></button>
+                    <button onclick="toggleNewsStatus(${news.id})" class="${news.status === 'active' ? 'text-green-500' : 'text-gray-400'} hover:text-green-700 p-1"><i class="fas fa-toggle-on"></i></button>
+                    <button onclick="deleteNews(${news.id})" class="text-red-500 hover:text-red-700 p-1"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function editNews(newsId) {
+        const news = companyNews.find(n => n.id === newsId);
+        if (!news) return;
+        
+        openAddNewsModal(false); // Open modal for editing
+        document.getElementById('newsModalTitle').innerHTML = `<i class="fas fa-edit mr-2 text-teal-600"></i> Edit Berita`;
+        document.getElementById('newsId').value = news.id;
+        document.getElementById('newsTitle').value = news.title;
+        document.getElementById('newsContent').value = news.content;
+        document.getElementById('newsCategory').value = news.category;
+        document.getElementById('newsPriority').value = news.priority;
+        if(news.photo) {
+            const preview = document.getElementById('newsImagePreview');
+            preview.src = news.photo;
+            preview.classList.remove('hidden');
+            newsPhotoData = news.photo;
+        }
+    }
+
+    function toggleNewsStatus(newsId) {
+        const index = companyNews.findIndex(n => n.id === newsId);
+        if (index !== -1) {
+            companyNews[index].status = companyNews[index].status === 'active' ? 'inactive' : 'active';
+            renderNewsManagementList();
+            refreshUserDashboardNews();
+        }
+    }
+
+    function deleteNews(newsId) {
+        if (confirm('Apakah Anda yakin ingin menghapus berita ini?')) {
+            companyNews = companyNews.filter(n => n.id !== newsId);
+            renderNewsManagementList();
+            refreshUserDashboardNews();
         }
     }
 
